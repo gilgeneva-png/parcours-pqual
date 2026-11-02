@@ -1,0 +1,45 @@
+/* ==========================================================
+   Parcours PQual — compléments à la feuille des mandats pratiques
+   ========================================================== */
+
+/* Bandeau bêta, plus discret que le bandeau brouillon */
+.beta-bar{background:repeating-linear-gradient(135deg,#DCEBFF 0 14px,#CFE2FF 14px 28px); color:#1F2A44}
+
+/* Planning : un mois = une colonne pleine, la semaine en pointillé n'est plus utile */
+.g-col-m{border-left:1.5px solid var(--line)}
+.g-exam{position:absolute; top:52px; bottom:0; background:var(--ink); opacity:.88; border-radius:6px; z-index:1}
+.g-exam span{position:absolute; bottom:6px; left:50%; transform:translateX(-50%) rotate(180deg); writing-mode:vertical-rl;
+  font-size:12px; font-weight:700; color:var(--sheet); white-space:nowrap}
+.g-legend .x{background:var(--ink)}
+.g-name .kw{font-family:var(--head); font-weight:800; display:block}
+.g-name .tt{color:var(--ink-soft); font-size:13px}
+
+/* Cartes d'activités */
+.acts{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px}
+.act{display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:start; text-decoration:none; color:var(--ink);
+  background:var(--sheet); border:2px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px;
+  transition:border-color .15s, transform .15s}
+a.act:hover{border-color:var(--c, var(--ink)); transform:translateY(-1px)}
+.act-ico{width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:var(--c, var(--ink)); color:var(--on-c, #fff)}
+.act-ico svg{width:22px; height:22px}
+.act-body{display:flex; flex-direction:column; gap:3px; min-width:0}
+.act-meta{font-size:13px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.act-t{font-family:var(--head); font-weight:800; font-size:18px; line-height:1.2}
+.act-d{font-size:15px; color:var(--ink-soft); line-height:1.4}
+.act-go{align-self:center; font-weight:700; font-size:14px; padding:6px 14px; border-radius:999px; border:2px solid var(--ink); white-space:nowrap}
+a.act:hover .act-go{background:var(--ink); color:var(--sheet)}
+.act.soon{border-style:dashed; cursor:default}
+.act.soon .act-ico{background:var(--line); color:var(--ink-soft)}
+.act.soon .act-go{border-style:dashed; border-color:var(--ink-soft); color:var(--ink-soft)}
+.acts.res{margin-bottom:24px}
+.acts.res .act-ico{background:var(--ink); color:var(--sheet)}
+.acts.res .act.soon .act-ico{background:var(--line); color:var(--ink-soft)}
+
+/* Navigation entre étapes */
+.step-nav{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:8px 0 26px}
+
+@media (max-width:560px){
+  .act{grid-template-columns:auto 1fr; padding:12px}
+  .act-go{grid-column:2; justify-self:start}
+}
+.narrow .acts{grid-template-columns:1fr}

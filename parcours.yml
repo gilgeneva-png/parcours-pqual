@@ -1,0 +1,298 @@
+# =====================================================================
+#  FICHIER MAÎTRE — Parcours PQual
+#  C'est le SEUL fichier à mettre à jour. Tout le site est généré à
+#  partir de lui (planning, pages des étapes, fichier agenda).
+# =====================================================================
+#
+#  MODE D'EMPLOI (les mêmes 5 règles que pour les mandats pratiques)
+#
+#  1. Dates toujours au format AAAA-MM-JJ   ex : 2026-11-13
+#  2. Indentation = 2 espaces, jamais de tabulation.
+#  3. Texte long : écrire  |  après les deux-points, puis le texte
+#     en dessous, indenté.
+#  4. Texte court contenant « : » ou « # » → le mettre entre guillemets.
+#  5. Une ligne qui commence par # est un commentaire : ignorée.
+#
+#  Mise en forme autorisée : **gras**, *italique*, listes « - »,
+#  liens [texte](https://...)
+#
+#  LIENS : un champ  url  vide  ("")  affiche « Bientôt disponible ».
+#  Il suffit de coller l'adresse pour que le bouton s'active.
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+#  1. LE SITE
+# ---------------------------------------------------------------------
+site:
+  titre: "Mon parcours PQual"
+  sous_titre: "Préparation au travail pratique oral, CFC employé·e de commerce"
+  formateur: "Gil Charmillot"
+  contact: ""
+  beta: true            # affiche le bandeau « version bêta »
+  guide_pratique: ""   # lien Drive du fichier guide-pratique.html (accès interne)
+  serie_zero: "https://igkg.ch/fr/employe-e-de-commerce-cfc-service-et-administration/documents-de-base/"
+
+
+# ---------------------------------------------------------------------
+#  2. LA PÉRIODE ET LES EXAMENS  (bornes du planning)
+# ---------------------------------------------------------------------
+parcours:
+  debut: 2026-11-02
+  fin: 2027-06-26
+
+examens:
+  nom: "Examens oraux"
+  debut: 2027-06-16
+  fin: 2027-06-26
+
+
+# ---------------------------------------------------------------------
+#  3. CALENDRIER  (vacances, jours fériés, événements)
+#  type possible :  vacances | ferie | evenement
+#  Source : ge.ch, calendrier scolaire 2026-2027.
+# ---------------------------------------------------------------------
+calendrier:
+  - nom: "Vacances de Noël et Nouvel An"
+    type: vacances
+    debut: 2026-12-24
+    fin: 2027-01-08
+
+  - nom: "Vacances de février"
+    type: vacances
+    debut: 2027-02-15
+    fin: 2027-02-19
+
+  - nom: "Vacances de Pâques"
+    type: vacances
+    debut: 2027-03-26
+    fin: 2027-04-09
+
+  - nom: "Pont de l'Ascension"
+    type: ferie
+    debut: 2027-05-06
+    fin: 2027-05-07
+
+  - nom: "Lundi de Pentecôte"
+    type: ferie
+    debut: 2027-05-17
+    fin: 2027-05-17
+
+
+# ---------------------------------------------------------------------
+#  4. LES ÉTAPES
+#  L'ordre ici = l'ordre d'affichage.
+#
+#  activites : une ligne par outil.
+#    type : quiz | situation | transfert | chrono | oral | ressource
+#    url  : adresse de l'outil ("" = bientôt disponible)
+#  guide     : parties du Guide pratique à ouvrir (si le guide est sur le
+#              Drive, un seul lien s'affiche par partie, vers le fichier).
+#              Une majuscule = un domaine entier (A à F),
+#              une minuscule = une compétence (ex. a1, c3).
+#  je_me_teste : ce que l'apprenti·e coche quand il ou elle sait le faire
+#    (les coches restent sur son appareil, personne d'autre ne les voit)
+# ---------------------------------------------------------------------
+etapes:
+
+  # ===================================================================
+  - id: comprendre
+    mot_cle: "Comprendre l'examen"
+    titre: "Savoir exactement ce qui vous attend"
+    debut: 2026-11-02
+    fin: 2026-11-20
+    en_bref: |
+      Avant de vous entraîner, connaissez les règles du jeu : combien de TP,
+      combien de temps, et sur quoi vous êtes évalué·e.
+    objectifs:
+      - "Connaître les 5 TP et les domaines qu'ils couvrent"
+      - "Connaître le déroulement d'un TP : 3, 4 puis 3 minutes"
+      - "Savoir lire les critères d'évaluation"
+    contenu: |
+      **L'examen en bref**
+      - 5 TP, chacun noté sur 9 points, soit 45 points au total.
+      - TP1 : domaines a et b (Mini Case).
+      - TP2 : domaine c (Mini Case).
+      - TP3 : domaine d (Simulation pratique).
+      - TP4 : domaine e (Simulation pratique).
+      - TP5 : domaines a à e (entretien de réflexion).
+      - Chaque TP : 3 minutes de préparation, 4 minutes de présentation, 3 minutes de questions.
+      - 3 critères notés sur 3 points. Ils sont visibles pendant la préparation.
+    activites:
+      - titre: "La série zéro officielle"
+        type: ressource
+        duree: "20 min"
+        description: "Les vraies tâches publiées pour préparer l'examen. Lisez au moins une tâche en entier."
+        url: "https://igkg.ch/fr/employe-e-de-commerce-cfc-service-et-administration/documents-de-base/"
+      - titre: "Quiz : le format de l'examen"
+        type: quiz
+        duree: "5 min"
+        description: "Dix questions rapides pour vérifier que vous avez tout compris."
+        url: ""
+    je_me_teste:
+      - "Je sais combien il y a de TP et quels domaines chacun couvre."
+      - "Je connais le déroulement : 3 minutes, 4 minutes, 3 minutes."
+      - "Je sais où trouver les critères pendant la préparation."
+      - "J'ai lu au moins une tâche de la série zéro en entier."
+
+  # ===================================================================
+  - id: methode
+    mot_cle: "La méthode"
+    titre: "Lire la consigne et préparer en 3 minutes"
+    debut: 2026-11-23
+    fin: 2026-12-23
+    en_bref: |
+      La demande n'est jamais au même endroit. Apprenez à repérer tout ce
+      qu'on vous demande, puis à préparer votre présentation en 3 minutes.
+    objectifs:
+      - "Repérer chaque demande dans un énoncé, même les demandes cachées"
+      - "Ne pas se laisser distraire par les détails sans importance"
+      - "Voir la tâche avec les yeux de l'expert·e"
+    activites:
+      - titre: "Lire une consigne"
+        type: situation
+        duree: "10 min"
+        description: "Touchez le mot-clé de chaque demande. Un oubli et vous redescendez d'un niveau."
+        url: ""
+      - titre: "Côté expert·e"
+        type: situation
+        duree: "15 min"
+        description: "Évaluez une présentation fictive avec les critères officiels."
+        url: ""
+      - titre: "Défi 3 minutes"
+        type: chrono
+        duree: "3 min"
+        description: "Une tâche, un chrono, une feuille : préparez votre plan de présentation."
+        url: ""
+    je_me_teste:
+      - "Je trouve toutes les demandes d'un énoncé, y compris les « et comment »."
+      - "Je repère les informations qui ne servent à rien."
+      - "Je sais ce que l'expert·e va vérifier avec chaque critère."
+      - "Je prépare un plan de présentation en 3 minutes."
+
+  # ===================================================================
+  - id: transfert
+    mot_cle: "Le transfert"
+    titre: "Relier la théorie aux situations d'examen"
+    debut: 2027-01-11
+    fin: 2027-02-12
+    en_bref: |
+      Un TP par semaine : retrouvez la théorie utile de chaque domaine et
+      appliquez-la à une situation d'entreprise.
+    objectifs:
+      - "Retrouver la théorie utile pour chaque TP"
+      - "L'appliquer à une situation concrète"
+    activites:
+      - titre: "Transfert des compétences"
+        type: transfert
+        duree: "20 min"
+        description: "Reliez une notion du Guide pratique à une situation d'entreprise."
+        url: ""
+      - titre: "Le Guide pratique"
+        type: ressource
+        duree: "à la carte"
+        description: "Toute la théorie, domaine par domaine. Sur le Drive de l'Espace Entreprise."
+        url: ""   # même lien Drive que guide_pratique
+    guide: [A, B, C, D, E]
+    je_me_teste:
+      - "Pour chaque TP, je sais dans quels domaines chercher."
+      - "Je cite une notion théorique et je l'applique à un exemple."
+      - "J'ai fait au moins un exercice de transfert par TP."
+
+  # ===================================================================
+  - id: oral
+    mot_cle: "L'oral"
+    titre: "Tenir 4 minutes, clairement"
+    debut: 2027-02-22
+    fin: 2027-03-25
+    en_bref: |
+      Le contenu ne suffit pas : il faut le présenter. Structure, voix,
+      gestion du temps et du stress.
+    objectifs:
+      - "Annoncer un plan et le suivre"
+      - "Tenir 4 minutes sans dépasser"
+      - "Gérer le stress le jour J"
+    activites:
+      - titre: "Je m'enregistre"
+        type: oral
+        duree: "10 min"
+        description: "Présentez une tâche à votre téléphone, puis réécoutez-vous avec les critères sous les yeux."
+        url: ""
+      - titre: "Structurer 4 minutes"
+        type: ressource
+        duree: "10 min"
+        description: "Une introduction, une partie par demande, une conclusion."
+        url: ""
+    je_me_teste:
+      - "J'annonce mon plan au début de la présentation."
+      - "Je tiens 4 minutes sans lire mes notes."
+      - "Je me suis enregistré·e au moins une fois."
+
+  # ===================================================================
+  - id: simulations
+    mot_cle: "Les simulations"
+    titre: "S'entraîner en conditions réelles"
+    debut: 2027-04-12
+    fin: 2027-05-14
+    en_bref: |
+      Des TP complets, chronométrés, comme le jour de l'examen.
+      C'est aussi le moment de préparer l'entretien de réflexion (TP5).
+    objectifs:
+      - "Enchaîner préparation, présentation et questions"
+      - "Se préparer à l'entretien de réflexion"
+    activites:
+      - titre: "Simulation d'examen"
+        type: chrono
+        duree: "10 min"
+        description: "Un TP complet, de la préparation aux questions."
+        url: ""
+      - titre: "L'entretien de réflexion (TP5)"
+        type: ressource
+        duree: "15 min"
+        description: "Comment il se déroule et comment le préparer."
+        url: ""
+    je_me_teste:
+      - "J'ai fait au moins un TP complet chronométré pour chaque domaine."
+      - "Je sais comment se déroule l'entretien de réflexion."
+
+  # ===================================================================
+  - id: sprint
+    mot_cle: "Le sprint final"
+    titre: "Revoir ses points faibles et préparer le jour J"
+    debut: 2027-05-18
+    fin: 2027-06-15
+    en_bref: |
+      Reprenez les étapes où vous avez encore des cases vides,
+      et arrivez à l'examen en sachant où vous êtes à l'aise.
+    objectifs:
+      - "Retravailler ce qui n'est pas encore acquis"
+      - "Savoir comment se passe le jour de l'examen"
+    activites:
+      - titre: "Mes cases vides"
+        type: ressource
+        duree: "à la carte"
+        description: "Retournez sur chaque étape : ce qui n'est pas coché est votre programme."
+        url: "./"
+      - titre: "Le jour J"
+        type: ressource
+        duree: "5 min"
+        description: "Horaires, lieu, ce qu'il faut apporter."
+        url: ""
+    je_me_teste:
+      - "Toutes les cases des étapes précédentes sont cochées."
+      - "Je sais où et quand je passe mon examen."
+
+
+# ---------------------------------------------------------------------
+#  5. RESSOURCES  (affichées sur l'accueil)
+# ---------------------------------------------------------------------
+ressources:
+  - titre: "Le Guide pratique"
+    description: "Toute la théorie, domaine par domaine. Accès avec votre compte Espace Entreprise."
+    url: ""   # même lien Drive que guide_pratique
+  - titre: "La série zéro"
+    description: "Les tâches officielles d'entraînement."
+    url: "https://igkg.ch/fr/employe-e-de-commerce-cfc-service-et-administration/documents-de-base/"
+  - titre: "Les conseils des ancien·ne·s"
+    description: "Ce que la volée précédente aurait aimé savoir."
+    url: ""
