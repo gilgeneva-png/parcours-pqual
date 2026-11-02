@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur TP — L'Espace Entreprise</title>
+<style>
+  :root {
+    --ee-cyan:      #00aeef;
+    --ee-cyan-dk:   #0090c8;
+    --ee-cyan-pale: #e8f7fd;
+    --ee-noir:      #1a1a1a;
+    --ee-gris:      #767171;
+    --ee-gris-pale: #f0efef;
+    --ee-blanc:     #ffffff;
+    --ee-vert:      #6fbc85;
+    --ee-jaune:     #fbbd51;
+    --ee-terra:     #f28c5c;
+    --tp1: #1A3A6B; --tp2: #2E7D52; --tp3: #C0531A; --tp4: #5B2D8E; --tp5: #767171;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: var(--ee-gris-pale); color: var(--ee-noir); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+  /* HEADER */
+  header { width: 100%; background: var(--ee-blanc); border-bottom: 3px solid var(--ee-cyan); padding: 0 28px; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .ee-logo { display: flex; flex-direction: column; line-height: 1; letter-spacing: 0.18em; font-size: 0.68rem; font-weight: 700; gap: 1px; }
+  .logo-row { display: flex; gap: 3px; }
+  .cy { color: var(--ee-cyan); } .bk { color: var(--ee-noir); }
+  .header-center { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ee-cyan); border-left: 1px solid #ddd; padding-left: 14px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .ee-squares { display: flex; align-items: flex-end; gap: 3px; }
+  .sq { border-radius: 2px; }
+  .sq1 { width: 10px; height: 10px; background: #b3e4f8; }
+  .sq2 { width: 14px; height: 14px; background: #5ecbf0; }
+  .sq3 { width: 18px; height: 18px; background: #00aeef; }
+  .timer-display { font-size: 0.9rem; font-weight: 700; color: var(--ee-blanc); background: var(--ee-noir); padding: 4px 14px; letter-spacing: 0.06em; display: none; }
+  .timer-display.warning { background: var(--ee-terra); animation: blink 1s infinite; }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+
+  /* SCREENS */
+  .screen { display: none; width: 100%; max-width: 960px; padding: 32px 24px 100px; flex-direction: column; align-items: center; gap: 20px; }
+  .screen.active { display: flex; }
+
+  /* PAGE TITLE */
+  .page-title { font-size: 1.4rem; font-weight: 700; text-transform: uppercase; color: var(--ee-noir); letter-spacing: 0.04em; width: 100%; padding-bottom: 10px; border-bottom: 2px solid var(--ee-cyan); }
+  .page-subtitle { font-size: 0.85rem; color: var(--ee-gris); width: 100%; margin-top: -12px; }
+
+  /* BUTTONS */
+  .btn { border: none; border-radius: 2px; padding: 10px 24px; font-family: Arial, sans-serif; font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.13s; }
+  .btn-primary { background: var(--ee-cyan); color: white; }
+  .btn-primary:hover { background: var(--ee-cyan-dk); }
+  .btn-outline { background: transparent; color: var(--ee-noir); border: 1.5px solid var(--ee-noir); }
+  .btn-outline:hover { background: var(--ee-noir); color: white; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* HOME SERIES GRID */
+  .series-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+  .series-card { background: var(--ee-blanc); border: 2px solid #e0e0e0; border-top: 4px solid var(--ee-cyan); padding: 24px 20px; cursor: pointer; transition: all 0.15s; position: relative; }
+  .series-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); transform: translateY(-2px); border-color: var(--ee-cyan); }
+  .series-card.selected { border-color: var(--ee-cyan); background: var(--ee-cyan-pale); }
+  .series-tag { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ee-cyan); margin-bottom: 6px; }
+  .series-name { font-size: 1.1rem; font-weight: 700; color: var(--ee-noir); margin-bottom: 4px; }
+  .series-company { font-size: 0.82rem; color: var(--ee-gris); margin-bottom: 10px; font-style: italic; }
+  .series-meta { font-size: 0.72rem; color: var(--ee-gris); }
+  .series-tps { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+  .tp-chip { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.06em; color: white; }
+
+  /* EXAM PROGRESS BAR */
+  .exam-progress { width: 100%; background: var(--ee-blanc); border-top: 3px solid var(--ee-cyan); padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .tp-steps { display: flex; gap: 6px; flex: 1; }
+  .tp-step { flex: 1; height: 6px; background: #e0e0e0; border-radius: 0; position: relative; cursor: pointer; }
+  .tp-step.done { background: var(--ee-vert); }
+  .tp-step.active { background: var(--ee-cyan); }
+  .tp-step-label { font-size: 0.62rem; font-weight: 700; color: var(--ee-gris); position: absolute; top: 10px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .exam-score { font-size: 0.8rem; font-weight: 700; color: var(--ee-gris); white-space: nowrap; }
+  .exam-score span { color: var(--ee-cyan); }
+
+  /* TP CARD */
+  .tp-card { width: 100%; background: var(--ee-blanc); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .tp-header { padding: 14px 20px; color: white; display: flex; align-items: center; justify-content: space-between; background: var(--tp-color, var(--ee-noir)); }
+  .tp-header-left { display: flex; flex-direction: column; gap: 2px; }
+  .tp-num { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.8; }
+  .tp-title { font-size: 0.95rem; font-weight: 700; }
+  .tp-points-badge { font-size: 0.72rem; font-weight: 700; background: rgba(255,255,255,0.18); padding: 4px 12px; white-space: nowrap; }
+  .tp-body { padding: 20px; }
+
+  /* CONTEXT BOX */
+  .context-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-cyan); margin-bottom: 8px; }
+  .context-box { background: var(--ee-cyan-pale); border-left: 3px solid var(--ee-cyan); padding: 14px 16px; margin-bottom: 16px; font-size: 0.88rem; line-height: 1.6; color: var(--ee-noir); }
+  .context-box p + p { margin-top: 8px; }
+
+  /* EMAIL BOX */
+  .email-box { border: 1px solid #ccc; background: #fafafa; padding: 16px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.6; }
+  .email-meta { font-size: 0.78rem; color: var(--ee-gris); margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  .email-meta strong { color: var(--ee-noir); }
+  .email-body { font-style: italic; color: #333; }
+
+  /* ANNEXE / DOCUMENT */
+  .annexe-box { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; font-size: 0.84rem; }
+  .annexe-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ee-gris); margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+  table.annexe-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  table.annexe-table th { background: var(--ee-noir); color: white; padding: 6px 10px; text-align: left; font-size: 0.78rem; }
+  table.annexe-table td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+  table.annexe-table tr:nth-child(even) td { background: #f8f8f8; }
+  .checkbox-cell { text-align: center; font-size: 1rem; }
+
+  /* TASKS TABLE */
+  .tasks-section { margin-bottom: 16px; }
+  .tasks-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-noir); margin-bottom: 8px; }
+  table.tasks-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  table.tasks-table th { background: var(--ee-noir); color: white; padding: 7px 12px; text-align: left; font-size: 0.78rem; }
+  table.tasks-table td { padding: 9px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  table.tasks-table tr:nth-child(even) td { background: #f8f8f8; }
+  .task-num { font-weight: 700; color: var(--ee-cyan); white-space: nowrap; }
+  .task-dur { white-space: nowrap; font-weight: 700; color: var(--ee-gris); font-size: 0.8rem; }
+
+  /* CRITERIA TABLE */
+  .criteria-section { margin-bottom: 16px; }
+  table.criteria-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  table.criteria-table th { background: var(--ee-noir); color: white; padding: 7px 12px; text-align: left; font-size: 0.78rem; }
+  table.criteria-table th:last-child { text-align: center; width: 70px; }
+  table.criteria-table td { padding: 9px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+  table.criteria-table td:last-child { text-align: center; font-weight: 700; color: var(--ee-cyan); }
+  table.criteria-table tr:nth-child(even) td { background: #f8f8f8; }
+
+  /* PREP ZONE */
+  .prep-zone { width: 100%; }
+  .prep-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .prep-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-noir); }
+  .timer-btn { font-size: 0.72rem; font-weight: 700; padding: 5px 14px; background: var(--ee-jaune); color: var(--ee-noir); border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.06em; }
+  .timer-btn:hover { background: #e8a830; }
+  .timer-btn.running { background: var(--ee-terra); color: white; }
+  .note-area { width: 100%; min-height: 140px; border: 1.5px solid #ddd; padding: 12px; font-family: Arial, sans-serif; font-size: 0.86rem; line-height: 1.6; resize: vertical; background: #fffdf5; }
+  .note-area:focus { outline: none; border-color: var(--ee-cyan); }
+  .note-area::placeholder { color: #bbb; }
+
+  /* CORRECTION ZONE */
+  .correction-zone { display: none; width: 100%; background: #f6fef9; border-left: 4px solid var(--ee-vert); padding: 16px; }
+  .correction-zone.visible { display: block; }
+  .correction-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-vert); margin-bottom: 10px; }
+  .correction-body { font-size: 0.86rem; line-height: 1.7; color: var(--ee-noir); }
+  .correction-body ul { padding-left: 18px; margin-top: 6px; }
+  .correction-body ul li { margin-bottom: 4px; }
+  .correction-body strong { color: #1a5e30; }
+
+  /* SELF EVAL */
+  .self-eval { width: 100%; }
+  .self-eval-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-noir); margin-bottom: 10px; }
+  .eval-criteria { display: flex; flex-direction: column; gap: 8px; }
+  .eval-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--ee-blanc); border: 1px solid #eee; }
+  .eval-crit-text { flex: 1; font-size: 0.84rem; }
+  .eval-stars { display: flex; gap: 6px; }
+  .star-btn { width: 28px; height: 28px; border: 1.5px solid #ddd; background: white; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; border-radius: 2px; }
+  .star-btn:hover { border-color: var(--ee-cyan); background: var(--ee-cyan-pale); }
+  .star-btn.active-1 { background: #fdecea; border-color: #e05252; }
+  .star-btn.active-2 { background: #fff8e1; border-color: var(--ee-jaune); }
+  .star-btn.active-3 { background: #edf7f1; border-color: var(--ee-vert); }
+  .eval-score-label { font-size: 0.72rem; color: var(--ee-gris); min-width: 30px; text-align: right; }
+
+  /* RESULTS */
+  .results-summary { width: 100%; background: var(--ee-blanc); border-top: 4px solid var(--ee-cyan); padding: 28px; }
+  .score-big { font-size: 3rem; font-weight: 700; color: var(--ee-cyan); line-height: 1; }
+  .score-max { font-size: 1rem; color: var(--ee-gris); margin-left: 6px; }
+  .results-subtitle { font-size: 0.88rem; color: var(--ee-gris); margin-top: 4px; }
+  .tp-scores-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; }
+  .tp-score-card { background: var(--ee-blanc); padding: 14px; border-top: 3px solid var(--c, var(--ee-gris)); text-align: center; }
+  .tp-score-label { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-gris); }
+  .tp-score-val { font-size: 1.8rem; font-weight: 700; color: var(--c, var(--ee-gris)); line-height: 1; margin: 4px 0; }
+  .tp-score-max { font-size: 0.72rem; color: var(--ee-gris); }
+  .notes-review { width: 100%; }
+  .notes-review-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ee-gris); margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+  .note-review-item { margin-bottom: 14px; }
+  .note-review-item .nri-label { font-size: 0.72rem; font-weight: 700; color: var(--ee-noir); margin-bottom: 4px; }
+  .note-review-item .nri-text { font-size: 0.84rem; color: #444; background: #fafafa; border-left: 3px solid #ddd; padding: 8px 12px; white-space: pre-wrap; line-height: 1.5; }
+
+  /* FOOTER */
+  .ee-footer { width: 100%; max-width: 960px; padding: 7px 24px; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--ee-gris); border-top: 3px solid var(--ee-cyan); background: var(--ee-blanc); position: fixed; bottom: 0; }
+
+  .divider { width: 100%; height: 1px; background: #e0e0e0; }
+
+  /* ── SITUATION DRAWER ── */
+  .sit-btn {
+    display: none;
+    align-items: center; gap: 7px;
+    background: var(--ee-blanc); border: 1.5px solid var(--ee-cyan);
+    color: var(--ee-cyan); font-family: Arial, sans-serif;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 5px 14px; cursor: pointer;
+    transition: all 0.13s; white-space: nowrap;
+  }
+  .sit-btn:hover { background: var(--ee-cyan); color: white; }
+  .sit-btn.active { background: var(--ee-cyan); color: white; }
+
+  .sit-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,26,26,0.35); z-index: 200;
+  }
+  .sit-overlay.open { display: block; }
+
+  .sit-drawer {
+    position: fixed; top: 54px; right: -480px; width: 460px;
+    max-width: 95vw; height: calc(100vh - 54px);
+    background: var(--ee-blanc); z-index: 201;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    display: flex; flex-direction: column;
+    transition: right 0.3s cubic-bezier(.4,0,.2,1);
+    overflow: hidden;
+  }
+  .sit-drawer.open { right: 0; }
+  .sit-drawer-header {
+    background: var(--ee-noir); color: var(--ee-blanc);
+    padding: 14px 20px; display: flex; align-items: center;
+    justify-content: space-between; flex-shrink: 0;
+    border-bottom: 3px solid var(--ee-cyan);
+  }
+  .sit-drawer-title { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sit-close { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 1.2rem; cursor: pointer; padding: 0 4px; line-height: 1; }
+  .sit-close:hover { color: white; }
+  .sit-drawer-body { flex: 1; overflow-y: auto; padding: 20px; font-size: 0.84rem; line-height: 1.6; }
+  .sit-drawer-body h3 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ee-cyan); margin: 16px 0 8px; border-bottom: 1px solid var(--ee-cyan-pale); padding-bottom: 4px; }
+  .sit-drawer-body h3:first-child { margin-top: 0; }
+  .sit-drawer-body p { margin-bottom: 8px; color: var(--ee-noir); }
+  .sit-drawer-body strong { color: var(--ee-noir); }
+  .sit-org { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .sit-org-box { background: var(--ee-cyan-pale); border: 1px solid rgba(0,174,239,0.25); padding: 7px 10px; font-size: 0.78rem; }
+  .sit-org-box .org-name { font-weight: 700; color: var(--ee-noir); }
+  .sit-org-box .org-role { color: var(--ee-gris); font-size: 0.72rem; margin-top: 1px; }
+  .sit-org-box.highlight { background: var(--ee-cyan); }
+  .sit-org-box.highlight .org-name, .sit-org-box.highlight .org-role { color: white; }
+  .sit-prod { display: flex; flex-direction: column; gap: 5px; }
+  .sit-prod-row { display: flex; gap: 8px; font-size: 0.82rem; }
+  .sit-prod-label { font-weight: 700; color: var(--ee-cyan); min-width: 120px; flex-shrink: 0; }
+
+  @media(max-width:500px){
+    .sit-drawer { width: 100vw; }
+    .sit-org { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="ee-logo">
+      <div class="logo-row"><span class="cy">E</span><span class="cy">S</span><span class="cy">P</span><span class="cy">A</span><span class="cy">C</span></div>
+      <div class="logo-row"><span class="bk">E</span><span class="bk">N</span><span class="bk">T</span><span class="bk">R</span><span class="cy">E</span></div>
+      <div class="logo-row"><span class="bk">P</span><span class="bk">R</span><span class="bk">I</span><span class="bk">S</span><span class="bk">E</span></div>
+    </div>
+    <div class="header-center">Simulateur TP</div>
+  </div>
+  <div class="header-right">
+    <button class="sit-btn" id="sitBtn" onclick="toggleSitDrawer()">📋 Situation initiale</button>
+    <div class="timer-display" id="globalTimer">00:00</div>
+    <div class="ee-squares"><div class="sq sq1"></div><div class="sq sq2"></div><div class="sq sq3"></div></div>
+  </div>
+</header>
+
+<!-- ══ SITUATION DRAWER ══ -->
+<div class="sit-overlay" id="sitOverlay" onclick="closeSitDrawer()"></div>
+<div class="sit-drawer" id="sitDrawer">
+  <div class="sit-drawer-header">
+    <div class="sit-drawer-title" id="sitDrawerTitle">Situation initiale</div>
+    <button class="sit-close" onclick="closeSitDrawer()">✕</button>
+  </div>
+  <div class="sit-drawer-body" id="sitDrawerBody"></div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="screen active" id="screenHome">
+  <div class="page-title">Simulateur d'entraînement — Travail Pratique CFC</div>
+  <p class="page-subtitle">Entraîne-toi dans les conditions réelles de l'examen. Choisis une série, prépare chaque TP, note tes idées, consulte les éléments de correction. <span style="color:var(--ee-gris);font-size:0.78rem">— Version 1.2 · mise à jour le 05.06.2026</span></p>
+
+  <div class="series-grid" id="seriesGrid">
+    <!-- Built by JS -->
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="background:var(--ee-blanc);border-top:3px solid var(--ee-cyan);padding:18px 20px;width:100%">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ee-gris);margin-bottom:12px">Structure de l'examen</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;font-size:0.78rem;">
+      <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp1)"><strong style="display:block;color:var(--tp1)">TP 1</strong>DCO a+b<br><span style="color:var(--ee-gris);font-size:0.7rem">Mini Case · 9 pts</span></div>
+      <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp2)"><strong style="display:block;color:var(--tp2)">TP 2</strong>DCO c<br><span style="color:var(--ee-gris);font-size:0.7rem">Mini Case · 9 pts</span></div>
+      <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp3)"><strong style="display:block;color:var(--tp3)">TP 3</strong>DCO d<br><span style="color:var(--ee-gris);font-size:0.7rem">Sim. pratique · 9 pts</span></div>
+      <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp4)"><strong style="display:block;color:var(--tp4)">TP 4</strong>DCO e<br><span style="color:var(--ee-gris);font-size:0.7rem">Sim. pratique · 9 pts</span></div>
+      <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp5)"><strong style="display:block;color:var(--tp5)">TP 5</strong>DCO a–e<br><span style="color:var(--ee-gris);font-size:0.7rem">Entretien · 9 pts</span></div>
+    </div>
+    <div style="margin-top:10px;font-size:0.78rem;color:var(--ee-gris)">Chaque TP = 3 tâches : <strong style="color:var(--ee-noir)">3 min préparation individuelle</strong> · <strong style="color:var(--ee-noir)">4 min présentation aux experts</strong> · <strong style="color:var(--ee-noir)">3 min questions complémentaires</strong> · 3 critères × 3 pts = <strong style="color:var(--ee-cyan)">9 points</strong></div>
+  </div>
+</div>
+
+<!-- ══ EXAM ══ -->
+<div class="screen" id="screenExam">
+  <div class="exam-progress">
+    <div class="tp-steps" id="tpSteps"></div>
+    <div class="exam-score">Score estimé : <span id="examScoreDisplay">0</span>/45</div>
+  </div>
+  <div class="tp-card" id="tpCard"><!-- TP content --></div>
+  <div class="prep-zone" id="prepZone">
+    <div class="prep-header">
+      <div class="prep-title">📝 Espace de préparation — Mes notes (3 min)</div>
+      <button class="timer-btn" id="prepTimerBtn" onclick="togglePrepTimer()">▶ Démarrer le chrono (3 min)</button>
+    </div>
+    <textarea class="note-area" id="prepNotes" placeholder="Prends tes notes de préparation ici. Identifie les problèmes, organise tes arguments, anticipe les questions..."></textarea>
+  </div>
+  <div class="correction-zone" id="correctionZone">
+    <div class="correction-title">✓ Éléments de correction (formateur)</div>
+    <div class="correction-body" id="correctionBody"></div>
+  </div>
+  <div class="self-eval" id="selfEval" style="display:none">
+    <div class="self-eval-title">Auto-évaluation — Critères d'évaluation</div>
+    <div class="eval-criteria" id="evalCriteria"></div>
+  </div>
+  <div class="btn-row" id="examBtns" style="justify-content:space-between;width:100%">
+    <button class="btn btn-outline" onclick="goHome()">← Accueil</button>
+    <div style="display:flex;gap:10px">
+      <button class="btn" style="background:var(--ee-jaune);color:var(--ee-noir)" id="btnCorrection" onclick="toggleCorrection()">Voir la correction</button>
+      <button class="btn btn-primary" id="btnNextTP" onclick="nextTP()">TP suivant →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div class="screen" id="screenResults">
+  <div class="page-title">Résultats de simulation</div>
+  <div class="results-summary">
+    <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:6px">
+      <div class="score-big" id="totalScore">0</div>
+      <div class="score-max">/45 points</div>
+    </div>
+    <div class="results-subtitle" id="resultsMsg"></div>
+  </div>
+  <div class="tp-scores-grid" id="tpScoresGrid"></div>
+  <div class="notes-review" id="notesReview">
+    <div class="notes-review-title">Tes notes de préparation</div>
+    <div id="notesReviewContent"></div>
+  </div>
+  <div class="btn-row" style="justify-content:center;width:100%">
+    <button class="btn btn-primary" onclick="restartSame()">Recommencer la même série</button>
+    <button class="btn btn-outline" onclick="goHome()">← Choisir une autre série</button>
+  </div>
+</div>
+
+<div class="ee-footer">
+  <span>Simulateur TP — Employé-e de commerce CFC</span>
+  <span>L'Espace Entreprise · Créateur d'expériences · 2025-2026</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  DATA — SÉRIES
+// ══════════════════════════════════════════════════════════════════
+
+const SERIES = {
+
+// ─────────────────────────────────────────────────────────────────
+"sz1": {
+  id: "sz1",
+  tag: "Série zéro officielle",
+  name: "Série zéro 1",
+  company: "TechnoSoft Solutions GmbH",
+  version: "1.0 / 20.10.2025",
+  situationHTML: `
+    <h3>Présentation de l'entreprise</h3>
+    <p><strong>TechnoSoft Solutions GmbH</strong> est une entreprise informatique de taille moyenne (~50 personnes) spécialisée dans le développement de solutions logicielles individuelles pour des clients de différents secteurs.</p>
+    <h3>Organigramme</h3>
+    <div class="sit-org">
+      <div class="sit-org-box"><div class="org-name">Marcella Benvenuto</div><div class="org-role">Directrice générale</div></div>
+      <div class="sit-org-box"><div class="org-name">Leonie Mathier</div><div class="org-role">Assistante de direction</div></div>
+      <div class="sit-org-box"><div class="org-name">Amélie Schmid</div><div class="org-role">Responsable Marketing et communication</div></div>
+      <div class="sit-org-box"><div class="org-name">Michael Bauer</div><div class="org-role">Responsable Ventes (3 pers.)</div></div>
+      <div class="sit-org-box"><div class="org-name">Adrian Casutt</div><div class="org-role">Responsable Développement (26 pers.)</div></div>
+      <div class="sit-org-box highlight"><div class="org-name">Michelle Schneiter</div><div class="org-role">Responsable Service et support ← votre supérieure</div></div>
+      <div class="sit-org-box"><div class="org-name">Max Keller</div><div class="org-role">Responsable Finances (4 pers.)</div></div>
+    </div>
+    <h3>Votre rôle</h3>
+    <p>Vous travaillez dans la division <strong>Service et support</strong> (5 pers. total). Vos responsabilités : réception et traitement des demandes clients (téléphone, courriel à <em>support@technosoftsolutions.ch</em>), coordination des commandes commerciales, collaboration étroite avec Développement et Ventes.</p>
+    <p>Les demandes de support portent souvent sur des problèmes simples (oubli de mots de passe, suppression de messages, téléchargement de documents), mais certaines sont complexes et nécessitent des connaissances en programmation.</p>
+    <h3>Produits et prestations</h3>
+    <div class="sit-prod">
+      <div class="sit-prod-row"><span class="sit-prod-label">Logiciels sur mesure</span><span>Bases de données, plateformes e-commerce, systèmes CRM.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Conseil informatique</span><span>Stratégie IT, choix des technologies, optimisation des processus.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Support et maintenance</span><span>Accompagnement client, maintenance et mises à jour des logiciels.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Formation</span><span>Formation des utilisateurs finaux sur les solutions développées.</span></div>
+    </div>
+    <h3>Clientèle</h3>
+    <p>Des entreprises de différents secteurs (start-ups à multinationales) ayant besoin de solutions logicielles individuelles et de conseil informatique.</p>`,
+  situation: `<p><strong>TechnoSoft Solutions GmbH</strong> est une entreprise informatique de taille moyenne (~50 personnes) spécialisée dans le développement de solutions logicielles individuelles.</p>
+  <p style="margin-top:8px"><strong>Votre rôle :</strong> Vous travaillez au sein de la division <em>Service et support</em>. Vos responsabilités : réception et traitement des demandes clients, coordination des commandes commerciales, collaboration étroite avec les divisions Développement et Ventes.</p>
+  <p style="margin-top:8px"><strong>Organigramme :</strong> Marcella Benvenuto (DG) → Amélie Schmid (Marketing), Michael Bauer (Ventes), Adrian Casutt (Développement), <u>Michelle Schneiter (Service et support – votre supérieure)</u>, Max Keller (Finances). Leonie Mathier assiste la DG.</p>`,
+  tps: [
+    {
+      num: 1, color: "var(--tp1)",
+      title: "Gestion du développement professionnel / Interaction dans un milieu interconnecté",
+      dco: "DCO a + b", methode: "Mini Case", points: 9,
+      context: `<p>Ces derniers temps, des clients se plaignent du support reçu par téléphone et e-mail : longs temps d'attente, renseignements erronés, interlocuteurs qui changent constamment.</p>
+      <p>La boîte <em>support@technosoftsolutions.ch</em> est traitée par quiconque a du temps libre. Sans transfert systématique en cas d'absence. Les collaborateurs à temps partiel laissent passer des demandes. Les développeurs sont difficiles à joindre et ne priorisent pas le support.</p>
+      <p>Votre supérieure vous a chargé-e d'analyser la situation et de réfléchir à des mesures d'amélioration.</p>`,
+      tasks: [
+        ["1.", "Analysez la situation actuelle : pour quelles raisons les demandes clients ne peuvent-elles pas être traitées de manière satisfaisante ? Quelles mesures prendriez-vous pour améliorer durablement la situation ?", "3 min"],
+        ["2.", "Décrivez vos résultats aux expert-e-s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les questions/problèmes/défis dans leur globalité ?", 3],
+        ["Les candidat-e-s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Que faites-vous si un client escalade la situation et menace de partir ?",
+        "Comment convaincez-vous les développeurs de prioriser le support ?",
+        "Comment mesureriez-vous l'amélioration de la satisfaction client après vos mesures ?",
+        "Et si votre supérieure refuse d'introduire un système de tickets ? Quelle alternative proposez-vous ?",
+      ],
+      correction: `<strong>Problèmes à identifier :</strong>
+<ul>
+  <li>Absence de responsabilité claire par demande → demandes sans suite</li>
+  <li>Pas de système de transfert/suivi des dossiers ouverts</li>
+  <li>Collaborateurs à temps partiel non informés des demandes en cours</li>
+  <li>Developers difficiles à joindre et non responsabilisés sur le support</li>
+  <li>Pas d'accusé de réception ni de délai communiqué au client</li>
+</ul>
+<strong>Mesures à proposer :</strong>
+<ul>
+  <li>Introduire un système de tickets avec attribution nominale (ex. TickTrack)</li>
+  <li>Définir des délais de réponse standards (ex. accusé 2h, réponse 24h)</li>
+  <li>Réunion de coordination hebdomadaire Service/Développement</li>
+  <li>Protocole de passation lors des absences ou temps partiels</li>
+  <li>SLA interne entre Service et support et Développement</li>
+</ul>`,
+    },
+    {
+      num: 2, color: "var(--tp2)",
+      title: "Coordination des processus de travail en entreprise",
+      dco: "DCO c", methode: "Mini Case", points: 9,
+      context: `<p>Pour améliorer la satisfaction client, il a été décidé qu'après chaque demande fermée, les clients recevraient un e-mail avec un lien vers une enquête de satisfaction.</p>
+      <p>Votre collègue a rédigé une première ébauche du questionnaire (voir annexe) et vous demande de lui faire part de vos commentaires.</p>`,
+      annexe: {
+        type: "questionnaire",
+        title: "Annexe : Questionnaire de satisfaction (ébauche)",
+        content: `<p style="margin-bottom:8px"><em>Veuillez prendre 10 minutes pour remplir le questionnaire. Prénom / Nom : ______</em></p>
+<p><strong>1.</strong> Quelle était la raison de votre demande ?<br>○ Rôles et droits &nbsp; ○ Utilisation d'un logiciel acheté &nbsp; ○ Erreur dans un logiciel acheté</p>
+<p style="margin-top:6px"><strong>2.</strong> J'ai reçu une réponse rapide et de qualité à ma question.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Vrai</p>
+<p style="margin-top:6px"><strong>3.</strong> Ma demande n'a pas été traitée par des collaborateurs différents.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Oui</p>
+<p style="margin-top:6px"><strong>4.</strong> Je suis globalement satisfait-e du support client de TechnoSoft.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Oui</p>`
+      },
+      tasks: [
+        ["1.", "Analysez dans quelle mesure le questionnaire ci-joint est approprié pour mesurer la satisfaction des clients concernant les prestations de support.", "3 min"],
+        ["2.", "Décrivez aux expert-e-s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les incohérences ?", 3],
+        ["Les candidat-e-s présentent-ils/elles des possibilités d'amélioration pertinentes ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Si le taux de réponse au questionnaire est très faible, que faites-vous ?",
+        "Comment exploiteriez-vous concrètement les données collectées pour améliorer le service ?",
+        "Votre collègue défend son ébauche. Comment lui expliquez-vous les problèmes sans le blesser ?",
+        "Faut-il rendre ce questionnaire obligatoire ou facultatif ? Justifiez votre réponse.",
+      ],
+      correction: `<strong>Problèmes dans le questionnaire :</strong>
+<ul>
+  <li><strong>Q1</strong> : les catégories sont incomplètes (ex. pas de « Problème de performance », « Demande de fonctionnalité »)</li>
+  <li><strong>Q2</strong> : l'échelle est incohérente (Non / En partie / <em>Vrai</em> — devrait être Oui/Non ou Likert 1-5)</li>
+  <li><strong>Q3</strong> : la question est formulée négativement, ce qui rend l'interprétation confuse</li>
+  <li>Pas de champ pour commentaires libres</li>
+  <li>Délai optimal non précisé (10 minutes c'est long pour une enquête post-ticket)</li>
+  <li>Pas de question sur la résolution effective du problème</li>
+</ul>
+<strong>Améliorations à proposer :</strong>
+<ul>
+  <li>Harmoniser les échelles (Likert 1-5 ou toujours Oui/Non)</li>
+  <li>Reformuler Q3 en positif</li>
+  <li>Ajouter : « Mon problème a été résolu » et un champ commentaire libre</li>
+  <li>Raccourcir à 5 min max, 3-4 questions seulement</li>
+</ul>`,
+    },
+    {
+      num: 3, color: "var(--tp3)",
+      title: "Gestion des relations avec les clients et les fournisseurs",
+      dco: "DCO d", methode: "Simulation pratique", points: 9,
+      context: `<p>En consultant la boîte <em>support@technosoftsolutions.ch</em>, vous trouvez ce courriel, non traité depuis trois jours :</p>`,
+      email: {
+        from: "markus.oberhammer@bau-co.ch",
+        to: "support@technosoftsolutions.ch",
+        subject: "Intranet mobile — problème urgent",
+        body: `Bonjour,\n\nJe suis client de longue date de votre entreprise, mais je suis au regret de vous informer que je commence à envisager de changer de fournisseur. L'une des raisons est que je dois toujours attendre une éternité avant de recevoir une réponse à mes demandes.\n\nJe ne suis pas du tout satisfait de l'intranet que nous avons mis en place le mois dernier. Si on souhaite y accéder depuis le smartphone, certains contenus ne s'affichent pas du tout et d'autres seulement en partie. Mais mes collaborateurs sont surtout sur les chantiers – c'est pourquoi ils ont besoin de pouvoir accéder à l'intranet depuis leurs appareils mobiles. Veuillez y remédier le plus rapidement possible.\n\nMeilleures salutations,\nMarkus Oberhammer\nDirecteur de Bau & Co`
+      },
+      tasks: [
+        ["1.", "Réfléchissez à la manière dont vous répondriez à ce client et à la suite que vous donneriez à ce cas après votre réponse.", "3 min"],
+        ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Et si le développement ne peut pas réparer l'intranet mobile dans les 48h ? Que dites-vous au client ?",
+        "Comment gérez-vous le risque que ce client parte chez un concurrent ?",
+        "Qui d'autre devez-vous informer en interne, et dans quel ordre ?",
+        "Le client vous rappelle trois jours après, toujours pas de solution. Comment gérez-vous cet appel ?",
+      ],
+      correction: `<strong>Réponse au client — éléments clés :</strong>
+<ul>
+  <li>S'excuser pour le délai de réponse (3 jours sans réponse = inexcusable)</li>
+  <li>Reconnaître le problème clairement sans minimiser</li>
+  <li>Communiquer un délai de résolution concret (et réaliste)</li>
+  <li>Désigner un interlocuteur unique pour ce cas</li>
+  <li>Ne pas promettre l'impossible sans consulter le développement d'abord</li>
+</ul>
+<strong>Démarche interne :</strong>
+<ul>
+  <li>Escalader immédiatement en interne (Division Développement)</li>
+  <li>Créer un ticket prioritaire, attribuer à un développeur</li>
+  <li>Informer Michelle Schneiter (supérieure) car c'est un client à risque de départ</li>
+  <li>Suivi proactif : rappeler le client dans 24-48h même sans solution complète</li>
+</ul>
+<strong>Questions typiques :</strong> « Et si le développement ne peut pas réparer en 48h ? » / « Comment gérez-vous le risque de perdre ce client ? »`,
+    },
+    {
+      num: 4, color: "var(--tp4)",
+      title: "Utilisation des technologies numériques du monde du travail",
+      dco: "DCO e", methode: "Simulation pratique", points: 9,
+      variants: [
+        {
+          label: "Variante A — Développement de contenu",
+          context: `<p>TechnoSoft Solutions GmbH constate que les clients potentiels ne savent souvent pas exactement quels services et projets l'entreprise propose. Une nouvelle section avec des projets de référence doit être créée sur le site web.</p>
+          <p>La division Service et support est chargée de la conception du contenu. La mise en œuvre technique est assurée par la division Développement. La responsabilité de la création du contenu vous a été confiée.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez à ce que pourrait être l'environnement de représentation des projets de référence sur le site web (organisation, structure, contenus) et aux contraintes à prendre en compte.", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "Comment obtenez-vous l'accord des clients pour publier leurs projets en référence ?",
+            "Qui est responsable de la mise à jour régulière de cette section sur le site ?",
+            "Comment mesurez-vous l'impact de cette nouvelle section sur l'acquisition de clients ?",
+            "Et si la division Développement n'a pas les ressources pour implémenter votre concept ? Que proposez-vous ?",
+          ],
+          correction: `<strong>Structure du contenu « Projets de référence » :</strong>
+<ul>
+  <li>Catégorisation par secteur ou par type de solution (ERP, e-commerce, CRM, etc.)</li>
+  <li>Pour chaque projet : client (anonymisé si besoin), défi initial, solution développée, résultat</li>
+  <li>Format visuel : image/screenshot, description courte, résultats chiffrés si possible</li>
+  <li>Filtre ou moteur de recherche par secteur/technologie</li>
+</ul>
+<strong>Contraintes à prendre en compte :</strong>
+<ul>
+  <li>Confidentialité client : accord écrit avant publication (NDA)</li>
+  <li>Cohérence avec la charte graphique du site</li>
+  <li>Accessibilité : mobile-friendly, vitesse de chargement</li>
+  <li>Mise à jour régulière : qui est responsable du contenu ?</li>
+  <li>Coordination avec le Développement sur les délais techniques</li>
+</ul>`
+        },
+        {
+          label: "Variante B — Infrastructure technologique",
+          context: `<p>TechnoSoft Solutions GmbH introduit dans la division Service et support le nouveau système de ticket <strong>« TickTrack »</strong> pour traiter plus efficacement les demandes de support. Le système a été testé et sera déployé en production dans quatre semaines.</p>
+          <p>Vous êtes chargé-e de coordonner l'introduction et de former les collaborateurs à son utilisation.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez à la manière dont vous procéderiez pour préparer les collaborateurs et collaboratrices de votre service à l'introduction du système de ticket dans les deux semaines à venir.", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "Que faites-vous si lors du lancement, le système tombe en panne le premier jour ?",
+            "Un collaborateur refuse catégoriquement d'utiliser TickTrack. Comment gérez-vous la situation ?",
+            "Comment assurez-vous la continuité du service pendant la période de transition ?",
+            "Après 1 mois, vous constatez que 30% de l'équipe n'utilise pas TickTrack correctement. Que faites-vous ?",
+          ],
+          correction: `<strong>Plan de déploiement sur 2 semaines :</strong>
+<ul>
+  <li><strong>Semaine 1 :</strong> Communication aux équipes (objectifs, bénéfices, calendrier), accès à l'environnement de test, documentation utilisateur simplifiée</li>
+  <li><strong>Semaine 2 :</strong> Sessions de formation pratiques (par petits groupes), exercices sur cas réels, désignation d'un référent TickTrack par équipe</li>
+</ul>
+<strong>Points clés de la formation :</strong>
+<ul>
+  <li>Montrer les bénéfices concrets pour CHAQUE collaborateur</li>
+  <li>Pratiquer sur des cas du quotidien (pas des exemples génériques)</li>
+  <li>Préparer une FAQ des questions fréquentes</li>
+  <li>Prévoir une période de support renforcé post-lancement (1 semaine)</li>
+</ul>
+<strong>Risques et mitigation :</strong>
+<ul>
+  <li>Résistance au changement → impliquer tôt, expliquer le « pourquoi »</li>
+  <li>Problèmes techniques → avoir un plan B (procédure papier provisoire)</li>
+</ul>`
+        }
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+    },
+    {
+      num: 5, color: "var(--tp5)",
+      title: "Propre pratique — Entretien de réflexion",
+      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
+      context: `<p>Le TP 5 est conduit sous forme d'entretien oral entre le-la candidat-e et les expert-e-s. Les expert-e-s choisissent librement une situation tirée de la propre pratique du-de la candidat-e.</p>
+      <p><strong>Objectif :</strong> Démontrer que vous pouvez réfléchir de manière critique sur votre propre pratique professionnelle, identifier vos apprentissages et formuler des mesures d'amélioration concrètes.</p>`,
+      tasks: [
+        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
+        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
+        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
+        "Comment ce que vous avez vécu se rattache-t-il à un DCO spécifique du plan de formation ?",
+        "Citez une compétence concrète que vous avez développée grâce à cette situation.",
+        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
+      ],
+      correction: `<strong>Structure attendue pour la présentation de propre pratique (méthode STAR) :</strong>
+<ul>
+  <li><strong>S</strong>ituation : contexte précis (quand, où, qui était impliqué)</li>
+  <li><strong>T</strong>âche : quel était votre rôle ou objectif dans cette situation</li>
+  <li><strong>A</strong>ction : ce que vous avez fait concrètement, étape par étape</li>
+  <li><strong>R</strong>ésultat : quel a été le résultat ? Qu'avez-vous appris ?</li>
+</ul>
+<strong>Critères de qualité :</strong>
+<ul>
+  <li>La situation est réelle et précise (pas vague)</li>
+  <li>Vous exprimez un regard critique sur votre propre action</li>
+  <li>Vous formulez ce que vous feriez différemment</li>
+  <li>Le lien avec un ou plusieurs DCOs est explicite</li>
+</ul>`,
+    },
+  ]
+},
+
+// ─────────────────────────────────────────────────────────────────
+"szb": {
+  id: "szb",
+  tag: "Série d'entraînement B",
+  name: "Série zéro B",
+  company: "Fiduciaire Lavalée & Partners SA",
+  version: "1.0 / 30.03.2026",
+  situationHTML: `
+    <h3>Présentation de l'entreprise</h3>
+    <p><strong>Fiduciaire Lavalée & Partners SA</strong> est une fiduciaire de taille moyenne basée à Lausanne, spécialisée en comptabilité, conseil fiscal et révision pour des PME romandes.</p>
+    <h3>Organigramme</h3>
+    <div class="sit-org">
+      <div class="sit-org-box"><div class="org-name">Isabelle Lavalée</div><div class="org-role">Directrice générale</div></div>
+      <div class="sit-org-box"><div class="org-name">Sébastien Ruf</div><div class="org-role">Assistant de direction</div></div>
+      <div class="sit-org-box highlight"><div class="org-name">Nathalie Pépin</div><div class="org-role">Responsable Comptabilité ← votre supérieure</div></div>
+      <div class="sit-org-box"><div class="org-name">Marc Fontaine</div><div class="org-role">Responsable Conseil fiscal</div></div>
+      <div class="sit-org-box"><div class="org-name">Céline Devaud</div><div class="org-role">Responsable Révision</div></div>
+      <div class="sit-org-box"><div class="org-name">Pierre Nendaz</div><div class="org-role">IT / Administration</div></div>
+    </div>
+    <h3>Votre rôle</h3>
+    <p>Vous travaillez dans le département <strong>Comptabilité</strong> sous la responsabilité de Nathalie Pépin. Vos tâches : saisie comptable, coordination des délais de bouclement, communication avec les clients mandants sur leurs dossiers et documents, coordination des délais liés aux bouclements annuels et aux déclarations fiscales.</p>
+    <p>Les demandes des clients vous parviennent par courriel, téléphone et parfois en personne.</p>
+    <h3>Produits et prestations</h3>
+    <div class="sit-prod">
+      <div class="sit-prod-row"><span class="sit-prod-label">Comptabilité</span><span>Gestion complète de la comptabilité, tenue des livres, clôtures annuelles.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Conseil fiscal</span><span>Déclarations fiscales, optimisation fiscale, conseil en planification.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Révision</span><span>Révision limitée et ordinaire des comptes pour PME.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Conseil d'entreprise</span><span>Création d'entreprise, restructuration, accompagnement stratégique.</span></div>
+    </div>
+    <h3>Clientèle</h3>
+    <p>Des PME romandes de secteurs variés (artisanat, commerce, services, immobilier) ayant externalisé tout ou partie de leur comptabilité à la fiduciaire.</p>`,
+  situation: `<p><strong>Fiduciaire Lavalée & Partners SA</strong> est une fiduciaire de taille moyenne basée à Lausanne, spécialisée en comptabilité, conseil fiscal et révision pour des PME romandes.</p>
+  <p style="margin-top:8px"><strong>Votre rôle :</strong> Vous travaillez dans le département Comptabilité sous la responsabilité de <em>Nathalie Pépin</em>. Vos tâches : saisie comptable, coordination des délais de bouclement, communication avec les clients mandants sur leurs dossiers et documents.</p>
+  <p style="margin-top:8px"><strong>Organigramme :</strong> Isabelle Lavalée (DG) → Sébastien Ruf (Assistant DG), <u>Nathalie Pépin (Comptabilité – votre supérieure)</u>, Marc Fontaine (Conseil fiscal), Céline Devaud (Révision), Pierre Nendaz (IT/Administration).</p>`,
+  tps: [
+    {
+      num: 1, color: "var(--tp1)",
+      title: "Gestion du développement professionnel / Interaction dans un milieu interconnecté",
+      dco: "DCO a + b", methode: "Mini Case", points: 9,
+      context: `<p>Depuis quelques semaines, des tensions sont apparues au sein de votre équipe. La charge de travail a augmenté suite à un afflux de nouveaux mandats. Plusieurs collaborateurs se plaignent de ne pas recevoir suffisamment d'informations sur les priorités à respecter. Il arrive que deux personnes travaillent en parallèle sur le même dossier sans le savoir, ce qui entraîne des doublons et des erreurs.</p>
+      <p>De plus, Léa Ferrero (à temps partiel, récemment rentrée de congé maternité) se sent exclue des échanges informels et peine à trouver sa place dans l'équipe. Des rumeurs circulent et créent un climat de méfiance.</p>
+      <p>Votre supérieure Nathalie Pépin vous demande de réfléchir à des propositions concrètes pour améliorer la collaboration et le bien-être au sein de l'équipe.</p>`,
+      tasks: [
+        ["1.", "Analysez la situation : quels sont les problèmes identifiés et leurs causes probables ? Quelles mesures proposeriez-vous pour améliorer durablement la collaboration et le bien-être au sein de l'équipe ?", "3 min"],
+        ["2.", "Présentez vos résultats aux expert-e-s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les problèmes et défis dans leur globalité ?", 3],
+        ["Les candidat-e-s proposent-ils/elles des mesures pertinentes et réalistes ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Que faites-vous si votre supérieure refuse la réunion hebdomadaire par manque de temps ?",
+        "Comment gérez-vous la situation de Léa Ferrero sans la stigmatiser ou créer un traitement de faveur ?",
+        "Les rumeurs continuent malgré vos mesures. Quelle est votre prochaine étape ?",
+        "Comment convainquez-vous un collègue sceptique que le tableau de suivi partagé est utile ?",
+      ],
+      correction: `<strong>Problèmes à identifier :</strong>
+<ul>
+  <li>Manque de communication des priorités par la supérieure → doublons et erreurs</li>
+  <li>Absence d'attribution claire des dossiers (qui fait quoi ?)</li>
+  <li>Exclusion involontaire de la collaboratrice à temps partiel → risque RH et légal</li>
+  <li>Rumeurs non gérées → climat de méfiance et perte de performance</li>
+</ul>
+<strong>Mesures à proposer :</strong>
+<ul>
+  <li>Réunion d'équipe hebdomadaire courte (15 min) pour partager les priorités et l'attribution des dossiers</li>
+  <li>Tableau de suivi partagé (qui gère quel mandat)</li>
+  <li>Point individuel régulier avec Léa Ferrero pour faciliter son intégration</li>
+  <li>Clarifier les canaux de communication (e-mail vs Teams vs oral)</li>
+  <li>Aborder les rumeurs en réunion d'équipe de façon factuelle et bienveillante</li>
+</ul>`,
+    },
+    {
+      num: 2, color: "var(--tp2)",
+      title: "Coordination des processus de travail en entreprise",
+      dco: "DCO c", methode: "Mini Case", points: 9,
+      context: `<p>La fiduciaire a décidé de standardiser son processus d'accueil des nouveaux mandats clients (onboarding). Actuellement, chaque comptable gère l'arrivée d'un nouveau client à sa façon, ce qui entraîne des oublis et une mauvaise impression auprès des clients.</p>
+      <p>Votre collègue <strong>Jonas Mauron</strong> a rédigé une proposition de checklist d'onboarding (voir l'annexe). Il vous demande de l'analyser avant de la soumettre à Nathalie Pépin.</p>`,
+      annexe: {
+        type: "table",
+        title: "Annexe : Checklist d'onboarding client (proposition de Jonas Mauron)",
+        note: "Remarque : cette checklist est une première ébauche, non encore validée par la direction.",
+        rows: [
+          ["1", "Envoyer un e-mail de bienvenue au client", "☐"],
+          ["2", "Créer le dossier client dans le système informatique", "☐"],
+          ["3", "Récupérer les documents de l'exercice précédent (bilan, CR, déclaration fiscale)", "☐"],
+          ["4", "Informer le client des honoraires", "☐"],
+          ["5", "Planifier le premier entretien avec le responsable de mandat", "☐"],
+          ["6", "Collecter les accès aux systèmes bancaires en ligne", "☐"],
+          ["7", "Signer le mandat", ""],
+          ["8", "Classer les documents reçus dans le bon répertoire", "☐"],
+        ]
+      },
+      tasks: [
+        ["1.", "Analysez dans quelle mesure la checklist proposée est adaptée pour standardiser et fiabiliser l'accueil des nouveaux clients mandants.", "3 min"],
+        ["2.", "Présentez aux expert-e-s vos résultats d'analyse et les améliorations que vous proposeriez.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les lacunes et incohérences ?", 3],
+        ["Les candidat-e-s proposent-ils/elles des améliorations pertinentes et justifiées ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Jonas Mauron défend sa checklist et ne comprend pas vos critiques. Comment gérez-vous cette situation ?",
+        "Comment vous assurez-vous que tous les comptables appliquent bien la checklist une fois validée ?",
+        "Que se passe-t-il si un nouveau client refuse de signer le mandat avant la transmission des documents ?",
+        "Comment adaptez-vous la checklist pour un client qui reprend un mandat d'une autre fiduciaire ?",
+      ],
+      correction: `<strong>Problèmes à identifier dans la checklist :</strong>
+<ul>
+  <li><strong>Étape 7 (Signer le mandat)</strong> est APRÈS avoir commencé à travailler (étapes 1-6) → devrait être la 1ère ou 2ème étape !</li>
+  <li>Pas de mention de la vérification d'identité du client (KYC / due diligence) — obligatoire en fiduciaire</li>
+  <li>Pas d'étape sur la protection des données (accord LPD/RGPD à faire signer)</li>
+  <li>« Informer le client des honoraires » (étape 4) devrait précéder le démarrage des travaux</li>
+  <li>Pas d'étape pour ouvrir le dossier avec la référence interne de la fiduciaire</li>
+</ul>
+<strong>Ordre logique proposé :</strong>
+<ol>
+  <li>Vérification d'identité / KYC</li>
+  <li>Signer le mandat + accord sur les honoraires</li>
+  <li>Signature de l'accord de protection des données</li>
+  <li>E-mail de bienvenue + créer le dossier</li>
+  <li>Récupérer les documents de l'exercice précédent</li>
+  <li>Collecter les accès bancaires, planifier le premier entretien, classer les documents</li>
+</ol>`,
+    },
+    {
+      num: 3, color: "var(--tp3)",
+      title: "Gestion des relations avec les clients et les fournisseurs",
+      dco: "DCO d", methode: "Simulation pratique", points: 9,
+      context: `<p>En consultant votre boîte de réception, vous découvrez ce courriel resté sans réponse depuis deux jours :</p>`,
+      email: {
+        from: "patricia.meyer@boulangerie-artisans.ch",
+        to: "comptabilite@lavaleefiduciaire.ch",
+        subject: "Bouclement 2025 — Documents manquants et délai dépassé",
+        body: `Madame, Monsieur,\n\nJe reviens vers vous car nous n'avons toujours pas reçu notre bilan et compte de résultats 2025, alors que vous nous aviez promis de nous les transmettre avant le 15 mars. Nous sommes à ce jour le 30 mars et notre banque nous relance pour obtenir ces documents en vue du renouvellement de notre ligne de crédit.\n\nPar ailleurs, j'ai remarqué sur la facture de janvier une ligne que je ne comprends pas : « Honoraires supplémentaires révision interne – CHF 850.– ». Personne ne nous a avertis de frais supplémentaires. Pourriez-vous m'expliquer ce poste ?\n\nJe compte sur une réponse rapide, faute de quoi je me verrai contrainte de signaler ce retard à notre banque.\n\nAvec mes cordiales salutations,\nPatricia Meyer\nResponsable administrative, Boulangerie des Artisans Sàrl`
+      },
+      tasks: [
+        ["1.", "Réfléchissez à la manière dont vous répondriez à ce courriel et aux démarches que vous entreprendriez en interne pour traiter ce cas.", "3 min"],
+        ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles leur démarche/action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Le bouclement n'est pas prêt car un collaborateur est en arrêt maladie. Comment expliquez-vous ça à la cliente ?",
+        "Comment justifiez-vous les CHF 850.– si la ligne de facturation s'avère erronée ?",
+        "La cliente menace de signaler le retard à sa banque. Que proposez-vous concrètement pour éviter ça ?",
+        "Nathalie Pépin n'est pas disponible pour vous aider. Que faites-vous ?",
+      ],
+      correction: `<strong>Réponse au courriel — éléments clés :</strong>
+<ul>
+  <li>Accuser réception immédiatement et s'excuser pour le délai (sans chercher d'excuse)</li>
+  <li>Répondre aux DEUX problèmes séparément : (1) retard du bouclement, (2) ligne de facture incomprise</li>
+  <li>Pour le retard : donner une date précise de livraison (après avoir vérifié avec la comptable responsable)</li>
+  <li>Pour la facturation : demander à vérifier avec le responsable avant de répondre — ne pas improviser</li>
+  <li>Ton : professionnel, empathique, solution-oriented</li>
+</ul>
+<strong>Démarche interne :</strong>
+<ul>
+  <li>Vérifier immédiatement l'état du dossier bouclement 2025 auprès de la comptable en charge</li>
+  <li>Demander l'explication de la ligne CHF 850.– à Nathalie Pépin ou Marc Fontaine</li>
+  <li>Informer Nathalie Pépin → c'est un client à risque (menace de signalement à la banque)</li>
+  <li>Si le bilan n'est pas prêt : proposer de transmettre une lettre d'attestation provisoire à la banque</li>
+</ul>
+<strong>Questions typiques :</strong> « Et si le bouclement est bloqué par un problème technique ? » / « Comment justifiez-vous les CHF 850.- si la facturation était erronée ? »`,
+    },
+    {
+      num: 4, color: "var(--tp4)",
+      title: "Utilisation des technologies numériques du monde du travail",
+      dco: "DCO e", methode: "Simulation pratique", points: 9,
+      variants: [
+        {
+          label: "Variante A — Développement de contenu (portail client)",
+          context: `<p>Fiduciaire Lavalée & Partners SA souhaite créer un <strong>portail client en ligne</strong> permettant aux mandants de déposer leurs documents comptables (relevés bancaires, factures, notes de frais) directement dans un espace sécurisé. L'objectif : réduire les échanges par e-mail et améliorer la traçabilité des documents reçus.</p>
+          <p>La conception du contenu (guide d'utilisation, structure des espaces, catégorisation des documents) est confiée au département Comptabilité. Nathalie Pépin vous charge de réfléchir à la structure et aux contenus que devrait comporter ce portail.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez à ce que pourrait être la structure du portail client (organisation, catégories de documents, fonctionnalités essentielles, contraintes en matière de protection des données).", "3 min"],
+            ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "Un client refuse d'utiliser le portail et préfère continuer par e-mail. Comment le convainquez-vous ?",
+            "Comment garantissez-vous la conformité LPD si le prestataire est basé à l'étranger ?",
+            "Le prestataire technique annonce un retard de 3 mois. Comment gérez-vous la communication auprès des clients ?",
+            "Comment formez-vous les clients mandants à utiliser ce portail ?",
+          ],
+          correction: `<strong>Structure du portail client :</strong>
+<ul>
+  <li><strong>Espace par client</strong> : dossier dédié avec sous-dossiers par exercice fiscal</li>
+  <li><strong>Catégories de documents</strong> : relevés bancaires, factures fournisseurs, factures clients, notes de frais, documents RH, autres</li>
+  <li><strong>Fonctionnalités clés</strong> : upload simple, notification automatique à la fiduciaire, historique des dépôts, prévisualisation avant envoi</li>
+</ul>
+<strong>Contraintes de protection des données (LPD) :</strong>
+<ul>
+  <li>Authentification forte (2FA) obligatoire</li>
+  <li>Chiffrement des données en transit et au repos</li>
+  <li>Accord de traitement des données à faire signer aux clients</li>
+  <li>Droit à l'effacement et portabilité des données</li>
+  <li>Hébergement en Suisse ou dans un pays avec niveau de protection équivalent</li>
+</ul>`
+        },
+        {
+          label: "Variante B — Infrastructure technologique (migration logiciel comptable)",
+          context: `<p>Fiduciaire Lavalée & Partners SA envisage de migrer son logiciel de comptabilité actuel vers une solution cloud plus moderne. La migration touchera l'ensemble des données clients (historiques comptables, déclarations fiscales, documents numérisés) et devra se faire sans interruption de service.</p>
+          <p>Nathalie Pépin vous charge de réfléchir à comment planifier et piloter cette migration pour minimiser les risques.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez aux étapes clés pour planifier et piloter cette migration en minimisant les risques pour les données clients et la continuité du service.", "3 min"],
+            ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "La migration révèle que 20% des données historiques sont corrompues. Que faites-vous ?",
+            "Comment communiquez-vous aux clients que leurs données vont être migrées vers un nouveau système ?",
+            "Un comptable refuse de changer de logiciel. Comment gérez-vous sa résistance ?",
+            "Comment prouvez-vous que toutes les données ont été correctement migrées et sont intactes ?",
+          ],
+          correction: `<strong>Étapes clés de la migration :</strong>
+<ul>
+  <li><strong>Phase 1 – Préparation :</strong> audit des données existantes, nettoyage, documentation des processus actuels, sélection du prestataire</li>
+  <li><strong>Phase 2 – Pilote :</strong> test sur un sous-ensemble de données (dossiers non critiques), formation d'une équipe pilote, validation des données transférées</li>
+  <li><strong>Phase 3 – Migration :</strong> migration complète en dehors des périodes de bouclement, double-saisie temporaire, vérification systématique</li>
+  <li><strong>Phase 4 – Post-migration :</strong> formation complète de l'équipe, support renforcé 4 semaines, audit de conformité</li>
+</ul>
+<strong>Risques à anticiper :</strong>
+<ul>
+  <li>Perte ou corruption de données → sauvegardes complètes avant migration</li>
+  <li>Interruption de service → planifier hors période de bouclement</li>
+  <li>Non-conformité LPD → contrat de sous-traitance avec le prestataire cloud</li>
+</ul>`
+        }
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+    },
+    {
+      num: 5, color: "var(--tp5)",
+      title: "Propre pratique — Entretien de réflexion",
+      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
+      context: `<p>Le TP 5 est conduit sous forme d'entretien oral. Les expert-e-s choisissent librement une situation tirée de votre propre pratique à la Fiduciaire Lavalée & Partners SA ou à L'Espace Entreprise.</p>
+      <p>Préparez-vous à décrire une situation réelle en utilisant la méthode <strong>STAR</strong> (Situation – Tâche – Action – Résultat).</p>`,
+      tasks: [
+        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
+        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
+        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
+        "Comment ce que vous avez vécu à la Fiduciaire se rattache-t-il à un DCO spécifique ?",
+        "Qu'est-ce que cette expérience vous a appris sur votre façon de travailler en équipe ?",
+        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
+      ],
+      correction: `<strong>Structure STAR pour la propre pratique :</strong>
+<ul>
+  <li><strong>S</strong>ituation : contexte précis — quand, où, quelles personnes</li>
+  <li><strong>T</strong>âche : quel était votre rôle dans cette situation</li>
+  <li><strong>A</strong>ction : ce que vous avez fait concrètement, pourquoi</li>
+  <li><strong>R</strong>ésultat : qu'est-ce qui s'est passé ? Qu'avez-vous appris ? Que feriez-vous différemment ?</li>
+</ul>
+<strong>Exemples de bonnes situations à présenter :</strong>
+<ul>
+  <li>Un client mécontent d'un retard dans son bouclement</li>
+  <li>Une erreur de saisie découverte et comment vous l'avez corrigée</li>
+  <li>Une amélioration de processus proposée à votre supérieure</li>
+  <li>Un conflit de priorités entre plusieurs mandants urgents</li>
+</ul>`,
+    },
+  ]
+}
+
+}; // end SERIES
+
+// ─────────────────────────────────────────────────────────────────
+// Série C added after initial object definition for clarity
+SERIES["szc"] = {
+  id: "szc",
+  tag: "Série d'entraînement C",
+  name: "Série zéro C",
+  company: "SIG — Services Industriels de Genève",
+  version: "1.0 / 05.06.2026",
+  situationHTML: `
+    <h3>Présentation de l'entreprise</h3>
+    <p><strong>SIG — Services Industriels de Genève</strong> est un établissement cantonal autonome de droit public (~1 900 collaborateurs) qui assure la distribution d'eau potable, d'électricité, de gaz naturel et du réseau de chauffage à distance à l'ensemble de la population et des entreprises du canton de Genève.</p>
+    <h3>Organigramme</h3>
+    <div class="sit-org">
+      <div class="sit-org-box"><div class="org-name">Nathalie Rochat</div><div class="org-role">Directrice générale</div></div>
+      <div class="sit-org-box"><div class="org-name">Damien Favre</div><div class="org-role">Dir. Clients et Marchés</div></div>
+      <div class="sit-org-box"><div class="org-name">Sophie Marchand</div><div class="org-role">Dir. Ressources Humaines</div></div>
+      <div class="sit-org-box"><div class="org-name">Lucas Bonnet</div><div class="org-role">Dir. Financière</div></div>
+      <div class="sit-org-box highlight"><div class="org-name">Isabelle Tornay</div><div class="org-role">Responsable Service clients ← votre supérieure</div></div>
+      <div class="sit-org-box"><div class="org-name">Maxime Pellerin</div><div class="org-role">Dir. Réseau et Infrastructure</div></div>
+      <div class="sit-org-box"><div class="org-name">Céline Vuadens</div><div class="org-role">Dir. Communication</div></div>
+    </div>
+    <h3>Votre rôle</h3>
+    <p>Vous travaillez au sein du <strong>Service clients</strong> de la Direction Clients et Marchés (équipe d'une dizaine de collaborateurs). Vous êtes le premier point de contact des ~240 000 clients des SIG.</p>
+    <p>Vos responsabilités : traitement des demandes de déménagement et ouvertures de contrat, gestion des réclamations de facturation, suivi des dossiers en cours, coordination avec les équipes techniques en cas de panne. Vous mettez à jour les données clients dans SAP et respectez les délais de la charte qualité SIG (3 jours ouvrables max.).</p>
+    <p>Les demandes arrivent par téléphone, courriel et via le portail client en ligne.</p>
+    <h3>Produits et prestations</h3>
+    <div class="sit-prod">
+      <div class="sit-prod-row"><span class="sit-prod-label">Distribution d'énergie</span><span>Eau potable, électricité, gaz naturel, chauffage à distance pour ménages et entreprises.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Services aux clients</span><span>Gestion des contrats, relevés de compteurs, facturation, conseil en efficacité énergétique.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Portail numérique</span><span>Consultation des consommations, gestion des contrats, signalement de pannes en ligne.</span></div>
+      <div class="sit-prod-row"><span class="sit-prod-label">Durabilité</span><span>Accompagnement vers les énergies renouvelables, conseils en rénovation énergétique.</span></div>
+    </div>
+    <h3>Clientèle</h3>
+    <p>L'ensemble des ménages, entreprises, institutions publiques et collectivités du canton de Genève. Les demandes couvrent déménagements, facturation, pannes, efficacité énergétique et programmes d'aide à la rénovation.</p>`,
+  situation: `<p><strong>SIG — Services Industriels de Genève</strong> est un établissement cantonal (~1 900 collaborateurs) assurant la distribution d'eau, d'électricité, de gaz et de chauffage à distance à l'ensemble du canton.</p>
+  <p style="margin-top:8px"><strong>Votre rôle :</strong> Vous travaillez au sein du Service clients, sous la responsabilité d'<em>Isabelle Tornay</em>. Premier point de contact des ~240 000 clients : déménagements, facturation, pannes, conseil énergétique. Outil principal : SAP. Délai charte qualité : 3 jours ouvrables.</p>
+  <p style="margin-top:8px"><strong>Organigramme :</strong> Nathalie Rochat (DG) → Damien Favre (Dir. Clients et Marchés) → <u>Isabelle Tornay (Resp. Service clients – votre supérieure)</u>. Autres directions : RH (Sophie Marchand), Financière (Lucas Bonnet), Réseau (Maxime Pellerin), Communication (Céline Vuadens).</p>`,
+  tps: [
+    {
+      num: 1, color: "var(--tp1)",
+      title: "Gestion du développement professionnel / Interaction dans un milieu interconnecté",
+      dco: "DCO a + b", methode: "Mini Case", points: 9,
+      context: `<p>Depuis plusieurs semaines, votre équipe du Service clients traverse une période difficile. Suite à l'introduction d'un nouveau système de gestion des demandes (migration vers SAP CRM), les délais de traitement ont fortement augmenté. Certains dossiers clients attendent depuis plus de dix jours, alors que la charte qualité des SIG impose un délai maximal de trois jours ouvrables.</p>
+      <p>Plusieurs membres de l'équipe se plaignent d'un manque de formation sur le nouvel outil : ils saisissent les données différemment selon leur propre interprétation des champs, ce qui génère des erreurs et des doublons. Par ailleurs, la communication entre votre équipe et la Direction Réseau et Infrastructure est insuffisante : les informations sur les pannes en cours ne sont pas transmises en temps réel au Service clients, obligeant les collaborateurs à répondre aux clients sans les informations nécessaires.</p>
+      <p>Votre supérieure Isabelle Tornay vous a demandé d'analyser la situation et de lui soumettre des propositions concrètes pour améliorer la qualité du service et la collaboration interne.</p>`,
+      complementary_questions: [
+        "Que faites-vous si certains membres de l'équipe résistent à changer leurs habitudes de saisie dans SAP ?",
+        "Comment convainquez-vous la Direction Réseau de transmettre les informations de panne en temps réel ?",
+        "Comment mesurez-vous l'amélioration après la mise en place de vos mesures ?",
+        "Si Isabelle Tornay refuse certaines de vos propositions, comment réagissez-vous ?",
+      ],
+      tasks: [
+        ["1.", "Analysez la situation actuelle : quels sont les problèmes identifiés et leurs causes probables ? Quelles mesures proposeriez-vous pour améliorer durablement la qualité du service et la collaboration au sein de l'équipe ?", "3 min"],
+        ["2.", "Présentez vos résultats aux expert-e-s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les questions/problèmes/défis dans leur globalité dans la situation décrite ?", 3],
+        ["Les candidat-e-s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+      ],
+      correction: `<strong>Problèmes à identifier :</strong>
+<ul>
+  <li>Migration SAP CRM sans formation suffisante → saisies incohérentes, doublons, erreurs</li>
+  <li>Délais dépassés (10 jours vs 3 jours charte) → insatisfaction clients, risque réputationnel</li>
+  <li>Absence de flux d'information en temps réel entre Direction Réseau et Service clients → réponses incorrectes aux clients</li>
+  <li>Pas de propriétaire unique par dossier → dossiers sans suite</li>
+</ul>
+<strong>Mesures à proposer :</strong>
+<ul>
+  <li>Sessions de formation SAP CRM ciblées (saisie standardisée, champs obligatoires)</li>
+  <li>Protocole de notification automatique (ou manuel quotidien) des pannes depuis la Direction Réseau</li>
+  <li>Attribution nominale des dossiers avec suivi du délai dans SAP</li>
+  <li>Tableau de bord hebdomadaire des délais de traitement pour Isabelle Tornay</li>
+  <li>Réunion de synchronisation bi-hebdomadaire Service clients / Réseau</li>
+</ul>`,
+    },
+    {
+      num: 2, color: "var(--tp2)",
+      title: "Coordination des processus de travail en entreprise",
+      dco: "DCO c", methode: "Mini Case", points: 9,
+      context: `<p>Les SIG ont récemment mis en place une procédure interne de traitement des réclamations de facturation. Votre collègue Romain Jacquet a rédigé une première version du formulaire de réclamation destiné aux clients (voir l'annexe). Il vous demande d'analyser ce formulaire et de lui faire part de vos commentaires avant de le soumettre à Isabelle Tornay pour validation.</p>`,
+      annexe: {
+        type: "form",
+        title: "Annexe : Formulaire de réclamation de facturation (ébauche de Romain Jacquet)",
+        intro: "Ce formulaire doit être rempli par le client et retourné par courriel ou courrier postal au Service clients des SIG dans un délai de 30 jours à compter de la date de la facture contestée.",
+        sections: [
+          { heading: "Informations personnelles", items: ["Nom et prénom : _______________________________", "Adresse complète : _______________________________", "Numéro de client : _______________________________"] },
+          { heading: "Facture contestée", items: ["Montant total de la facture (CHF) : ________________", "Montant contesté (CHF) : ________________"] },
+          { heading: "Motif de la réclamation (cocher une seule case)", items: ["☐ Montant trop élevé par rapport à ma consommation habituelle", "☐ Je n'ai pas reçu la facture", "☐ Erreur sur le nom ou l'adresse"] },
+          { heading: "Demande du client", items: ["☐ Remboursement de la différence", "☐ Correction de la facture", "☐ Appel téléphonique de rappel"] },
+          { heading: "Documents joints", items: ["☐ Copie de la facture contestée", "☐ Factures des mois précédents"] },
+        ],
+        note: "Remarque : ce formulaire est une première ébauche et n'a pas encore été validé par la direction."
+      },
+      complementary_questions: [
+        "Romain Jacquet défend son formulaire et ne comprend pas certaines de vos critiques. Comment gérez-vous cette situation ?",
+        "Comment vous assurez-vous que le formulaire corrigé est bien utilisé par tous les clients ?",
+        "Que se passe-t-il si un client envoie le formulaire après le délai de 30 jours ?",
+        "Comment adapteriez-vous ce formulaire pour les clients qui préfèrent le téléphone à l'écrit ?",
+      ],
+      tasks: [
+        ["1.", "Analysez dans quelle mesure le formulaire de réclamation ci-joint est approprié pour traiter efficacement les réclamations de facturation des clients des SIG.", "3 min"],
+        ["2.", "Décrivez aux expert-e-s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s identifient-ils/elles les incohérences et lacunes du formulaire ?", 3],
+        ["Les candidat-e-s présentent-ils/elles des possibilités d'amélioration pertinentes et justifiées ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+      ],
+      correction: `<strong>Problèmes à identifier dans le formulaire :</strong>
+<ul>
+  <li>Pas de date de la facture contestée → impossible de vérifier le délai de 30 jours</li>
+  <li>Liste des motifs incomplète : pas de « double facturation », « compteur défectueux », « déménagement non pris en compte »</li>
+  <li>« Appel téléphonique de rappel » n'est pas une résolution de réclamation — c'est un canal, pas une solution</li>
+  <li>Pas de champ e-mail ou téléphone → impossible de recontacter le client</li>
+  <li>Pas de signature ni de date du formulaire</li>
+  <li>« Factures des mois précédents » est vague — combien de mois ?</li>
+  <li>Pas de mention du délai de traitement par les SIG (3 jours ouvrables selon charte)</li>
+</ul>
+<strong>Améliorations à proposer :</strong>
+<ul>
+  <li>Ajouter : date de la facture contestée, n° de facture, e-mail/téléphone du client, signature + date</li>
+  <li>Compléter la liste des motifs</li>
+  <li>Remplacer « Appel de rappel » par « Prise en charge et réponse dans les 3 jours ouvrables »</li>
+  <li>Préciser « 3 dernières factures » au lieu de « factures des mois précédents »</li>
+</ul>`,
+    },
+    {
+      num: 3, color: "var(--tp3)",
+      title: "Gestion des relations avec les clients et les fournisseurs",
+      dco: "DCO d", methode: "Simulation pratique", points: 9,
+      context: `<p>En prenant votre poste ce matin, vous constatez que le courriel suivant est arrivé hier soir et est resté sans réponse depuis plus de 16 heures :</p>`,
+      email: {
+        from: "georges.widmer@hotel-lac-leman.ch",
+        to: "clients@sig-ge.ch",
+        subject: "Facture d'électricité janvier 2026 — montant anormal et coupure de courant",
+        body: `Madame, Monsieur,\n\nJe reviens vers vous au sujet de deux problèmes urgents concernant notre établissement.\n\nPremièrement, nous avons reçu notre facture d'électricité pour le mois de janvier 2026 d'un montant de CHF 18 450.–, soit près du double de notre consommation habituelle (environ CHF 9 500.– par mois). Nous n'avons procédé à aucun changement dans notre exploitation qui justifierait une telle hausse. Nous pensons à une erreur de relevé de compteur ou à un problème technique.\n\nDeuxièmement, nous avons subi une coupure de courant le 14 janvier dernier entre 14h00 et 17h45. Cette coupure nous a contraints à annuler 28 couverts lors du service du soir et à jeter pour environ CHF 3 200.– de denrées alimentaires périssables. Nous n'avons reçu aucune information préalable sur cette intervention.\n\nNous exigeons une correction immédiate de la facture ainsi qu'une explication formelle sur la coupure. Dans l'attente d'une réponse satisfaisante, nous suspendons le paiement de la facture contestée.\n\nAvec nos salutations distinguées,\nGeorges Widmer\nDirecteur, Hôtel du Lac Léman SA`
+      },
+      complementary_questions: [
+        "Le client maintient la suspension de paiement après votre première réponse. Que faites-vous ?",
+        "La vérification révèle que la facture était effectivement erronée. Comment gérez-vous la situation avec le client ET en interne ?",
+        "Le client demande une indemnisation pour les pertes liées à la coupure (CHF 3 200.–). Quelle est votre démarche ?",
+        "Comment évitez-vous qu'une situation similaire se reproduise à l'avenir ?",
+      ],
+      tasks: [
+        ["1.", "Réfléchissez à la manière dont vous répondriez à ce client et aux démarches que vous entreprendriez en interne pour traiter ce cas dans sa globalité.", "3 min"],
+        ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+      ],
+      correction: `<strong>Réponse au client — éléments clés :</strong>
+<ul>
+  <li>Accuser réception immédiatement (mail resté 16h sans réponse → urgence)</li>
+  <li>S'excuser pour le délai de réponse</li>
+  <li>Traiter les DEUX problèmes séparément et clairement : (1) facture douteuse, (2) coupure non annoncée</li>
+  <li>Pour la facture : ouvrir une réclamation formelle, promettre une vérification du compteur et un retour dans un délai précis</li>
+  <li>Pour la coupure : vérifier si elle était planifiée (et non communiquée) ou imprévue, expliquer la cause</li>
+  <li>Ne pas promettre une indemnisation sans validation interne préalable</li>
+  <li>Désigner un interlocuteur unique (vous-même) pour toute la durée du dossier</li>
+</ul>
+<strong>Démarche interne :</strong>
+<ul>
+  <li>Ouvrir un ticket prioritaire dans SAP avec les deux problèmes liés</li>
+  <li>Contacter la Direction Réseau pour vérifier le relevé de compteur et obtenir le rapport sur la coupure du 14 janvier</li>
+  <li>Informer Isabelle Tornay → client à risque (suspension de paiement)</li>
+  <li>Suivi proactif dans 24h même sans solution complète</li>
+</ul>`,
+    },
+    {
+      num: 4, color: "var(--tp4)",
+      title: "Utilisation des technologies numériques du monde du travail",
+      dco: "DCO e", methode: "Simulation pratique", points: 9,
+      variants: [
+        {
+          label: "Variante A — Développement de contenu (rubrique efficacité énergétique)",
+          context: `<p>Les SIG souhaitent améliorer leur portail client en ligne en ajoutant une nouvelle rubrique dédiée aux <strong>« Conseils en efficacité énergétique »</strong>. Cette rubrique doit permettre aux clients d'accéder à des informations pratiques pour réduire leur consommation et bénéficier des programmes d'aide à la rénovation proposés par les SIG et l'État de Genève.</p>
+          <p>La Direction Communication a décidé que la conception du contenu serait confiée au Service clients, les plus proches des besoins réels des clients. La mise en œuvre technique sera assurée par un prestataire externe. Isabelle Tornay vous charge de réfléchir à la structure et aux contenus de cette nouvelle rubrique.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez à ce que pourrait être la structure de la rubrique « Conseils en efficacité énergétique » du portail client (organisation, types de contenus, fonctionnalités, contraintes à prendre en compte).", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "Comment vous assurez-vous que les informations sur les aides à la rénovation restent à jour sur le portail ?",
+            "Qui valide le contenu avant publication ? Quelle est la procédure de validation ?",
+            "Comment mesurez-vous si la rubrique est utile aux clients ?",
+            "Et si le prestataire technique annonce un retard de 2 mois ? Comment communiquez-vous aux clients ?",
+          ],
+          correction: `<strong>Structure de la rubrique « Efficacité énergétique » :</strong>
+<ul>
+  <li><strong>Organisation :</strong> par type d'énergie (électricité, eau, gaz, chauffage) ou par profil client (ménage, entreprise, locataire, propriétaire)</li>
+  <li><strong>Contenus clés :</strong> conseils pratiques par thème, calculateur de consommation, présentation des programmes d'aide à la rénovation SIG/État GE, FAQ</li>
+  <li><strong>Fonctionnalités :</strong> lien vers le portail client pour voir sa propre consommation, formulaire de demande d'audit énergétique, téléchargement de fiches pratiques</li>
+</ul>
+<strong>Contraintes :</strong>
+<ul>
+  <li>Cohérence avec la charte graphique SIG et la ligne éditoriale</li>
+  <li>Accessibilité (WCAG, mobile-friendly, multilingue FR/DE)</li>
+  <li>Validation juridique des informations sur les aides (montants, conditions)</li>
+  <li>Processus de mise à jour régulière défini (responsable désigné)</li>
+  <li>Protection des données si formulaire de demande d'audit</li>
+</ul>`,
+        },
+        {
+          label: "Variante B — Infrastructure technologique (système NetAlert)",
+          context: `<p>Les SIG ont décidé de mettre en place un nouveau système de gestion des pannes et des interventions sur le réseau (logiciel <strong>« NetAlert »</strong>). Ce système permettra au Service clients d'être informé en temps réel des coupures et interruptions de service, afin de renseigner les clients de manière proactive et précise.</p>
+          <p>Le système sera opérationnel dans six semaines. Isabelle Tornay vous confie la coordination de l'introduction de cet outil au sein de votre équipe du Service clients, ainsi que la préparation des collaborateurs à son utilisation.</p>`,
+          tasks: [
+            ["1.", "Réfléchissez à la manière dont vous procéderiez pour préparer les collaborateurs et collaboratrices du Service clients à l'introduction du système NetAlert dans les quatre semaines à venir.", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+          ],
+          complementary_questions: [
+            "NetAlert tombe en panne lors de sa première semaine d'utilisation réelle. Comment gérez-vous la situation ?",
+            "Un collaborateur refuse catégoriquement d'utiliser NetAlert car il préfère l'ancien système. Comment réagissez-vous ?",
+            "Comment vous assurez-vous que la Direction Réseau alimente bien NetAlert en temps réel ?",
+            "Après 1 mois, vous constatez que 30% des collaborateurs n'utilisent pas NetAlert correctement. Que faites-vous ?",
+          ],
+          correction: `<strong>Plan de préparation sur 4 semaines :</strong>
+<ul>
+  <li><strong>Semaine 1 :</strong> Communication aux équipes (objectifs, bénéfices concrets pour le quotidien), accès à l'environnement de test, documentation utilisateur simplifiée</li>
+  <li><strong>Semaine 2 :</strong> Formation pratique en petits groupes sur des cas réels (pannes fréquentes, alertes types)</li>
+  <li><strong>Semaine 3 :</strong> Exercices autonomes sur l'environnement de test, désignation d'un référent NetAlert dans l'équipe</li>
+  <li><strong>Semaine 4 :</strong> Test grandeur nature avec accompagnement, FAQ interne, procédure dégradée en cas de panne du système</li>
+</ul>
+<strong>Points clés :</strong>
+<ul>
+  <li>Montrer les bénéfices concrets pour chaque collaborateur (plus besoin d'appeler la Direction Réseau)</li>
+  <li>Préparer un plan B (procédure manuelle) si NetAlert est indisponible</li>
+  <li>Coordination avec la Direction Réseau pour alimenter NetAlert correctement dès le lancement</li>
+</ul>`,
+        }
+      ],
+      criteria: [
+        ["Les candidat-e-s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+      ],
+    },
+    {
+      num: 5, color: "var(--tp5)",
+      title: "Propre pratique — Entretien de réflexion",
+      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
+      context: `<p>Le TP 5 est conduit sous forme d'entretien oral entre le-la candidat-e et les expert-e-s. Les expert-e-s choisissent librement une situation tirée de votre propre pratique professionnelle aux SIG ou à L'Espace Entreprise.</p>
+      <p>Préparez-vous à décrire une situation réelle en utilisant la méthode <strong>STAR</strong> (Situation – Tâche – Action – Résultat).</p>`,
+      tasks: [
+        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
+        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
+      ],
+      criteria: [
+        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
+        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
+        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+      ],
+      complementary_questions: [
+        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
+        "Comment ce que vous avez vécu aux SIG se rattache-t-il à un DCO spécifique ?",
+        "Qu'est-ce que cette expérience vous a appris sur votre façon de communiquer avec les clients ?",
+        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
+      ],
+      correction: `<strong>Structure STAR pour la propre pratique :</strong>
+<ul>
+  <li><strong>S</strong>ituation : contexte précis — quand, où, quelles personnes</li>
+  <li><strong>T</strong>âche : quel était votre rôle dans cette situation</li>
+  <li><strong>A</strong>ction : ce que vous avez fait concrètement, pourquoi</li>
+  <li><strong>R</strong>ésultat : qu'est-ce qui s'est passé ? Qu'avez-vous appris ? Que feriez-vous différemment ?</li>
+</ul>
+<strong>Critères de qualité :</strong>
+<ul>
+  <li>La situation est réelle et précise (pas vague)</li>
+  <li>Vous exprimez un regard critique sur votre propre action</li>
+  <li>Vous formulez ce que vous feriez différemment</li>
+  <li>Le lien avec un ou plusieurs DCOs est explicite</li>
+</ul>`,
+    },
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════════
+let currentSeries = null;
+let currentTPIdx = 0;
+let currentVariantIdx = 0;
+let notes = {};          // tpNum -> text
+let selfScores = {};     // tpNum -> [pts, pts, pts]
+let correctionVisible = false;
+let prepTimerInterval = null;
+let prepTimerSeconds = 0;
+let prepTimerRunning = false;
+
+// ══════════════════════════════════════════════════════════════════
+//  HOME
+// ══════════════════════════════════════════════════════════════════
+function initHome() {
+  const grid = document.getElementById('seriesGrid');
+  grid.innerHTML = '';
+  Object.values(SERIES).forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'series-card';
+    const chips = s.tps.map((tp,i) =>
+      `<span class="tp-chip" style="background:var(--tp${tp.num})">TP ${tp.num}</span>`
+    ).join('');
+    card.innerHTML = `
+      <div class="series-tag">${s.tag}</div>
+      <div class="series-name">${s.name}</div>
+      <div class="series-company">Entreprise : ${s.company}</div>
+      <div class="series-meta">5 TPs · 45 points max · Structure officielle CIFC</div>
+      <div class="series-tps">${chips}</div>`;
+    card.onclick = () => startSeries(s.id);
+    grid.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  START / NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+function startSeries(id) {
+  currentSeries = SERIES[id];
+  currentTPIdx = 0;
+  notes = {};
+  selfScores = {};
+  correctionVisible = false;
+  currentVariantIdx = -1;
+  document.getElementById('sitBtn').style.display = 'flex';
+  buildSitDrawer();
+  showScreen('screenExam');
+  renderTP();
+}
+
+function renderTP() {
+  const tp = currentSeries.tps[currentTPIdx];
+  correctionVisible = false;
+  stopPrepTimer();
+
+  // ── TP4 : si pas encore de variante choisie, montrer l'écran de choix ──
+  if (tp.variants && currentVariantIdx === -1) {
+    showVariantChoice(tp);
+    return;
+  }
+
+  // Progress bar
+  const stepsDiv = document.getElementById('tpSteps');
+  stepsDiv.innerHTML = '';
+  currentSeries.tps.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'tp-step' + (i < currentTPIdx ? ' done' : i === currentTPIdx ? ' active' : '');
+    d.title = `TP ${t.num}`;
+    stepsDiv.appendChild(d);
+  });
+
+  // Score
+  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  document.getElementById('examScoreDisplay').textContent = s;
+
+  // Build TP card
+  const tpCard = document.getElementById('tpCard');
+  tpCard.style.setProperty('--tp-color', tp.color);
+
+  // Determine variant
+  const hasVariants = !!tp.variants;
+  const variant = hasVariants ? tp.variants[currentVariantIdx] : null;
+  const context = variant ? variant.context : tp.context;
+  const tasks = variant ? variant.tasks : tp.tasks;
+  const correction = variant ? variant.correction : tp.correction;
+  const compQs = variant ? (variant.complementary_questions || []) : (tp.complementary_questions || []);
+
+  // Build full correction HTML (correction + complementary questions)
+  let fullCorrection = correction || '';
+  if (compQs && compQs.length > 0) {
+    const qItems = compQs.map(q => `<li>${q}</li>`).join('');
+    fullCorrection += `\n<strong>Questions complémentaires possibles (Tâche 3) :</strong>\n<ul>${qItems}</ul>`;
+  }
+
+  // Header
+  let variantLabel = variant ? `<div style="font-size:0.68rem;opacity:0.8;margin-top:2px">${variant.label}</div>` : '';
+  tpCard.innerHTML = `
+    <div class="tp-header">
+      <div class="tp-header-left">
+        <div class="tp-num">TP ${tp.num} · ${tp.dco} · ${tp.methode}</div>
+        <div class="tp-title">${tp.title}</div>
+        ${variantLabel}
+      </div>
+      <div class="tp-points-badge">${tp.points} pts</div>
+    </div>
+    <div class="tp-body" id="tpBody"></div>`;
+
+  const body = document.getElementById('tpBody');
+
+  // Situation résumée si TP 1
+  if (tp.num === 1) {
+    body.innerHTML += `<div class="context-label">Rappel — Situation initiale</div>
+    <div class="context-box" style="font-size:0.82rem;margin-bottom:12px">${currentSeries.situation}</div>`;
+  }
+
+  // Context
+  body.innerHTML += `<div class="context-label">Contexte</div><div class="context-box">${context}</div>`;
+
+  // Email (si présent) — sur tp direct uniquement (pas variant)
+  const emailSrc = (!variant && tp.email) ? tp.email : null;
+  if (emailSrc) {
+    body.innerHTML += `<div class="email-box">
+      <div class="email-meta">
+        <strong>De :</strong> ${emailSrc.from}<br>
+        <strong>À :</strong> ${emailSrc.to}<br>
+        <strong>Objet :</strong> ${emailSrc.subject}
+      </div>
+      <div class="email-body">${emailSrc.body.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }
+
+  // Annexe (si présente — sur tp direct uniquement)
+  const annexeSrc = (!variant && tp.annexe) ? tp.annexe : null;
+  if (annexeSrc) {
+    let annexeContent = '';
+    if (annexeSrc.type === 'questionnaire') {
+      annexeContent = `<div class="annexe-box"><div class="annexe-title">${annexeSrc.title}</div>${annexeSrc.content}</div>`;
+    } else if (annexeSrc.type === 'table') {
+      const rows = annexeSrc.rows.map(r =>
+        `<tr><td style="text-align:center;font-weight:700;color:var(--ee-cyan)">${r[0]}</td><td>${r[1]}</td><td class="checkbox-cell">${r[2]}</td></tr>`).join('');
+      annexeContent = `<div class="annexe-box"><div class="annexe-title">${annexeSrc.title}</div>
+        <table class="annexe-table"><thead><tr><th style="width:40px">N°</th><th>Étape</th><th style="width:60px">Fait ?</th></tr></thead><tbody>${rows}</tbody></table>
+        ${annexeSrc.note ? `<p style="font-size:0.76rem;color:var(--ee-gris);margin-top:8px;font-style:italic">${annexeSrc.note}</p>` : ''}</div>`;
+    } else if (annexeSrc.type === 'form') {
+      const sectionsHTML = annexeSrc.sections.map(s => {
+        const items = s.items.map(item =>
+          `<div style="padding:5px 8px;border-bottom:1px solid #eee;font-size:0.83rem">${item}</div>`
+        ).join('');
+        return `<div style="margin-bottom:10px">
+          <div style="font-size:0.75rem;font-weight:700;color:var(--tp2);text-transform:uppercase;letter-spacing:0.06em;padding:5px 8px;background:#f0fdf4;border-left:3px solid var(--tp2)">${s.heading}</div>
+          ${items}
+        </div>`;
+      }).join('');
+      annexeContent = `<div class="annexe-box">
+        <div class="annexe-title">${annexeSrc.title}</div>
+        <p style="font-size:0.8rem;font-style:italic;color:var(--ee-gris);margin-bottom:12px">${annexeSrc.intro}</p>
+        ${sectionsHTML}
+        ${annexeSrc.note ? `<p style="font-size:0.76rem;color:var(--ee-gris);margin-top:8px;font-style:italic">${annexeSrc.note}</p>` : ''}
+      </div>`;
+    }
+    body.innerHTML += annexeContent;
+  }
+
+  // ── TP5 : consignes STAR toujours visibles ──
+  if (tp.num === 5) {
+    body.innerHTML += `
+    <div style="background:#fff8e8;border-left:4px solid var(--ee-jaune);padding:14px 16px;margin-bottom:16px;font-size:0.86rem;line-height:1.7">
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#8b6800;margin-bottom:10px">Méthode conseillée — Structure STAR</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><strong style="color:#8b6800">S — Situation</strong><br>Décrivez le contexte précis : quand, où, qui était impliqué.</div>
+        <div><strong style="color:#8b6800">T — Tâche</strong><br>Quel était votre rôle ou votre objectif dans cette situation ?</div>
+        <div><strong style="color:#8b6800">A — Action</strong><br>Qu'avez-vous fait concrètement, étape par étape ?</div>
+        <div><strong style="color:#8b6800">R — Résultat</strong><br>Quel a été le résultat ? Qu'avez-vous appris ? Que referiez-vous différemment ?</div>
+      </div>
+    </div>`;
+  }
+
+
+
+  // Tasks
+  const taskRows = tasks.map(t =>
+    `<tr><td class="task-num">${t[0]}</td><td>${t[1]}</td><td class="task-dur">${t[2]}</td></tr>`).join('');
+  body.innerHTML += `<div class="tasks-section"><div class="tasks-label">Tâches</div>
+    <table class="tasks-table"><thead><tr><th style="width:30px"></th><th>Tâche</th><th style="width:80px">Durée</th></tr></thead><tbody>${taskRows}</tbody></table></div>`;
+
+  // Criteria
+  const critRows = tp.criteria.map(c =>
+    `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('');
+  body.innerHTML += `<div class="criteria-section"><div class="tasks-label">Critères d'évaluation</div>
+    <table class="criteria-table"><thead><tr><th>Critère</th><th>Pts</th></tr></thead><tbody>${critRows}</tbody></table></div>`;
+
+  // Timer reset
+  document.getElementById('prepTimerBtn').textContent = '▶ Démarrer le chrono (3 min)';
+  document.getElementById('prepTimerBtn').classList.remove('running');
+
+  // Notes
+  document.getElementById('prepNotes').value = notes[tp.num] || '';
+
+  // Correction
+  document.getElementById('correctionZone').classList.remove('visible');
+  document.getElementById('correctionBody').innerHTML = fullCorrection;
+
+  // Self eval — reset
+  const evalDiv = document.getElementById('selfEval');
+  evalDiv.style.display = 'none';
+  renderSelfEval(tp);
+
+  // Buttons
+  document.getElementById('btnCorrection').textContent = 'Voir la correction';
+  const btnNext = document.getElementById('btnNextTP');
+  btnNext.textContent = currentTPIdx < currentSeries.tps.length - 1 ? `TP ${tp.num + 1} →` : 'Voir mes résultats →';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TP4 VARIANT CHOICE SCREEN
+// ══════════════════════════════════════════════════════════════════
+function showVariantChoice(tp) {
+  const tpCard = document.getElementById('tpCard');
+  tpCard.style.setProperty('--tp-color', tp.color);
+  tpCard.innerHTML = `
+    <div class="tp-header">
+      <div class="tp-header-left">
+        <div class="tp-num">TP ${tp.num} · ${tp.dco} · ${tp.methode}</div>
+        <div class="tp-title">${tp.title}</div>
+      </div>
+      <div class="tp-points-badge">${tp.points} pts</div>
+    </div>
+    <div class="tp-body">
+      <div class="context-label">Choix du domaine spécifique</div>
+      <div class="context-box">
+        <p>Pour le TP 4, le-la candidat-e choisit <strong>un domaine spécifique</strong> parmi les deux proposés. Ce choix est définitif pour toute la simulation.</p>
+        <p style="margin-top:8px">Quel domaine choisis-tu pour ce TP 4 ?</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+        ${tp.variants.map((v, i) => `
+          <div onclick="selectVariant(${i})" style="cursor:pointer;background:white;border:2px solid #e0e0e0;border-top:4px solid var(--tp4);padding:20px;transition:all 0.15s"
+            onmouseover="this.style.borderColor='var(--tp4)';this.style.boxShadow='0 4px 14px rgba(0,0,0,0.1)'"
+            onmouseout="this.style.borderColor='#e0e0e0';this.style.boxShadow='none'">
+            <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--tp4);margin-bottom:6px">Option ${i+1}</div>
+            <div style="font-size:0.9rem;font-weight:700;color:var(--ee-noir);margin-bottom:8px">${v.label.replace(/^Variante [AB] — /, '')}</div>
+            <div style="font-size:0.78rem;color:var(--ee-gris);line-height:1.4">${v.context.replace(/<[^>]+>/g,'').substring(0,120)}…</div>
+            <div style="margin-top:12px;background:var(--tp4);color:white;text-align:center;padding:8px;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em">Choisir ce domaine →</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  document.getElementById('prepZone').style.display = 'none';
+  document.getElementById('correctionZone').classList.remove('visible');
+  document.getElementById('selfEval').style.display = 'none';
+  document.getElementById('btnCorrection').style.display = 'none';
+  document.getElementById('btnNextTP').style.display = 'none';
+}
+
+function selectVariant(idx) {
+  currentVariantIdx = idx;
+  document.getElementById('prepZone').style.display = 'block';
+  document.getElementById('btnCorrection').style.display = 'inline-block';
+  document.getElementById('btnNextTP').style.display = 'inline-block';
+  renderTP();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SELF EVAL
+// ══════════════════════════════════════════════════════════════════
+function renderSelfEval(tp) {
+  const evalDiv = document.getElementById('selfEval');
+  const crits = document.getElementById('evalCriteria');
+  crits.innerHTML = '';
+  if (!selfScores[tp.num]) selfScores[tp.num] = [0,0,0];
+
+  tp.criteria.forEach((c, i) => {
+    const labels = ['✗ Insuffisant', '△ Partiel', '✓ Complet'];
+    const colors = ['active-1','active-2','active-3'];
+    const row = document.createElement('div');
+    row.className = 'eval-row';
+    const stars = [0,1,2].map(v => {
+      const isActive = selfScores[tp.num][i] === v+1;
+      return `<button class="star-btn ${isActive ? colors[v] : ''}" onclick="setScore(${tp.num},${i},${v+1})">${['✗','△','✓'][v]}</button>`;
+    }).join('');
+    row.innerHTML = `<div class="eval-crit-text">${c[0]}</div>
+      <div class="eval-stars">${stars}</div>
+      <div class="eval-score-label" id="evalScore_${tp.num}_${i}">${selfScores[tp.num][i]}/3</div>`;
+    crits.appendChild(row);
+  });
+  evalDiv.style.display = 'block';
+}
+
+function setScore(tpNum, critIdx, val) {
+  if (!selfScores[tpNum]) selfScores[tpNum] = [0,0,0];
+  selfScores[tpNum][critIdx] = val;
+  const tp = currentSeries.tps[currentTPIdx];
+  renderSelfEval(tp);
+  // Update total
+  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  document.getElementById('examScoreDisplay').textContent = s;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  CORRECTION TOGGLE
+// ══════════════════════════════════════════════════════════════════
+function toggleCorrection() {
+  const tp = currentSeries.tps[currentTPIdx];
+  // Save notes first
+  notes[tp.num] = document.getElementById('prepNotes').value;
+
+  correctionVisible = !correctionVisible;
+  const zone = document.getElementById('correctionZone');
+  zone.classList.toggle('visible', correctionVisible);
+  document.getElementById('btnCorrection').textContent = correctionVisible ? 'Masquer la correction' : 'Voir la correction';
+
+  // Show self eval when correction is shown
+  if (correctionVisible) {
+    renderSelfEval(tp);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════════════
+function togglePrepTimer() {
+  if (prepTimerRunning) {
+    stopPrepTimer();
+  } else {
+    startPrepTimer(3 * 60);
+  }
+}
+
+function startPrepTimer(seconds) {
+  prepTimerSeconds = seconds;
+  prepTimerRunning = true;
+  const btn = document.getElementById('prepTimerBtn');
+  btn.classList.add('running');
+  document.getElementById('globalTimer').style.display = 'block';
+  updateTimerDisplay();
+  prepTimerInterval = setInterval(() => {
+    prepTimerSeconds--;
+    updateTimerDisplay();
+    if (prepTimerSeconds <= 0) {
+      stopPrepTimer();
+      document.getElementById('globalTimer').textContent = '⏰ 0:00';
+      document.getElementById('globalTimer').classList.add('warning');
+    } else if (prepTimerSeconds <= 30) {
+      document.getElementById('globalTimer').classList.add('warning');
+    }
+  }, 1000);
+}
+
+function stopPrepTimer() {
+  clearInterval(prepTimerInterval);
+  prepTimerRunning = false;
+  const btn = document.getElementById('prepTimerBtn');
+  btn.textContent = '▶ Démarrer le chrono (3 min)';
+  btn.classList.remove('running');
+  document.getElementById('globalTimer').classList.remove('warning');
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(prepTimerSeconds / 60);
+  const s = prepTimerSeconds % 60;
+  const label = `${m}:${String(s).padStart(2,'0')}`;
+  document.getElementById('globalTimer').textContent = label;
+  document.getElementById('prepTimerBtn').textContent = `⏸ ${label} restantes`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+function nextTP() {
+  const tp = currentSeries.tps[currentTPIdx];
+  notes[tp.num] = document.getElementById('prepNotes').value;
+  stopPrepTimer();
+
+  if (currentTPIdx < currentSeries.tps.length - 1) {
+    currentTPIdx++;
+    renderTP();
+    showScreen('screenExam');
+    window.scrollTo(0,0);
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  showScreen('screenResults');
+  document.getElementById('globalTimer').style.display = 'none';
+
+  const total = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  document.getElementById('totalScore').textContent = total;
+
+  let msg = '';
+  const pct = total / 45 * 100;
+  if (pct >= 75) msg = 'Excellent résultat ! Tu maîtrises la structure de l\'examen.';
+  else if (pct >= 55) msg = 'Bon travail ! Quelques TP à retravailler.';
+  else msg = 'Continue à t\'entraîner. Relis le Guide Pratique et recommence.';
+  document.getElementById('resultsMsg').textContent = msg;
+
+  // TP score cards
+  const grid = document.getElementById('tpScoresGrid');
+  grid.innerHTML = '';
+  const tpColors = ['var(--tp1)','var(--tp2)','var(--tp3)','var(--tp4)','var(--tp5)'];
+  currentSeries.tps.forEach((tp, i) => {
+    const sc = (selfScores[tp.num]||[]).reduce((a,v)=>a+v,0);
+    const card = document.createElement('div');
+    card.className = 'tp-score-card';
+    card.style.setProperty('--c', tpColors[i]);
+    card.innerHTML = `<div class="tp-score-label">TP ${tp.num}</div>
+      <div class="tp-score-val">${sc}</div>
+      <div class="tp-score-max">/ ${tp.points} pts</div>`;
+    grid.appendChild(card);
+  });
+
+  // Notes review
+  const nrc = document.getElementById('notesReviewContent');
+  nrc.innerHTML = '';
+  currentSeries.tps.forEach(tp => {
+    const note = notes[tp.num] || '';
+    if (note.trim()) {
+      nrc.innerHTML += `<div class="note-review-item">
+        <div class="nri-label">TP ${tp.num} — ${tp.title}</div>
+        <div class="nri-text">${note}</div>
+      </div>`;
+    }
+  });
+  if (!nrc.innerHTML) nrc.innerHTML = '<p style="font-size:0.84rem;color:var(--ee-gris)">Aucune note enregistrée.</p>';
+}
+
+function restartSame() {
+  startSeries(currentSeries.id);
+}
+
+function goHome() {
+  stopPrepTimer();
+  closeSitDrawer();
+  document.getElementById('globalTimer').style.display = 'none';
+  document.getElementById('sitBtn').style.display = 'none';
+  showScreen('screenHome');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SITUATION DRAWER
+// ══════════════════════════════════════════════════════════════════
+function buildSitDrawer() {
+  if (!currentSeries) return;
+  document.getElementById('sitDrawerTitle').textContent =
+    `Situation initiale — ${currentSeries.company}`;
+  document.getElementById('sitDrawerBody').innerHTML =
+    currentSeries.situationHTML || `<p>${currentSeries.situation}</p>`;
+}
+
+function toggleSitDrawer() {
+  const drawer = document.getElementById('sitDrawer');
+  const overlay = document.getElementById('sitOverlay');
+  const btn = document.getElementById('sitBtn');
+  const isOpen = drawer.classList.contains('open');
+  drawer.classList.toggle('open', !isOpen);
+  overlay.classList.toggle('open', !isOpen);
+  btn.classList.toggle('active', !isOpen);
+}
+
+function closeSitDrawer() {
+  document.getElementById('sitDrawer').classList.remove('open');
+  document.getElementById('sitOverlay').classList.remove('open');
+  document.getElementById('sitBtn').classList.remove('active');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+initHome();
+</script>
+</body>
+</html>

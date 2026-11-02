@@ -187,7 +187,7 @@ etapes:
         type: transfert
         duree: "20 min"
         description: "Reliez une notion du Guide pratique à une situation d'entreprise."
-        url: ""
+        url: "jeux/transfert.html"
       - titre: "Le Guide pratique"
         type: ressource
         duree: "à la carte"
@@ -244,8 +244,8 @@ etapes:
       - titre: "Simulation d'examen"
         type: chrono
         duree: "10 min"
-        description: "Un TP complet, de la préparation aux questions."
-        url: ""
+        description: "Un TP complet, de la préparation aux questions. Séries zéro, B et C."
+        url: "jeux/simulation-tp.html"
       - titre: "L'entretien de réflexion (TP5)"
         type: ressource
         duree: "15 min"
