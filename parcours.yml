@@ -153,7 +153,7 @@ etapes:
         type: situation
         duree: "10 min"
         description: "Touchez le mot-clé de chaque demande. Un oubli et vous redescendez d'un niveau."
-        url: ""
+        url: "https://gilgeneva-png.github.io/gil.geneva/la-commande.html"
       - titre: "Côté expert·e"
         type: situation
         duree: "15 min"
