@@ -104,10 +104,13 @@ etapes:
     en_bref: |
       Avant de vous entraîner, connaissez les règles du jeu : combien de TP,
       combien de temps, et sur quoi vous êtes évalué·e.
+      Commencez aussi votre TP5 : choisir 2 compétences et savoir les décrire
+      de manière professionnelle.
     objectifs:
       - "Connaître les 5 TP et les domaines qu'ils couvrent"
       - "Connaître le déroulement d'un TP : 3, 4 puis 3 minutes"
       - "Savoir lire les critères d'évaluation"
+      - "Choisir 2 compétences pour le TP5 et les décrire de manière professionnelle"
     contenu: |
       **L'examen en bref**
       - 5 TP, chacun noté sur 9 points, soit 45 points au total.
@@ -116,7 +119,8 @@ etapes:
       - TP3 : domaine d (Simulation pratique).
       - TP4 : domaine e (Simulation pratique).
       - TP5 : domaines a à e (entretien de réflexion).
-      - Chaque TP : 3 minutes de préparation, 4 minutes de présentation, 3 minutes de questions.
+      - TP1 à TP4 : 3 minutes de préparation, 4 minutes de présentation, 3 minutes de questions.
+      - TP5 : 10 minutes d'entretien sur 2 compétences que vous avez choisies et préparées à l'avance.
       - 3 critères notés sur 3 points. Ils sont visibles pendant la préparation.
     activites:
       - titre: "La série zéro officielle"
@@ -129,11 +133,18 @@ etapes:
         duree: "5 min"
         description: "Dix questions rapides pour vérifier que vous avez tout compris."
         url: ""
+      - titre: "Préparer mon TP5"
+        type: situation
+        duree: "30 min"
+        description: "Choisissez vos 2 compétences, puis préparez la situation, l'analyse et le « Et si… » pour chacune."
+        url: "jeux/tp5.html"
     je_me_teste:
       - "Je sais combien il y a de TP et quels domaines chacun couvre."
       - "Je connais le déroulement : 3 minutes, 4 minutes, 3 minutes."
       - "Je sais où trouver les critères pendant la préparation."
       - "J'ai lu au moins une tâche de la série zéro en entier."
+      - "J'ai choisi mes 2 compétences pour le TP5 et je sais expliquer pourquoi."
+      - "Ma fiche TP5 est complète pour au moins une compétence."
 
   # ===================================================================
   - id: methode
@@ -236,24 +247,24 @@ etapes:
     fin: 2027-05-14
     en_bref: |
       Des TP complets, chronométrés, comme le jour de l'examen.
-      C'est aussi le moment de préparer l'entretien de réflexion (TP5).
+      Répétez aussi votre TP5 à voix haute, à partir de votre fiche.
     objectifs:
       - "Enchaîner préparation, présentation et questions"
-      - "Se préparer à l'entretien de réflexion"
+      - "Répéter l'entretien de réflexion (TP5) à voix haute"
     activites:
       - titre: "Simulation d'examen"
         type: chrono
         duree: "10 min"
         description: "Un TP complet, de la préparation aux questions. Séries zéro, B et C."
         url: "jeux/simulation-tp.html"
-      - titre: "L'entretien de réflexion (TP5)"
-        type: ressource
-        duree: "15 min"
-        description: "Comment il se déroule et comment le préparer."
-        url: ""
+      - titre: "Ma fiche TP5"
+        type: oral
+        duree: "10 min"
+        description: "Reprenez votre fiche et dites vos 2 compétences à voix haute, en 10 minutes."
+        url: "jeux/tp5.html#fiche"
     je_me_teste:
       - "J'ai fait au moins un TP complet chronométré pour chaque domaine."
-      - "Je sais comment se déroule l'entretien de réflexion."
+      - "J'ai dit mon TP5 à voix haute en 10 minutes, sans lire."
 
   # ===================================================================
   - id: sprint
