@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulateur TP — L'Espace Entreprise</title>
+<title>Simulateur TP — L'Espace Entreprise (v2.0)</title>
 <style>
   :root {
     --ee-cyan:      #00aeef;
@@ -150,8 +150,39 @@
   .eval-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--ee-blanc); border: 1px solid #eee; }
   .eval-crit-text { flex: 1; font-size: 0.84rem; }
   .eval-stars { display: flex; gap: 6px; }
-  .star-btn { width: 28px; height: 28px; border: 1.5px solid #ddd; background: white; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; border-radius: 2px; }
+  .star-btn { width: 34px; height: 34px; font-weight: 700; border: 1.5px solid #ddd; background: white; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; border-radius: 2px; }
   .star-btn:hover { border-color: var(--ee-cyan); background: var(--ee-cyan-pale); }
+
+  /* ── TP5 v2.0 ── */
+  .tag-off, .tag-no { display:inline-block; font-size:0.62rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:1px 7px; border-radius:10px; vertical-align:1px; margin-left:4px; white-space:nowrap; }
+  .tag-off { background:var(--ee-noir); color:#fff; }
+  .tag-no { border:1px dashed var(--ee-gris); color:var(--ee-gris); }
+  .tp5-mine { display:grid; gap:8px; }
+  .tp5-co { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; border:1.5px solid #e0e0e0; border-left:4px solid var(--tp5); padding:10px 12px; background:#fff; }
+  .tp5-co.empty { display:block; color:var(--ee-gris); font-style:italic; }
+  .tp5-co-k { font-size:1.3rem; font-weight:700; color:var(--tp5); line-height:1; }
+  .tp5-co-t { font-size:0.88rem; font-weight:700; margin-bottom:4px; }
+  .tp5-co details { font-size:0.82rem; } .tp5-co summary { cursor:pointer; color:var(--ee-cyan-dk); font-weight:700; }
+  .tp5-co ul { padding-left:18px; margin-top:6px; } .tp5-co li { margin-bottom:3px; }
+  .tp5-pick { display:flex; flex-direction:column; gap:4px; font-size:0.78rem; font-weight:700; }
+  .tp5-pick { min-width:0; }
+  .tp5-pick select { font:inherit; font-weight:400; font-size:0.86rem; padding:8px; border:1.5px solid #ddd; background:#fff; width:100%; max-width:100%; }
+  .tp5-mine, .tp5-chrono, .tp5-if { min-width:0; max-width:100%; }
+  .tp5-hint { font-size:0.78rem; color:var(--ee-gris); margin-top:6px; line-height:1.5; }
+  .tp5-hint a { color:var(--ee-cyan-dk); font-weight:700; }
+  .tp5-chrono { background:#fff; border:1.5px solid #e0e0e0; padding:14px; }
+  .tp5-now { display:grid; grid-template-columns:1fr auto; align-items:end; gap:2px 12px; margin-bottom:10px; }
+  .tp5-now-co { grid-column:1; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--ee-gris); }
+  .tp5-now-ph { grid-column:1; font-size:1.3rem; font-weight:700; }
+  .tp5-now-t { grid-column:2; grid-row:1 / span 2; font-size:2.2rem; font-weight:700; color:var(--tp5); font-variant-numeric:tabular-nums; }
+  .tp5-bar { display:flex; gap:2px; }
+  .tp5-bar span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.62rem; font-weight:700; text-align:center; padding:6px 2px; background:#eee; color:var(--ee-gris); }
+  .tp5-bar span:nth-child(5) { margin-left:6px; }
+  .tp5-bar span.done { background:#cfcaca; color:#fff; }
+  .tp5-bar span.on { background:var(--tp5); color:#fff; }
+  .tp5-if { background:#fff; border:1.5px solid #e0e0e0; padding:12px 14px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .tp5-if-q { font-size:0.95rem; font-weight:700; flex:1; min-width:200px; }
+  .star-btn.active-0 { background: #f3d6d6; border-color: #b03030; }
   .star-btn.active-1 { background: #fdecea; border-color: #e05252; }
   .star-btn.active-2 { background: #fff8e1; border-color: var(--ee-jaune); }
   .star-btn.active-3 { background: #edf7f1; border-color: var(--ee-vert); }
@@ -235,6 +266,14 @@
     .sit-drawer { width: 100vw; }
     .sit-org { grid-template-columns: 1fr; }
   }
+  @media(max-width:600px){
+    header { padding: 0 10px; gap: 8px; }
+    .header-center, .ee-squares { display: none; }
+    .header-right { gap: 6px; }
+    .sit-btn { padding: 5px 8px; font-size: 0.68rem; }
+    .timer-display { padding: 4px 8px; }
+    .ee-footer { position: static; flex-direction: column; gap: 2px; padding: 8px 14px; margin-top: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -249,7 +288,7 @@
     <div class="header-center">Simulateur TP</div>
   </div>
   <div class="header-right">
-    <button class="sit-btn" id="sitBtn" onclick="toggleSitDrawer()">📋 Situation initiale</button>
+    <button class="sit-btn" id="sitBtn" onclick="toggleSitDrawer()">Situation initiale</button>
     <div class="timer-display" id="globalTimer">00:00</div>
     <div class="ee-squares"><div class="sq sq1"></div><div class="sq sq2"></div><div class="sq sq3"></div></div>
   </div>
@@ -260,7 +299,7 @@
 <div class="sit-drawer" id="sitDrawer">
   <div class="sit-drawer-header">
     <div class="sit-drawer-title" id="sitDrawerTitle">Situation initiale</div>
-    <button class="sit-close" onclick="closeSitDrawer()">✕</button>
+    <button class="sit-close" onclick="closeSitDrawer()" aria-label="Fermer">Fermer</button>
   </div>
   <div class="sit-drawer-body" id="sitDrawerBody"></div>
 </div>
@@ -268,7 +307,7 @@
 <!-- ══ HOME ══ -->
 <div class="screen active" id="screenHome">
   <div class="page-title">Simulateur d'entraînement — Travail Pratique CFC</div>
-  <p class="page-subtitle">Entraîne-toi dans les conditions réelles de l'examen. Choisis une série, prépare chaque TP, note tes idées, consulte les éléments de correction. <span style="color:var(--ee-gris);font-size:0.78rem">— Version 1.2 · mise à jour le 05.06.2026</span></p>
+  <p class="page-subtitle">Entraînez-vous dans les conditions réelles de l'examen. Choisissez une série, préparez chaque TP, notez vos idées, consultez les éléments de correction. <span style="color:var(--ee-gris);font-size:0.78rem">— Version 2.0 · mise à jour le 03.11.2026</span></p>
 
   <div class="series-grid" id="seriesGrid">
     <!-- Built by JS -->
@@ -285,7 +324,8 @@
       <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp4)"><strong style="display:block;color:var(--tp4)">TP 4</strong>DCO e<br><span style="color:var(--ee-gris);font-size:0.7rem">Sim. pratique · 9 pts</span></div>
       <div style="text-align:center;padding:10px;background:#f8f8f8;border-top:3px solid var(--tp5)"><strong style="display:block;color:var(--tp5)">TP 5</strong>DCO a–e<br><span style="color:var(--ee-gris);font-size:0.7rem">Entretien · 9 pts</span></div>
     </div>
-    <div style="margin-top:10px;font-size:0.78rem;color:var(--ee-gris)">Chaque TP = 3 tâches : <strong style="color:var(--ee-noir)">3 min préparation individuelle</strong> · <strong style="color:var(--ee-noir)">4 min présentation aux experts</strong> · <strong style="color:var(--ee-noir)">3 min questions complémentaires</strong> · 3 critères × 3 pts = <strong style="color:var(--ee-cyan)">9 points</strong></div>
+    <div style="margin-top:10px;font-size:0.78rem;color:var(--ee-gris)">TP 1 à TP 4 = 3 tâches : <strong style="color:var(--ee-noir)">3 min préparation individuelle</strong> · <strong style="color:var(--ee-noir)">4 min présentation aux experts</strong> · <strong style="color:var(--ee-noir)">3 min questions complémentaires</strong> · 3 critères × 3 pts = <strong style="color:var(--ee-cyan)">9 points</strong></div>
+    <div style="margin-top:6px;font-size:0.78rem;color:var(--ee-gris)">TP 5 = <strong style="color:var(--ee-noir)">10 min d'entretien</strong> sur 2 compétences que vous avez choisies et préparées à l'avance · 3 critères × 3 pts = <strong style="color:var(--ee-cyan)">9 points</strong> · <a href="tp5.html" style="color:var(--ee-cyan-dk);font-weight:700">Préparer mon TP5</a></div>
   </div>
 </div>
 
@@ -298,13 +338,13 @@
   <div class="tp-card" id="tpCard"><!-- TP content --></div>
   <div class="prep-zone" id="prepZone">
     <div class="prep-header">
-      <div class="prep-title">📝 Espace de préparation — Mes notes (3 min)</div>
-      <button class="timer-btn" id="prepTimerBtn" onclick="togglePrepTimer()">▶ Démarrer le chrono (3 min)</button>
+      <div class="prep-title">Espace de préparation — Mes notes (3 min)</div>
+      <button class="timer-btn" id="prepTimerBtn" onclick="togglePrepTimer()">Démarrer le chrono (3 min)</button>
     </div>
-    <textarea class="note-area" id="prepNotes" placeholder="Prends tes notes de préparation ici. Identifie les problèmes, organise tes arguments, anticipe les questions..."></textarea>
+    <textarea class="note-area" id="prepNotes" placeholder="Prenez vos notes de préparation ici. Identifiez les problèmes, organisez vos arguments, anticipez les questions…"></textarea>
   </div>
   <div class="correction-zone" id="correctionZone">
-    <div class="correction-title">✓ Éléments de correction (formateur)</div>
+    <div class="correction-title">Éléments de correction (formateur)</div>
     <div class="correction-body" id="correctionBody"></div>
   </div>
   <div class="self-eval" id="selfEval" style="display:none">
@@ -332,7 +372,7 @@
   </div>
   <div class="tp-scores-grid" id="tpScoresGrid"></div>
   <div class="notes-review" id="notesReview">
-    <div class="notes-review-title">Tes notes de préparation</div>
+    <div class="notes-review-title">Vos notes de préparation</div>
     <div id="notesReviewContent"></div>
   </div>
   <div class="btn-row" style="justify-content:center;width:100%">
@@ -342,7 +382,7 @@
 </div>
 
 <div class="ee-footer">
-  <span>Simulateur TP — Employé-e de commerce CFC</span>
+  <span>Simulateur TP — Employé·e de commerce CFC</span>
   <span>L'Espace Entreprise · Créateur d'expériences · 2025-2026</span>
 </div>
 
@@ -350,6 +390,86 @@
 // ══════════════════════════════════════════════════════════════════
 //  DATA — SÉRIES
 // ══════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════
+//  TP5 — commun à toutes les séries (v2.0)
+//  Source : présentation PQUAL « Partie pratique 3Cp », version 28.01.26,
+//  diapositives 25 et 27. Les situations sont liées à l'Espace Entreprise,
+//  pas à l'entreprise fictive de la série.
+// ══════════════════════════════════════════════════════════════════
+const TP5 = {
+  num: 5, color: "var(--tp5)", tp5: true,
+  title: "Propre pratique — Entretien de réflexion",
+  dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
+  tasks: [
+    ["1.", "Choisir 2 compétences opérationnelles et justifier son choix : ce qui vous enthousiasme, pourquoi vous vous estimez fort·e.", "≈ 1 min *"],
+    ["2.", "Décrire une situation concrète, vécue, dans laquelle vous avez relevé un défi avec assurance et compétence.", "≈ 1 min"],
+    ["3.", "Analyser la situation : les défis, ce qui a contribué à la réussite, ce que vous feriez autrement la prochaine fois.", "≈ 2 min"],
+    ["4.", "Scénario alternatif : comment vous auriez agi si la situation avait évolué autrement ou dans d'autres conditions.", "≈ 1 min"],
+  ],
+  criteria: [
+    ["Le choix des compétences opérationnelles est-il justifié et une situation pratique concrète est-elle décrite de manière compréhensible ?", 3],
+    ["Les défis, les points forts personnels dans le traitement et les éventuelles pierres d'achoppement sont-ils reconnus ?", 3],
+    ["Une procédure appropriée est-elle également décrite dans une situation alternative ?", 3],
+  ],
+  phases: [
+    ["Compétence 1", "Choix et justification", 60], ["Compétence 1", "Situation", 60], ["Compétence 1", "Analyse", 120], ["Compétence 1", "Et si…", 60],
+    ["Compétence 2", "Choix et justification", 60], ["Compétence 2", "Situation", 60], ["Compétence 2", "Analyse", 120], ["Compétence 2", "Et si…", 60],
+  ],
+  ifs: [
+    "Et si vous aviez eu deux fois moins de temps ?",
+    "Et si la personne en face avait été mécontente ?",
+    "Et si l'outil ou le logiciel était tombé en panne ?",
+    "Et si vous aviez dû le faire seul·e, sans aide ?",
+    "Et si une personne clé avait été absente ?",
+    "Et si vous aviez dû le faire en anglais ?",
+    "Et si votre supérieur·e avait refusé votre proposition ?",
+    "Et si vous aviez découvert une erreur au dernier moment ?"
+  ],
+  correction: `<strong>Ce que les expert·e·s attendent</strong> <span class="tag-off">officiel</span>
+<ul>
+  <li>Vous choisissez vous-même 2 compétences opérationnelles et vous justifiez ce choix.</li>
+  <li>Pour chaque compétence : une situation concrète, vécue, où vous avez relevé un défi avec assurance et compétence.</li>
+  <li>L'analyse nomme les défis, ce qui a permis de réussir (vos points forts) et ce que vous feriez autrement.</li>
+  <li>Dans un scénario alternatif, vous décrivez une façon d'agir appropriée.</li>
+</ul>
+<strong>Pièges fréquents</strong> <span class="tag-no">non officiel</span>
+<ul>
+  <li>Raconter un échec au lieu d'une réussite.</li>
+  <li>Rester général (« je fais souvent… ») au lieu d'une situation précise : un lieu, un moment, ce que vous avez fait.</li>
+  <li>Décrire la situation sans l'analyser : l'analyse vaut 3 points à elle seule.</li>
+  <li>Parler de l'équipe (« on a… ») au lieu de vous (« j'ai… »).</li>
+</ul>
+<strong>Aide pour décrire la situation : STAR</strong> <span class="tag-no">non officiel</span>
+<p>Situation, Tâche, Action, Résultat. Utile pour l'étape 2 seulement : STAR ne couvre ni la justification du choix, ni l'analyse, ni le scénario alternatif.</p>`
+};
+
+/* Intitulés officiels des compétences sélectionnables (profil de qualification) */
+const CO_TITLES = {
+  a1:"Examiner et développer des compétences commerciales",
+  a2:"Développer et utiliser des réseaux propres au domaine commercial",
+  a3:"Recevoir et exécuter des mandats propres au domaine commercial",
+  a4:"Agir de manière responsable dans la société",
+  a5:"Intégrer des questions politiques et une approche culturelle dans ses actions",
+  b1:"Collaborer et communiquer dans différentes équipes",
+  b2:"Coordonner les interfaces dans les processus en entreprise",
+  b3:"Participer aux discussions économiques",
+  b4:"Exécuter des tâches de gestion de projets et traiter des projets partiels",
+  b5:"Participer à la réalisation de processus de changement en entreprise",
+  c1:"Planifier, coordonner et optimiser des tâches et des ressources",
+  c2:"Coordonner et mettre en œuvre des processus de soutien",
+  c3:"Documenter, coordonner et mettre en œuvre des processus en entreprise",
+  c4:"Mettre en œuvre des activités de marketing et de communication",
+  c5:"Assurer le suivi et le contrôle d'opérations financières",
+  d1:"Prendre en compte les besoins des clients et des fournisseurs",
+  d2:"Mener des entretiens d'information et de conseil",
+  d3:"Mener des entretiens de vente et de négociation",
+  d4:"Entretenir les relations avec les clients et les fournisseurs",
+  e1:"Utiliser des applications propres au domaine commercial",
+  e2:"Rechercher et évaluer des informations",
+  e3:"Évaluer et préparer des données et des statistiques",
+  e4:"Préparer des contenus à l'aide d'outils multimédia"
+};
 
 const SERIES = {
 
@@ -395,16 +515,16 @@ const SERIES = {
       dco: "DCO a + b", methode: "Mini Case", points: 9,
       context: `<p>Ces derniers temps, des clients se plaignent du support reçu par téléphone et e-mail : longs temps d'attente, renseignements erronés, interlocuteurs qui changent constamment.</p>
       <p>La boîte <em>support@technosoftsolutions.ch</em> est traitée par quiconque a du temps libre. Sans transfert systématique en cas d'absence. Les collaborateurs à temps partiel laissent passer des demandes. Les développeurs sont difficiles à joindre et ne priorisent pas le support.</p>
-      <p>Votre supérieure vous a chargé-e d'analyser la situation et de réfléchir à des mesures d'amélioration.</p>`,
+      <p>Votre supérieure vous a chargé·e d'analyser la situation et de réfléchir à des mesures d'amélioration.</p>`,
       tasks: [
         ["1.", "Analysez la situation actuelle : pour quelles raisons les demandes clients ne peuvent-elles pas être traitées de manière satisfaisante ? Quelles mesures prendriez-vous pour améliorer durablement la situation ?", "3 min"],
-        ["2.", "Décrivez vos résultats aux expert-e-s.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Décrivez vos résultats aux expert·e·s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les questions/problèmes/défis dans leur globalité ?", 3],
-        ["Les candidat-e-s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les questions/problèmes/défis dans leur globalité ?", 3],
+        ["Les candidat·e·s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Que faites-vous si un client escalade la situation et menace de partir ?",
@@ -442,17 +562,17 @@ const SERIES = {
 <p><strong>1.</strong> Quelle était la raison de votre demande ?<br>○ Rôles et droits &nbsp; ○ Utilisation d'un logiciel acheté &nbsp; ○ Erreur dans un logiciel acheté</p>
 <p style="margin-top:6px"><strong>2.</strong> J'ai reçu une réponse rapide et de qualité à ma question.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Vrai</p>
 <p style="margin-top:6px"><strong>3.</strong> Ma demande n'a pas été traitée par des collaborateurs différents.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Oui</p>
-<p style="margin-top:6px"><strong>4.</strong> Je suis globalement satisfait-e du support client de TechnoSoft.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Oui</p>`
+<p style="margin-top:6px"><strong>4.</strong> Je suis globalement satisfait·e du support client de TechnoSoft.<br>○ Non &nbsp; ○ En partie &nbsp; ○ Oui</p>`
       },
       tasks: [
         ["1.", "Analysez dans quelle mesure le questionnaire ci-joint est approprié pour mesurer la satisfaction des clients concernant les prestations de support.", "3 min"],
-        ["2.", "Décrivez aux expert-e-s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Décrivez aux expert·e·s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les incohérences ?", 3],
-        ["Les candidat-e-s présentent-ils/elles des possibilités d'amélioration pertinentes ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les incohérences ?", 3],
+        ["Les candidat·e·s présentent-ils/elles des possibilités d'amélioration pertinentes ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Si le taux de réponse au questionnaire est très faible, que faites-vous ?",
@@ -490,13 +610,13 @@ const SERIES = {
       },
       tasks: [
         ["1.", "Réfléchissez à la manière dont vous répondriez à ce client et à la suite que vous donneriez à ce cas après votre réponse.", "3 min"],
-        ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Et si le développement ne peut pas réparer l'intranet mobile dans les 48h ? Que dites-vous au client ?",
@@ -532,7 +652,7 @@ const SERIES = {
           <p>La division Service et support est chargée de la conception du contenu. La mise en œuvre technique est assurée par la division Développement. La responsabilité de la création du contenu vous a été confiée.</p>`,
           tasks: [
             ["1.", "Réfléchissez à ce que pourrait être l'environnement de représentation des projets de référence sur le site web (organisation, structure, contenus) et aux contraintes à prendre en compte.", "3 min"],
-            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
             ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
@@ -560,10 +680,10 @@ const SERIES = {
         {
           label: "Variante B — Infrastructure technologique",
           context: `<p>TechnoSoft Solutions GmbH introduit dans la division Service et support le nouveau système de ticket <strong>« TickTrack »</strong> pour traiter plus efficacement les demandes de support. Le système a été testé et sera déployé en production dans quatre semaines.</p>
-          <p>Vous êtes chargé-e de coordonner l'introduction et de former les collaborateurs à son utilisation.</p>`,
+          <p>Vous êtes chargé·e de coordonner l'introduction et de former les collaborateurs à son utilisation.</p>`,
           tasks: [
             ["1.", "Réfléchissez à la manière dont vous procéderiez pour préparer les collaborateurs et collaboratrices de votre service à l'introduction du système de ticket dans les deux semaines à venir.", "3 min"],
-            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
             ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
@@ -592,48 +712,12 @@ const SERIES = {
         }
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
     },
-    {
-      num: 5, color: "var(--tp5)",
-      title: "Propre pratique — Entretien de réflexion",
-      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
-      context: `<p>Le TP 5 est conduit sous forme d'entretien oral entre le-la candidat-e et les expert-e-s. Les expert-e-s choisissent librement une situation tirée de la propre pratique du-de la candidat-e.</p>
-      <p><strong>Objectif :</strong> Démontrer que vous pouvez réfléchir de manière critique sur votre propre pratique professionnelle, identifier vos apprentissages et formuler des mesures d'amélioration concrètes.</p>`,
-      tasks: [
-        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
-        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
-      ],
-      criteria: [
-        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
-        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
-      ],
-      complementary_questions: [
-        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
-        "Comment ce que vous avez vécu se rattache-t-il à un DCO spécifique du plan de formation ?",
-        "Citez une compétence concrète que vous avez développée grâce à cette situation.",
-        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
-      ],
-      correction: `<strong>Structure attendue pour la présentation de propre pratique (méthode STAR) :</strong>
-<ul>
-  <li><strong>S</strong>ituation : contexte précis (quand, où, qui était impliqué)</li>
-  <li><strong>T</strong>âche : quel était votre rôle ou objectif dans cette situation</li>
-  <li><strong>A</strong>ction : ce que vous avez fait concrètement, étape par étape</li>
-  <li><strong>R</strong>ésultat : quel a été le résultat ? Qu'avez-vous appris ?</li>
-</ul>
-<strong>Critères de qualité :</strong>
-<ul>
-  <li>La situation est réelle et précise (pas vague)</li>
-  <li>Vous exprimez un regard critique sur votre propre action</li>
-  <li>Vous formulez ce que vous feriez différemment</li>
-  <li>Le lien avec un ou plusieurs DCOs est explicite</li>
-</ul>`,
-    },
+    TP5,
   ]
 },
 
@@ -681,13 +765,13 @@ const SERIES = {
       <p>Votre supérieure Nathalie Pépin vous demande de réfléchir à des propositions concrètes pour améliorer la collaboration et le bien-être au sein de l'équipe.</p>`,
       tasks: [
         ["1.", "Analysez la situation : quels sont les problèmes identifiés et leurs causes probables ? Quelles mesures proposeriez-vous pour améliorer durablement la collaboration et le bien-être au sein de l'équipe ?", "3 min"],
-        ["2.", "Présentez vos résultats aux expert-e-s.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Présentez vos résultats aux expert·e·s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les problèmes et défis dans leur globalité ?", 3],
-        ["Les candidat-e-s proposent-ils/elles des mesures pertinentes et réalistes ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les problèmes et défis dans leur globalité ?", 3],
+        ["Les candidat·e·s proposent-ils/elles des mesures pertinentes et réalistes ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Que faites-vous si votre supérieure refuse la réunion hebdomadaire par manque de temps ?",
@@ -734,13 +818,13 @@ const SERIES = {
       },
       tasks: [
         ["1.", "Analysez dans quelle mesure la checklist proposée est adaptée pour standardiser et fiabiliser l'accueil des nouveaux clients mandants.", "3 min"],
-        ["2.", "Présentez aux expert-e-s vos résultats d'analyse et les améliorations que vous proposeriez.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Présentez aux expert·e·s vos résultats d'analyse et les améliorations que vous proposeriez.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les lacunes et incohérences ?", 3],
-        ["Les candidat-e-s proposent-ils/elles des améliorations pertinentes et justifiées ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les lacunes et incohérences ?", 3],
+        ["Les candidat·e·s proposent-ils/elles des améliorations pertinentes et justifiées ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Jonas Mauron défend sa checklist et ne comprend pas vos critiques. Comment gérez-vous cette situation ?",
@@ -779,13 +863,13 @@ const SERIES = {
       },
       tasks: [
         ["1.", "Réfléchissez à la manière dont vous répondriez à ce courriel et aux démarches que vous entreprendriez en interne pour traiter ce cas.", "3 min"],
-        ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Présentez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles leur démarche/action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles leur démarche/action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
       complementary_questions: [
         "Le bouclement n'est pas prêt car un collaborateur est en arrêt maladie. Comment expliquez-vous ça à la cliente ?",
@@ -821,7 +905,7 @@ const SERIES = {
           <p>La conception du contenu (guide d'utilisation, structure des espaces, catégorisation des documents) est confiée au département Comptabilité. Nathalie Pépin vous charge de réfléchir à la structure et aux contenus que devrait comporter ce portail.</p>`,
           tasks: [
             ["1.", "Réfléchissez à ce que pourrait être la structure du portail client (organisation, catégories de documents, fonctionnalités essentielles, contraintes en matière de protection des données).", "3 min"],
-            ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["2.", "Présentez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
             ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
@@ -851,7 +935,7 @@ const SERIES = {
           <p>Nathalie Pépin vous charge de réfléchir à comment planifier et piloter cette migration pour minimiser les risques.</p>`,
           tasks: [
             ["1.", "Réfléchissez aux étapes clés pour planifier et piloter cette migration en minimisant les risques pour les données clients et la continuité du service.", "3 min"],
-            ["2.", "Présentez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
+            ["2.", "Présentez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
             ["3.", "Répondez aux questions complémentaires ou aux questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
@@ -876,48 +960,12 @@ const SERIES = {
         }
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
       ],
     },
-    {
-      num: 5, color: "var(--tp5)",
-      title: "Propre pratique — Entretien de réflexion",
-      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
-      context: `<p>Le TP 5 est conduit sous forme d'entretien oral. Les expert-e-s choisissent librement une situation tirée de votre propre pratique à la Fiduciaire Lavalée & Partners SA ou à L'Espace Entreprise.</p>
-      <p>Préparez-vous à décrire une situation réelle en utilisant la méthode <strong>STAR</strong> (Situation – Tâche – Action – Résultat).</p>`,
-      tasks: [
-        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
-        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
-      ],
-      criteria: [
-        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
-        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
-      ],
-      complementary_questions: [
-        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
-        "Comment ce que vous avez vécu à la Fiduciaire se rattache-t-il à un DCO spécifique ?",
-        "Qu'est-ce que cette expérience vous a appris sur votre façon de travailler en équipe ?",
-        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
-      ],
-      correction: `<strong>Structure STAR pour la propre pratique :</strong>
-<ul>
-  <li><strong>S</strong>ituation : contexte précis — quand, où, quelles personnes</li>
-  <li><strong>T</strong>âche : quel était votre rôle dans cette situation</li>
-  <li><strong>A</strong>ction : ce que vous avez fait concrètement, pourquoi</li>
-  <li><strong>R</strong>ésultat : qu'est-ce qui s'est passé ? Qu'avez-vous appris ? Que feriez-vous différemment ?</li>
-</ul>
-<strong>Exemples de bonnes situations à présenter :</strong>
-<ul>
-  <li>Un client mécontent d'un retard dans son bouclement</li>
-  <li>Une erreur de saisie découverte et comment vous l'avez corrigée</li>
-  <li>Une amélioration de processus proposée à votre supérieure</li>
-  <li>Un conflit de priorités entre plusieurs mandants urgents</li>
-</ul>`,
-    },
+    TP5,
   ]
 }
 
@@ -976,13 +1024,13 @@ SERIES["szc"] = {
       ],
       tasks: [
         ["1.", "Analysez la situation actuelle : quels sont les problèmes identifiés et leurs causes probables ? Quelles mesures proposeriez-vous pour améliorer durablement la qualité du service et la collaboration au sein de l'équipe ?", "3 min"],
-        ["2.", "Présentez vos résultats aux expert-e-s.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Présentez vos résultats aux expert·e·s.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les questions/problèmes/défis dans leur globalité dans la situation décrite ?", 3],
-        ["Les candidat-e-s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les questions/problèmes/défis dans leur globalité dans la situation décrite ?", 3],
+        ["Les candidat·e·s déduisent-ils/elles des conséquences/mesures compréhensibles pour la suite ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
       ],
       correction: `<strong>Problèmes à identifier :</strong>
 <ul>
@@ -1026,13 +1074,13 @@ SERIES["szc"] = {
       ],
       tasks: [
         ["1.", "Analysez dans quelle mesure le formulaire de réclamation ci-joint est approprié pour traiter efficacement les réclamations de facturation des clients des SIG.", "3 min"],
-        ["2.", "Décrivez aux expert-e-s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Décrivez aux expert·e·s vos résultats d'analyse et ce que vous amélioreriez, et comment.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s identifient-ils/elles les incohérences et lacunes du formulaire ?", 3],
-        ["Les candidat-e-s présentent-ils/elles des possibilités d'amélioration pertinentes et justifiées ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+        ["Les candidat·e·s identifient-ils/elles les incohérences et lacunes du formulaire ?", 3],
+        ["Les candidat·e·s présentent-ils/elles des possibilités d'amélioration pertinentes et justifiées ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
       ],
       correction: `<strong>Problèmes à identifier dans le formulaire :</strong>
 <ul>
@@ -1071,13 +1119,13 @@ SERIES["szc"] = {
       ],
       tasks: [
         ["1.", "Réfléchissez à la manière dont vous répondriez à ce client et aux démarches que vous entreprendriez en interne pour traiter ce cas dans sa globalité.", "3 min"],
-        ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+        ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
+        ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
       ],
       correction: `<strong>Réponse au client — éléments clés :</strong>
 <ul>
@@ -1108,8 +1156,8 @@ SERIES["szc"] = {
           <p>La Direction Communication a décidé que la conception du contenu serait confiée au Service clients, les plus proches des besoins réels des clients. La mise en œuvre technique sera assurée par un prestataire externe. Isabelle Tornay vous charge de réfléchir à la structure et aux contenus de cette nouvelle rubrique.</p>`,
           tasks: [
             ["1.", "Réfléchissez à ce que pourrait être la structure de la rubrique « Conseils en efficacité énergétique » du portail client (organisation, types de contenus, fonctionnalités, contraintes à prendre en compte).", "3 min"],
-            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
-            ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
             "Comment vous assurez-vous que les informations sur les aides à la rénovation restent à jour sur le portail ?",
@@ -1138,8 +1186,8 @@ SERIES["szc"] = {
           <p>Le système sera opérationnel dans six semaines. Isabelle Tornay vous confie la coordination de l'introduction de cet outil au sein de votre équipe du Service clients, ainsi que la préparation des collaborateurs à son utilisation.</p>`,
           tasks: [
             ["1.", "Réfléchissez à la manière dont vous procéderiez pour préparer les collaborateurs et collaboratrices du Service clients à l'introduction du système NetAlert dans les quatre semaines à venir.", "3 min"],
-            ["2.", "Décrivez vos réflexions aux expert-e-s et justifiez-les.", "4 min"],
-            ["3.", "Répondez aux questions complémentaires des expert-e-s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
+            ["2.", "Décrivez vos réflexions aux expert·e·s et justifiez-les.", "4 min"],
+            ["3.", "Répondez aux questions complémentaires des expert·e·s ou à leurs questions concernant des scénarios alternatifs.", "3 min"],
           ],
           complementary_questions: [
             "NetAlert tombe en panne lors de sa première semaine d'utilisation réelle. Comment gérez-vous la situation ?",
@@ -1163,48 +1211,12 @@ SERIES["szc"] = {
         }
       ],
       criteria: [
-        ["Les candidat-e-s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
-        ["Les candidat-e-s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
+        ["Les candidat·e·s présentent-ils/elles la démarche dans la situation de manière complète et correcte OU mettent-ils/elles en œuvre l'action de manière complète et correcte ?", 3],
+        ["Les candidat·e·s justifient-ils/elles la démarche/l'action de manière compréhensible ?", 3],
+        ["Les candidat·e·s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ou aux questions relatives aux scénarios alternatifs ?", 3],
       ],
     },
-    {
-      num: 5, color: "var(--tp5)",
-      title: "Propre pratique — Entretien de réflexion",
-      dco: "DCO a à e", methode: "Entretien de réflexion", points: 9,
-      context: `<p>Le TP 5 est conduit sous forme d'entretien oral entre le-la candidat-e et les expert-e-s. Les expert-e-s choisissent librement une situation tirée de votre propre pratique professionnelle aux SIG ou à L'Espace Entreprise.</p>
-      <p>Préparez-vous à décrire une situation réelle en utilisant la méthode <strong>STAR</strong> (Situation – Tâche – Action – Résultat).</p>`,
-      tasks: [
-        ["1.", "Réfléchissez à une situation de votre propre pratique professionnelle que vous pourriez présenter aux expert-e-s.", "3 min"],
-        ["2.", "Présentez cette situation aux expert-e-s (contexte, votre action, résultat, apprentissage).", "4 min"],
-        ["3.", "Répondez aux questions complémentaires des expert-e-s.", "3 min"],
-      ],
-      criteria: [
-        ["Les candidat-e-s décrivent-ils/elles la situation de manière structurée et pertinente ?", 3],
-        ["Les candidat-e-s justifient-ils/elles leurs actions de manière compréhensible ?", 3],
-        ["Les candidat-e-s répondent-ils/elles de manière compréhensible et justifiée aux questions complémentaires ?", 3],
-      ],
-      complementary_questions: [
-        "Dans la situation que vous décrivez, qu'auriez-vous fait différemment avec le recul ?",
-        "Comment ce que vous avez vécu aux SIG se rattache-t-il à un DCO spécifique ?",
-        "Qu'est-ce que cette expérience vous a appris sur votre façon de communiquer avec les clients ?",
-        "Si vous deviez conseiller un-e apprenti-e qui vit la même situation, que lui diriez-vous ?",
-      ],
-      correction: `<strong>Structure STAR pour la propre pratique :</strong>
-<ul>
-  <li><strong>S</strong>ituation : contexte précis — quand, où, quelles personnes</li>
-  <li><strong>T</strong>âche : quel était votre rôle dans cette situation</li>
-  <li><strong>A</strong>ction : ce que vous avez fait concrètement, pourquoi</li>
-  <li><strong>R</strong>ésultat : qu'est-ce qui s'est passé ? Qu'avez-vous appris ? Que feriez-vous différemment ?</li>
-</ul>
-<strong>Critères de qualité :</strong>
-<ul>
-  <li>La situation est réelle et précise (pas vague)</li>
-  <li>Vous exprimez un regard critique sur votre propre action</li>
-  <li>Vous formulez ce que vous feriez différemment</li>
-  <li>Le lien avec un ou plusieurs DCOs est explicite</li>
-</ul>`,
-    },
+    TP5,
   ]
 };
 
@@ -1271,6 +1283,8 @@ function renderTP() {
     return;
   }
 
+  document.getElementById('prepZone').style.display = tp.tp5 ? 'none' : 'block';
+
   // Progress bar
   const stepsDiv = document.getElementById('tpSteps');
   stepsDiv.innerHTML = '';
@@ -1282,7 +1296,7 @@ function renderTP() {
   });
 
   // Score
-  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+(v||0),0), 0);
   document.getElementById('examScoreDisplay').textContent = s;
 
   // Build TP card
@@ -1318,6 +1332,8 @@ function renderTP() {
     <div class="tp-body" id="tpBody"></div>`;
 
   const body = document.getElementById('tpBody');
+
+  if (tp.tp5) { renderTP5(tp, body, fullCorrection); return; }
 
   // Situation résumée si TP 1
   if (tp.num === 1) {
@@ -1373,22 +1389,6 @@ function renderTP() {
     body.innerHTML += annexeContent;
   }
 
-  // ── TP5 : consignes STAR toujours visibles ──
-  if (tp.num === 5) {
-    body.innerHTML += `
-    <div style="background:#fff8e8;border-left:4px solid var(--ee-jaune);padding:14px 16px;margin-bottom:16px;font-size:0.86rem;line-height:1.7">
-      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#8b6800;margin-bottom:10px">Méthode conseillée — Structure STAR</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div><strong style="color:#8b6800">S — Situation</strong><br>Décrivez le contexte précis : quand, où, qui était impliqué.</div>
-        <div><strong style="color:#8b6800">T — Tâche</strong><br>Quel était votre rôle ou votre objectif dans cette situation ?</div>
-        <div><strong style="color:#8b6800">A — Action</strong><br>Qu'avez-vous fait concrètement, étape par étape ?</div>
-        <div><strong style="color:#8b6800">R — Résultat</strong><br>Quel a été le résultat ? Qu'avez-vous appris ? Que referiez-vous différemment ?</div>
-      </div>
-    </div>`;
-  }
-
-
-
   // Tasks
   const taskRows = tasks.map(t =>
     `<tr><td class="task-num">${t[0]}</td><td>${t[1]}</td><td class="task-dur">${t[2]}</td></tr>`).join('');
@@ -1402,7 +1402,7 @@ function renderTP() {
     <table class="criteria-table"><thead><tr><th>Critère</th><th>Pts</th></tr></thead><tbody>${critRows}</tbody></table></div>`;
 
   // Timer reset
-  document.getElementById('prepTimerBtn').textContent = '▶ Démarrer le chrono (3 min)';
+  document.getElementById('prepTimerBtn').textContent = 'Démarrer le chrono (3 min)';
   document.getElementById('prepTimerBtn').classList.remove('running');
 
   // Notes
@@ -1423,6 +1423,138 @@ function renderTP() {
   btnNext.textContent = currentTPIdx < currentSeries.tps.length - 1 ? `TP ${tp.num + 1} →` : 'Voir mes résultats →';
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+//  TP5 — ENTRETIEN DE RÉFLEXION (v2.0)
+// ══════════════════════════════════════════════════════════════════
+let tp5Interval = null, tp5Phase = 0, tp5Left = 0, tp5Running = false, tp5Manual = ['', ''];
+const escH = x => String(x == null ? '' : x).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+/* Fiche préparée dans l'outil « Préparer mon TP5 » (même site, même appareil) */
+function readTP5Fiche() {
+  try {
+    const o = JSON.parse(localStorage.getItem('pqual-tp5-v1') || 'null');
+    if (o && o.v === 1 && Array.isArray(o.sel)) return o;
+  } catch (e) {}
+  return null;
+}
+
+function renderTP5(tp, body, fullCorrection) {
+  const fiche = readTP5Fiche();
+  const sel = fiche ? fiche.sel : [null, null];
+  const hasFiche = sel.some(Boolean);
+
+  body.innerHTML += `<div class="context-label">Contexte</div><div class="context-box">
+    <p>Le TP 5 est un entretien sur <strong>votre propre pratique à l'Espace Entreprise</strong>, pas sur l'entreprise de la série. <span class="tag-off">officiel</span></p>
+    <p style="margin-top:8px">Vous présentez <strong>2 compétences opérationnelles que vous avez choisies et préparées à l'avance</strong>. Pas de cas à lire : 10 minutes d'entretien en tout.</p></div>`;
+
+  // Mes 2 compétences
+  let mine = '';
+  if (hasFiche) {
+    mine = [0,1].map(i => {
+      const k = sel[i]; if (!k) return `<div class="tp5-co empty">Compétence ${i+1} : pas encore choisie</div>`;
+      const pr = (fiche.prep && fiche.prep[i]) || {};
+      const lines = [["Pourquoi", pr.like || pr.strong], ["Situation", pr.task || pr.did], ["Analyse", pr.chal || pr.work], ["Et si…", pr.altA]]
+        .map(([l,v]) => `<li><strong>${l} :</strong> ${v && v.trim() ? escH(v.trim()) : '<em>à compléter</em>'}</li>`).join('');
+      return `<div class="tp5-co"><div class="tp5-co-k">${k}</div><div><div class="tp5-co-t">${escH(CO_TITLES[k] || '')}</div>
+        <details><summary>Mes notes</summary><ul>${lines}</ul></details></div></div>`;
+    }).join('');
+    mine += `<p class="tp5-hint">Repris de votre fiche « Préparer mon TP5 », sur cet appareil. <a href="tp5.html#fiche">Modifier ma fiche</a></p>`;
+  } else {
+    const opts = v => '<option value="">Choisir…</option>' + Object.entries(CO_TITLES).map(([k,t]) => `<option value="${k}" ${v===k?'selected':''}>${k} · ${escH(t)}</option>`).join('');
+    mine = [0,1].map(i => `<label class="tp5-pick">Compétence ${i+1}<select onchange="tp5Manual[${i}]=this.value">${opts(tp5Manual[i])}</select></label>`).join('')
+      + `<p class="tp5-hint">Pas encore de fiche sur cet appareil. Préparez-la d'abord avec <a href="tp5.html">l'outil « Préparer mon TP5 »</a>.</p>`;
+  }
+  body.innerHTML += `<div class="context-label" style="margin-top:14px">Mes 2 compétences</div><div class="tp5-mine">${mine}</div>`;
+
+  // Chrono par phases
+  body.innerHTML += `<div class="context-label" style="margin-top:14px">Chrono de l'entretien · 10 min</div>
+    <div class="tp5-chrono">
+      <div class="tp5-now"><div class="tp5-now-co" id="tp5Co"></div><div class="tp5-now-ph" id="tp5Ph"></div><div class="tp5-now-t" id="tp5T"></div></div>
+      <div class="tp5-bar" id="tp5Bar">${tp.phases.map((ph,i) => `<span style="flex:${ph[2]}" data-i="${i}">${ph[1].replace('Choix et justification','Choix')}</span>`).join('')}</div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-primary" id="tp5Go" onclick="tp5Toggle()">Démarrer</button>
+        <button class="btn btn-outline" onclick="tp5Skip()">Phase suivante</button>
+        <button class="btn btn-outline" onclick="tp5Reset()">Recommencer</button>
+      </div>
+      <p class="tp5-hint">Durées « environ ». Si vous parlez bien, les expert·e·s ne vous coupent pas et la question « Et si… » ne vient pas toujours. La minute du choix est une estimation. <span class="tag-no">non officiel</span></p>
+    </div>`;
+
+  // Question « Et si… »
+  body.innerHTML += `<div class="context-label" style="margin-top:14px">Question « Et si… » <span class="tag-no">non officiel</span></div>
+    <div class="tp5-if"><div id="tp5If" class="tp5-if-q">Touchez le bouton pour tirer une question, comme le feraient les expert·e·s.</div>
+    <button class="btn btn-outline" onclick="tp5Draw()">Tirer une question</button></div>`;
+
+  // Tâches et critères officiels
+  const taskRows = tp.tasks.map(t => `<tr><td class="task-num">${t[0]}</td><td>${t[1]}</td><td class="task-dur">${t[2]}</td></tr>`).join('');
+  body.innerHTML += `<div class="tasks-section" style="margin-top:16px"><div class="tasks-label">Déroulement, pour chacune des 2 compétences <span class="tag-off">officiel</span></div>
+    <table class="tasks-table"><thead><tr><th style="width:30px"></th><th>Étape</th><th style="width:80px">Durée</th></tr></thead><tbody>${taskRows}</tbody></table>
+    <p class="tp5-hint">* La durée de l'étape 1 n'est pas précisée dans la source officielle.</p></div>`;
+  const critRows = tp.criteria.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('');
+  body.innerHTML += `<div class="criteria-section"><div class="tasks-label">Critères d'évaluation <span class="tag-off">officiel</span></div>
+    <table class="criteria-table"><thead><tr><th>Critère</th><th>Pts</th></tr></thead><tbody>${critRows}</tbody></table></div>`;
+
+  tp5Reset();
+  document.getElementById('prepNotes').value = '';
+
+  document.getElementById('correctionZone').classList.remove('visible');
+  document.getElementById('correctionBody').innerHTML = fullCorrection;
+  document.getElementById('selfEval').style.display = 'none';
+  renderSelfEval(tp);
+  document.getElementById('btnCorrection').textContent = 'Voir les éléments attendus';
+  const btnNext = document.getElementById('btnNextTP');
+  btnNext.textContent = currentTPIdx < currentSeries.tps.length - 1 ? `TP ${tp.num + 1} →` : 'Voir mes résultats →';
+}
+
+function tp5Show() {
+  const ph = TP5.phases[tp5Phase];
+  const co = document.getElementById('tp5Co'); if (!co) return;
+  const done = tp5Phase >= TP5.phases.length;
+  const sel = (readTP5Fiche() || {sel:tp5Manual}).sel || tp5Manual;
+  const code = !done ? (sel[ph[0] === 'Compétence 1' ? 0 : 1] || tp5Manual[ph[0] === 'Compétence 1' ? 0 : 1]) : '';
+  co.textContent = done ? 'Terminé' : ph[0] + (code ? ' · ' + code : '');
+  document.getElementById('tp5Ph').textContent = done ? 'Passez à l\'auto-évaluation.' : ph[1];
+  const m = Math.floor(tp5Left / 60), sec = tp5Left % 60;
+  document.getElementById('tp5T').textContent = done ? '' : `${m}:${String(sec).padStart(2,'0')}`;
+  document.querySelectorAll('#tp5Bar span').forEach((el, i) => {
+    el.className = i < tp5Phase ? 'done' : i === tp5Phase ? 'on' : '';
+  });
+  const g = document.getElementById('globalTimer');
+  let total = tp5Left; for (let i = tp5Phase + 1; i < TP5.phases.length; i++) total += TP5.phases[i][2];
+  g.style.display = (tp5Running || tp5Phase > 0 || tp5Left < TP5.phases[0][2]) ? 'block' : 'none';
+  g.textContent = done ? '0:00' : `${Math.floor(total/60)}:${String(total%60).padStart(2,'0')}`;
+}
+function tp5Toggle() {
+  if (tp5Phase >= TP5.phases.length) tp5Reset();
+  tp5Running = !tp5Running;
+  document.getElementById('tp5Go').textContent = tp5Running ? 'Pause' : 'Reprendre';
+  clearInterval(tp5Interval);
+  if (tp5Running) tp5Interval = setInterval(() => {
+    tp5Left--;
+    if (tp5Left <= 0) { tp5Phase++; tp5Left = tp5Phase < TP5.phases.length ? TP5.phases[tp5Phase][2] : 0; }
+    if (tp5Phase >= TP5.phases.length) { clearInterval(tp5Interval); tp5Running = false; document.getElementById('tp5Go').textContent = 'Recommencer'; }
+    tp5Show();
+  }, 1000);
+}
+function tp5Skip() {
+  if (tp5Phase >= TP5.phases.length) return;
+  tp5Phase++; tp5Left = tp5Phase < TP5.phases.length ? TP5.phases[tp5Phase][2] : 0;
+  if (tp5Phase >= TP5.phases.length) { clearInterval(tp5Interval); tp5Running = false; document.getElementById('tp5Go').textContent = 'Recommencer'; }
+  tp5Show();
+}
+function tp5Reset() {
+  clearInterval(tp5Interval); tp5Running = false; tp5Phase = 0; tp5Left = TP5.phases[0][2];
+  const b = document.getElementById('tp5Go'); if (b) b.textContent = 'Démarrer';
+  tp5Show();
+}
+function tp5Stop() { clearInterval(tp5Interval); tp5Running = false; }
+let tp5LastIf = -1;
+function tp5Draw() {
+  let i; do { i = Math.floor(Math.random() * TP5.ifs.length); } while (i === tp5LastIf && TP5.ifs.length > 1);
+  tp5LastIf = i;
+  document.getElementById('tp5If').textContent = TP5.ifs[i];
+}
+
 // ══════════════════════════════════════════════════════════════════
 //  TP4 VARIANT CHOICE SCREEN
 // ══════════════════════════════════════════════════════════════════
@@ -1440,8 +1572,8 @@ function showVariantChoice(tp) {
     <div class="tp-body">
       <div class="context-label">Choix du domaine spécifique</div>
       <div class="context-box">
-        <p>Pour le TP 4, le-la candidat-e choisit <strong>un domaine spécifique</strong> parmi les deux proposés. Ce choix est définitif pour toute la simulation.</p>
-        <p style="margin-top:8px">Quel domaine choisis-tu pour ce TP 4 ?</p>
+        <p>Pour le TP 4, vous choisissez <strong>un domaine spécifique</strong> parmi les deux proposés, en principe celui de votre mandat de transfert 2 en cours interentreprises (CI). Ce choix est définitif pour toute la simulation.</p>
+        <p style="margin-top:8px">Quel domaine choisissez-vous pour ce TP 4 ?</p>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
         ${tp.variants.map((v, i) => `
@@ -1478,32 +1610,32 @@ function renderSelfEval(tp) {
   const evalDiv = document.getElementById('selfEval');
   const crits = document.getElementById('evalCriteria');
   crits.innerHTML = '';
-  if (!selfScores[tp.num]) selfScores[tp.num] = [0,0,0];
+  if (!selfScores[tp.num]) selfScores[tp.num] = [null,null,null];
 
   tp.criteria.forEach((c, i) => {
-    const labels = ['✗ Insuffisant', '△ Partiel', '✓ Complet'];
-    const colors = ['active-1','active-2','active-3'];
+    const colors = ['active-0','active-1','active-2','active-3'];
     const row = document.createElement('div');
     row.className = 'eval-row';
-    const stars = [0,1,2].map(v => {
-      const isActive = selfScores[tp.num][i] === v+1;
-      return `<button class="star-btn ${isActive ? colors[v] : ''}" onclick="setScore(${tp.num},${i},${v+1})">${['✗','△','✓'][v]}</button>`;
+    const cur = selfScores[tp.num][i];
+    const stars = [0,1,2,3].map(v => {
+      const isActive = cur === v;
+      return `<button class="star-btn ${isActive ? colors[v] : ''}" aria-pressed="${isActive}" aria-label="${v} point${v>1?'s':''}" onclick="setScore(${tp.num},${i},${v})">${v}</button>`;
     }).join('');
     row.innerHTML = `<div class="eval-crit-text">${c[0]}</div>
       <div class="eval-stars">${stars}</div>
-      <div class="eval-score-label" id="evalScore_${tp.num}_${i}">${selfScores[tp.num][i]}/3</div>`;
+      <div class="eval-score-label" id="evalScore_${tp.num}_${i}">${cur == null ? '–' : cur}/${c[1]}</div>`;
     crits.appendChild(row);
   });
   evalDiv.style.display = 'block';
 }
 
 function setScore(tpNum, critIdx, val) {
-  if (!selfScores[tpNum]) selfScores[tpNum] = [0,0,0];
+  if (!selfScores[tpNum]) selfScores[tpNum] = [null,null,null];
   selfScores[tpNum][critIdx] = val;
   const tp = currentSeries.tps[currentTPIdx];
   renderSelfEval(tp);
   // Update total
-  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  const s = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+(v||0),0), 0);
   document.getElementById('examScoreDisplay').textContent = s;
 }
 
@@ -1549,7 +1681,7 @@ function startPrepTimer(seconds) {
     updateTimerDisplay();
     if (prepTimerSeconds <= 0) {
       stopPrepTimer();
-      document.getElementById('globalTimer').textContent = '⏰ 0:00';
+      document.getElementById('globalTimer').textContent = '0:00';
       document.getElementById('globalTimer').classList.add('warning');
     } else if (prepTimerSeconds <= 30) {
       document.getElementById('globalTimer').classList.add('warning');
@@ -1558,10 +1690,11 @@ function startPrepTimer(seconds) {
 }
 
 function stopPrepTimer() {
+  tp5Stop();
   clearInterval(prepTimerInterval);
   prepTimerRunning = false;
   const btn = document.getElementById('prepTimerBtn');
-  btn.textContent = '▶ Démarrer le chrono (3 min)';
+  btn.textContent = 'Démarrer le chrono (3 min)';
   btn.classList.remove('running');
   document.getElementById('globalTimer').classList.remove('warning');
 }
@@ -1571,7 +1704,7 @@ function updateTimerDisplay() {
   const s = prepTimerSeconds % 60;
   const label = `${m}:${String(s).padStart(2,'0')}`;
   document.getElementById('globalTimer').textContent = label;
-  document.getElementById('prepTimerBtn').textContent = `⏸ ${label} restantes`;
+  document.getElementById('prepTimerBtn').textContent = `Pause · ${label} restantes`;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1596,14 +1729,14 @@ function showResults() {
   showScreen('screenResults');
   document.getElementById('globalTimer').style.display = 'none';
 
-  const total = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+v,0), 0);
+  const total = Object.values(selfScores).reduce((a,arr) => a + (arr||[]).reduce((x,v)=>x+(v||0),0), 0);
   document.getElementById('totalScore').textContent = total;
 
   let msg = '';
   const pct = total / 45 * 100;
-  if (pct >= 75) msg = 'Excellent résultat ! Tu maîtrises la structure de l\'examen.';
-  else if (pct >= 55) msg = 'Bon travail ! Quelques TP à retravailler.';
-  else msg = 'Continue à t\'entraîner. Relis le Guide Pratique et recommence.';
+  if (pct >= 75) msg = 'Excellent résultat. Vous maîtrisez la structure de l\'examen.';
+  else if (pct >= 55) msg = 'Bon travail. Quelques TP à retravailler.';
+  else msg = 'Continuez à vous entraîner. Relisez le Guide pratique et recommencez.';
   document.getElementById('resultsMsg').textContent = msg;
 
   // TP score cards
@@ -1611,7 +1744,7 @@ function showResults() {
   grid.innerHTML = '';
   const tpColors = ['var(--tp1)','var(--tp2)','var(--tp3)','var(--tp4)','var(--tp5)'];
   currentSeries.tps.forEach((tp, i) => {
-    const sc = (selfScores[tp.num]||[]).reduce((a,v)=>a+v,0);
+    const sc = (selfScores[tp.num]||[]).reduce((a,v)=>a+(v||0),0);
     const card = document.createElement('div');
     card.className = 'tp-score-card';
     card.style.setProperty('--c', tpColors[i]);
