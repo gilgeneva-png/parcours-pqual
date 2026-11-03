@@ -7,7 +7,7 @@
    Les pages Konvink demandent d'être connecté·e à son compte.
    ========================================================== */
 window.KONVINK = {
-  accueil: "https://app.konvink.ch",
+  accueil: "https://app.konvink.ch/Institution/126/30949/2?isPreview=False",   /* Mon savoir-faire – éléments opérationnels CFC */
 
   /* Domaines */
   A: "https://app.konvink.ch/Institution/126/30950/2",

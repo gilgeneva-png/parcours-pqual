@@ -179,6 +179,44 @@ dialog.sheet::backdrop{background:rgba(10,14,28,.55)}
 
 .foot-src{font-size:13px; color:var(--ink-soft); margin-top:24px}
 
+
+/* ---- v2 : couleurs par étape, en-têtes pleins ---- */
+.intro p{font-size:19px; color:var(--ink)}
+.path li .dot{border-color:var(--s); color:var(--s)}
+.path li.now .dot, .path li.done .dot{background:var(--s); border-color:var(--s); color:var(--on-s)}
+.path li.done::before{background:var(--s)}
+.path .stage{border-left:10px solid var(--s)}
+.path li.now .stage{border:3px solid var(--s); border-left-width:10px; box-shadow:5px 5px 0 var(--s)}
+.path .stage .st, .path li.now .stage .st, .path li.done .stage .st{color:var(--s)}
+button.result{width:100%; font:inherit; color:var(--ink); cursor:pointer; text-align:left; border-style:solid}
+button.result:hover{border-color:var(--ink)}
+button.result span{font-weight:700}
+.links ul{gap:6px}
+.head{background:var(--s); color:var(--on-s); border-radius:var(--radius-sm); padding:14px 16px 14px; margin:10px 0 14px}
+.head .k{color:inherit; opacity:.85; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.chip-min{background:var(--on-s); color:var(--s); border-radius:999px; padding:0 9px; font-size:12.5px; letter-spacing:0; text-transform:none; opacity:1}
+.head .prog i{background:color-mix(in srgb, var(--on-s) 30%, transparent)}
+.head .prog i.on{background:var(--on-s)}
+.head .prog i.done{background:color-mix(in srgb, var(--on-s) 70%, transparent)}
+.nav .btn.solid, .actions-col .btn.solid{background:var(--s); border-color:var(--s); color:var(--on-s)}
+.card h2{display:flex; align-items:center; gap:8px}
+.card h2::before{content:""; width:10px; height:10px; border-radius:50%; background:var(--s); flex:none}
+.rule-card{border:3px solid var(--s)}
+.big-rule em{background:linear-gradient(transparent 58%, color-mix(in srgb,var(--s) 35%, transparent) 58%)}
+.min-bar span{background:var(--s); color:var(--on-s)}
+.min-bar span:last-child{background:repeating-linear-gradient(135deg,var(--s) 0 6px, color-mix(in srgb,var(--s) 70%, var(--sheet)) 6px 12px)}
+.crit{counter-reset:k}
+.crit li{display:flex; gap:10px; align-items:baseline; counter-increment:k; font-size:16.5px}
+.crit li::before{content:counter(k); flex:none; width:26px; height:26px; border-radius:50%; background:var(--s); color:var(--on-s); display:grid; place-items:center; font-weight:800; font-size:14px; transform:translateY(5px)}
+.reminder{border-left-color:var(--s)}
+.door{border-left:8px solid var(--s)}
+.door:hover,.door:focus-visible{border-color:var(--s)}
+.field textarea:focus{border-color:var(--s)}
+.tips{list-style:none; padding:0; margin:0 0 12px; display:grid; gap:8px; counter-reset:t}
+.tips li{counter-increment:t; display:grid; grid-template-columns:34px 1fr; column-gap:12px; background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px}
+.tips li::before{content:counter(t); grid-row:span 2; width:34px; height:34px; border-radius:50%; background:var(--ink); color:var(--sheet); display:grid; place-items:center; font-family:var(--head); font-weight:800}
+.tips b{font-family:var(--head); font-size:18px}
+.tips span{color:var(--ink-soft); font-size:15.5px}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -199,8 +237,9 @@ dialog.sheet::backdrop{background:rgba(10,14,28,.55)}
   <section class="screen" id="s-learn" hidden></section>
   <section class="screen" id="s-co" hidden></section>
   <section class="screen" id="s-speech" hidden></section>
+  <section class="screen" id="s-tips" hidden></section>
 
-  <p class="foot-src" id="footSrc" hidden>Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26) et plan de formation employé·e de commerce CFC. Ce qui est marqué <span class="tag-no">non officiel</span> est une aide de l'Espace Entreprise. Vos réponses restent sur cet appareil.</p>
+  <p class="foot-src" id="footSrc" hidden>Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26) et plan de formation employé·e de commerce CFC. Ce qui est marqué est une aide de l'Espace Entreprise. Vos réponses restent sur cet appareil.</p>
 </div>
 
 <dialog class="sheet" id="sheet"></dialog>
@@ -415,6 +454,8 @@ function onColor(hex){
   return L > .36 ? "#12152B" : "#FFFFFF";
 }
 const colorOf = code => pal["ABCDE".indexOf(code[0].toUpperCase())] || pal[0];
+const STEPC = [pal[0], pal[1], pal[3]];
+const svars = i => { const c = STEPC[i]; return `--s:${c};--on-s:${onColor(c)}`; };
 const cvars = code => { const c = colorOf(code); return `--c:${c};--on-c:${onColor(c)}`; };
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const $ = id => document.getElementById(id);
@@ -425,20 +466,20 @@ const has = v => typeof v === "string" && v.trim() !== "";
    LES QUESTIONS DE PRÉPARATION (une compétence = 5 écrans)
    ===================================================================== */
 const Q = {
-  why:{h:"Pourquoi cette compétence ?", min:"≈ 1 min à l'oral", tip:"Les expert·e·s veulent savoir pourquoi vous l'avez choisie.", fields:[
+  why:{h:"Pourquoi cette compétence ?", min:"1 min", fields:[
     ["like","Qu'est-ce qui vous plaît dans cette compétence ?","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
     ["strong","Pourquoi êtes-vous fort·e dans ce domaine ?","Ex. On me confie souvent l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
-  context:{h:"Le contexte", min:"≈ 1 min à l'oral, avec l'écran suivant", tip:"Une vraie mission, que vous avez faite vous-même.", fields:[
+  context:{h:"Le contexte", min:"Situation · 1 min", fields:[
     ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…","Pendant mon stage chez…"]],
     ["task","Qu'est-ce qu'on vous a demandé ?","Ex. Organiser la séance d'équipe du jeudi, en trois jours.",["On m'a demandé de…","Ma mission était de…"]]]},
-  challenge:{h:"Le défi relevé", min:"suite de la situation", tip:"Racontez une réussite : ce qui était difficile, et comment vous vous en êtes sorti·e.", fields:[
+  challenge:{h:"Le défi relevé", min:"Situation · 1 min", fields:[
     ["chal","Qu'est-ce qui était difficile ?","Ex. La salle était déjà prise et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
     ["did","Qu'avez-vous fait, vous ?","Ex. J'ai trouvé une autre salle, réparti les tâches et envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
     ["res","Quel a été le résultat ?","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
-  analysis:{h:"Avec le recul", min:"≈ 2 min à l'oral", tip:"C'est l'analyse : elle vaut 3 points à elle seule.", fields:[
+  analysis:{h:"Avec le recul", min:"2 min", fields:[
     ["work","Qu'est-ce qui a fait que ça a marché ?","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
     ["next","Que feriez-vous autrement la prochaine fois ?","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
-  alt:{h:"Et si… ?", min:"≈ 1 min à l'oral, si on vous la pose", tip:"Les expert·e·s peuvent vous demander comment vous auriez fait si les choses s'étaient passées autrement. Choisissez une question et préparez une réponse.", ifs:true, fields:[
+  alt:{h:"Et si… ?", min:"1 min", ifs:true, fields:[
     ["altA","Ce que vous auriez fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]}
 };
 const FIELDS = ["like","strong","where","task","chal","did","res","work","next","altA"];
@@ -455,15 +496,16 @@ function go(to, push){
   if (to === "co1" || to === "co2"){ ci = to === "co1" ? 0 : 1; to = "co"; }
   document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
   cur = to;
-  ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech}[to])();
-  $("footSrc").hidden = to !== "learn";
+  ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech, tips:renderTips}[to])();
+  const sv = to === "learn" ? 0 : to === "co" ? ci + 1 : -1;
+  $("s-"+to).style.cssText = (to === "co" && S.sel[ci] ? cvars(S.sel[ci]) + ";" : "") + (sv >= 0 ? svars(sv) : "--s:var(--ink);--on-s:var(--sheet)");
   $("saveState").hidden = to === "home";
   window.scrollTo(0,0);
   const h = to === "co" ? "co"+(ci+1) : to;
   try{ if (push !== false && location.hash.slice(1) !== h) history.pushState(null, "", "#"+h); }catch(e){}
 }
 window.addEventListener("popstate", () => route());
-function route(){ const h = (location.hash || "").slice(1); go(["learn","co1","co2","speech"].includes(h) ? h : "home", false); }
+function route(){ const h = (location.hash || "").slice(1); go(["learn","co1","co2","speech","tips"].includes(h) ? h : "home", false); }
 document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b){ e.preventDefault(); go(b.dataset.go); } });
 
 /* =====================================================================
@@ -475,9 +517,9 @@ function renderHome(){
   const label = (i, started) => st[i] ? "Fait" : i === nextI ? (started ? "Continuer ici" : "Commencer ici") : started ? "En cours" : "À faire";
   const coLine = i => S.sel[i]
     ? `<span class="co-pill" style="${cvars(S.sel[i])}">${S.sel[i]}</span>${esc(CO[S.sel[i]].t)}`
-    : (i === 0 ? "Choisir une compétence et préparer ce que vous allez dire." : "Même chose avec une deuxième compétence.");
+    : (i === 0 ? "Choisir, puis préparer" : "La même chose, une 2e fois");
   const items = [
-    ["learn", "Comprendre la consigne", "Ce qu'on attend de vous, en 2 minutes.", S.learned],
+    ["learn", "Comprendre la consigne", "2 minutes de lecture", S.learned],
     ["co1", "Ma compétence 1", coLine(0), nFilled(0) > 0],
     ["co2", "Ma compétence 2", coLine(1), nFilled(1) > 0]
   ];
@@ -485,16 +527,17 @@ function renderHome(){
   $("s-home").innerHTML = `
     <div class="intro">
       <h1>Mon TP5,<br>pas à pas</h1>
-      <p>À l'examen, vous parlez <b>10 minutes</b> de <b>2 compétences</b> que vous avez choisies. On prépare ça ensemble, en <b>3 étapes</b>.</p>
+      <p><b>10 minutes</b> · <b>2 compétences</b> · <b>3 étapes</b></p>
     </div>
     <ol class="path">${items.map(([to,t,s,started],i) => `
-      <li class="${st[i]?"done":""}${i===nextI?" now":""}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
+      <li class="${st[i]?"done":""}${i===nextI?" now":""}" style="${svars(i)}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
         <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button></li>`).join("")}
     </ol>
-    ${any ? `<div class="result"><div><b>Mon speech</b><small>Tout ce que vous avez préparé, prêt à relire ou en PDF.</small></div><button class="btn" data-go="speech">Voir</button></div>` : ""}
-    <div class="links"><h2>À portée de clic</h2><ul>
+    ${any ? `<button class="result" data-go="speech"><b>Mon speech</b><span>Relire · PDF &rarr;</span></button>` : ""}
+    <div class="links"><ul>
+      <li><a href="#tips" data-go="tips">Les conseils du coach <span>&rarr;</span></a></li>
       <li><a href="${esc(konv("accueil"))}" target="_blank" rel="noopener">Le Guide pratique <span>Konvink</span></a></li>
-      <li><a href="simulation-tp.html">S'entraîner : simulateur d'examen <span>TP1 à TP5</span></a></li>
+      <li><a href="simulation-tp.html">Le simulateur d'examen <span>TP1 à TP5</span></a></li>
     </ul></div>`;
   $("barBack").textContent = "← Mon parcours PQual"; $("barBack").href = "../index.html"; $("barBack").onclick = null;
 }
@@ -506,34 +549,30 @@ let mi = 0;
 function renderLearn(){
   backHome();
   $("s-learn").innerHTML = `
-    <div class="head"><div class="k">Étape 1 sur 3</div><h1>Comprendre la consigne</h1></div>
-    <div class="card">
+    <div class="head"><div class="k">Étape 1</div><h1>Comprendre la consigne</h1></div>
+    <div class="card rule-card">
       <p class="big-rule">Racontez <em>une mission que vous avez vraiment faite</em>, et réussie, sous l'angle d'<em>une compétence</em>.</p>
-      <p class="note-s">Une situation de l'Espace Entreprise, où vous avez relevé un défi. <span class="tag-off">officiel</span></p>
     </div>
     <div class="card">
-      <h2>Le même schéma, deux fois</h2>
-      <p>Pour chacune de vos 2 compétences, environ 5 minutes :</p>
+      <h2>5 minutes par compétence</h2>
       <div class="min-bar">
         <span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span>
       </div>
-      <p class="note-s">Durées « environ » selon la présentation PQUAL. <span class="tag-off">officiel</span> La minute du « Pourquoi » est une estimation. <span class="tag-no">non officiel</span></p>
     </div>
     <div class="card">
-      <h2>Une mission, plusieurs angles <span class="tag-no">non officiel</span></h2>
-      <p>La même mission se raconte de plusieurs façons. Ce qui change : ce que vous mettez en avant. Touchez une mission :</p>
+      <h2>Une mission, plusieurs angles</h2>
       <div class="missions" id="missions"></div>
       <div class="angles" id="angles"></div>
     </div>
     <div class="card">
-      <h2>Comment vous êtes noté·e <span class="tag-off">officiel</span></h2>
+      <h2>Ce que les expert·e·s regardent</h2>
       <ul class="crit">
-        <li><b>3</b><span>Votre choix est justifié et la situation est claire, concrète.</span></li>
-        <li><b>3</b><span>Vous voyez les défis, vos points forts et ce qui a coincé.</span></li>
-        <li><b>3</b><span>Vous savez comment agir si la situation avait été différente.</span></li>
+        <li>Pourquoi ce choix, et une situation claire</li>
+        <li>Ce qui était difficile, ce qui a marché, ce que vous changeriez</li>
+        <li>Ce que vous feriez si c'était différent</li>
       </ul>
     </div>
-    <div class="nav"><button class="btn solid" id="learnOk">C'est clair : ma compétence 1 &rarr;</button></div>`;
+    <div class="nav"><button class="btn solid" id="learnOk">C'est clair &rarr;</button></div>`;
   renderMissions();
   $("learnOk").onclick = () => { S.learned = true; save(); go("co1"); };
 }
@@ -542,6 +581,21 @@ function renderMissions(){
   $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderMissions(); });
   $("angles").innerHTML = MISSIONS[mi].a.map(([k,how,first]) =>
     `<div class="angle" style="${cvars(k)}"><b>${k}</b> · ${esc(how)}<q>${esc(first)}</q></div>`).join("");
+}
+const TIPS = [
+  ["Une vraie mission", "Que vous avez faite vous-même, à l'Espace Entreprise."],
+  ["Une réussite", "Un défi relevé, pas un échec. Vous pouvez parler de ce qui était difficile."],
+  ["Parlez de vous", "« J'ai fait… », pas « on a fait… »."],
+  ["L'analyse compte", "Ce qui a marché et ce que vous changeriez : c'est là qu'on fait la différence."],
+  ["Préparez le « Et si… »", "Si vous parlez bien, on ne vous coupe pas toujours. Mais soyez prêt·e."],
+  ["Vos mandats pratiques", "Ils peuvent vous donner des idées. Ce n'est pas obligatoire de les reprendre."],
+  ["À voix haute", "Répétez sans lire, plusieurs fois. Chronométrez-vous : 5 minutes par compétence."]
+];
+function renderTips(){
+  backHome();
+  $("s-tips").innerHTML = `<div class="head"><div class="k">Mon TP5</div><h1>Les conseils du coach</h1></div>
+    <ol class="tips">${TIPS.map(([t,d]) => `<li><b>${esc(t)}</b><span>${esc(d)}</span></li>`).join("")}</ol>
+    <div class="nav"><button class="btn solid" data-go="home">Retour à mes 3 étapes</button></div>`;
 }
 function backHome(){ $("barBack").textContent = "← Mes 3 étapes"; $("barBack").href = "#home"; $("barBack").onclick = e => { e.preventDefault(); go("home"); }; }
 
@@ -556,25 +610,24 @@ function renderCo(){
   const kind = seq[st], k = S.sel[ci], p = S.prep[ci];
   const visible = seq.filter(x => x !== "start" && x !== "done");
   const pos = visible.indexOf(kind);
-  document.getElementById("s-co").setAttribute("style", k ? cvars(k) : "");
-  let h = `<div class="head"><div class="k">Étape ${ci+2} sur 3 · Compétence ${ci+1}${k?` · ${k}`:""}</div><h1>${headTitle(kind)}</h1>
+  document.getElementById("s-co").setAttribute("style", (k ? cvars(k) + ";" : "") + svars(ci + 1));
+  let h = `<div class="head"><div class="k">Étape ${ci+2} · Compétence ${ci+1}${k?` · ${k}`:""}${Q[kind]?`<span class="chip-min">${Q[kind].min}</span>`:""}</div><h1>${headTitle(kind)}</h1>
     ${kind!=="start" ? `<div class="prog">${visible.map((_,j) => `<i class="${j<pos||kind==="done"?"done":j===pos?"on":""}"></i>`).join("")}</div>` : ""}</div>`;
 
   if (kind === "start"){
     if (k) h += `<div class="reminder"><b>Déjà choisie</b>${k} · ${esc(CO[k].t)}</div>`;
-    h += `<p class="tip" style="margin-top:0">Par quoi voulez-vous commencer ?</p>
-      <div class="doors">
-        <button class="door" data-entry="co"><b>J'ai une compétence en tête</b><small>Je la choisis dans la liste, puis je trouve une mission qui va avec.</small></button>
-        <button class="door" data-entry="mission"><b>J'ai une mission en tête</b><small>Je décris ce que j'ai fait, puis je choisis sous quel angle le raconter.</small></button>
+    h += `<div class="doors">
+        <button class="door" data-entry="co"><b>J'ai une compétence en tête</b><small>Je la choisis, puis je trouve la mission.</small></button>
+        <button class="door" data-entry="mission"><b>J'ai une mission en tête</b><small>Je la décris, puis je choisis l'angle.</small></button>
       </div>
       ${ci===1 && !S.sel[0] ? `<p class="note-s">Conseil : commencez plutôt par la <a href="#co1" data-go="co1">compétence 1</a>.</p>` : ""}`;
   }
   else if (kind === "pick"){
     if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
-    h += `<p class="tip" style="margin-top:0">${has(p.mission) ? "Sous quel angle la racontez-vous ? Touchez une compétence pour lire sa fiche." : "Touchez une compétence pour lire sa fiche et l'angle à prendre."}</p>` + damier();
+    h += `<p class="tip" style="margin-top:0">Touchez une compétence.</p>` + damier();
   }
   else if (kind === "mission"){
-    h += `<p class="tip" style="margin-top:0">${k ? `Pensez à une mission réussie que vous pouvez raconter sous l'angle de <b>${k}</b>.` : "Une mission que vous avez vraiment faite, et réussie."}</p>
+    h += `${k ? "" : `<p class="tip" style="margin-top:0">Une mission vraiment faite, et réussie.</p>`}
       ${k ? `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>` : ""}
       <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
       <textarea id="f-mission" data-f="mission" rows="2" placeholder="Ex. J'ai organisé la séance d'équipe du jeudi.">${esc(p.mission||"")}</textarea>
@@ -583,7 +636,6 @@ function renderCo(){
   }
   else if (Q[kind]){
     const q = Q[kind];
-    h += `<p class="tip" style="margin-top:0">${esc(q.tip)} <span style="white-space:nowrap">· ${esc(q.min)}</span></p>`;
     if (kind === "why") h += `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>`;
     if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
     h += q.fields.map(([f,lab,ph,starts]) => {
@@ -594,7 +646,7 @@ function renderCo(){
     }).join("");
   }
   else if (kind === "done"){
-    h += `<div class="done-box"><b>Compétence ${ci+1} prête</b><p class="note-s">Relisez-la à voix haute : environ 5 minutes.</p></div>` + speechCard(ci) +
+    h += `<div class="done-box"><b>Compétence ${ci+1} prête</b></div>` + speechCard(ci) +
       `<div class="actions-col">${ci===0 ? `<button class="btn solid" data-go="co2">Passer à ma compétence 2 &rarr;</button>` : `<button class="btn solid" data-go="speech">Voir mon speech complet</button>`}
        <button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
   }
@@ -648,10 +700,10 @@ function openSheet(k){
   d.setAttribute("style", cvars(k));
   d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
    <div class="sheet-body">
-    <h4>L'angle à prendre <span class="tag-no">non officiel</span></h4><p>${esc(c.angle)}</p>
-    <h4>Des idées à l'Espace Entreprise <span class="tag-no">non officiel</span></h4>
+    <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
+    <h4>Des idées à l'Espace Entreprise</h4>
     <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    <details><summary>Le texte officiel <span class="tag-off">officiel</span></summary><p style="margin-top:8px">${esc(c.off)}</p></details>
+    <details><summary>Le texte officiel</summary><p style="margin-top:8px">${esc(c.off)}</p></details>
     <div class="sheet-acts">
       ${taken ? `<button class="btn" disabled>Déjà choisie pour la compétence ${2-ci}</button>`
         : mine ? `<button class="btn solid" id="shKeep">Garder ${k} &rarr;</button>`
@@ -687,10 +739,8 @@ function speechCard(i){
 function renderSpeech(){
   backHome();
   $("s-speech").innerHTML = `<div class="head"><div class="k">Mon TP5</div><h1>Mon speech</h1></div>
-    <p class="tip no-print" style="margin-top:0">Relisez-le à voix haute, sans lire mot à mot. Pour le garder : faites une capture d'écran ou enregistrez-le en PDF.</p>
     <div class="actions-col no-print" style="margin:0 0 14px"><button class="btn solid" id="bPdf">Enregistrer en PDF</button></div>
     ${speechCard(0)}${speechCard(1)}
-    <p class="note-s">Préparé avec « Mon parcours PQual », Espace Entreprise. Document de travail.</p>
     <div class="actions-col no-print"><button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
   $("bPdf").onclick = () => window.print();
 }
