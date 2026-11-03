@@ -222,6 +222,35 @@ button.result span{font-weight:700}
 .reset .btn:hover{border-color:var(--ink); background:transparent; color:var(--ink)}
 .reset .btn.armed{border-color:var(--alert); background:var(--alert); color:#fff}
 .reset small{display:block; margin-top:6px; font-size:13.5px; color:var(--alert)}
+
+/* ---- v3 ---- */
+.path li.grp{padding-left:0; margin:6px 0 8px; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft)}
+.path li.grp::before{display:none}
+.path li.grp ~ li.grp{margin-top:18px}
+.erase{display:inline-block; margin:6px 0 0; font:inherit; font-size:13.5px; font-weight:700; color:var(--ink-soft); background:none; border:0; padding:4px 0; text-decoration:underline; text-underline-offset:3px; cursor:pointer}
+.erase:hover{color:var(--ink)}
+.erase.armed{color:#fff; background:var(--alert); text-decoration:none; border-radius:999px; padding:5px 12px}
+.say{font-size:18px; margin:0}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 12px}
+.two div{background:var(--s); color:var(--on-s); border-radius:var(--radius-sm); padding:14px; text-align:center}
+.two b{display:block; font-family:var(--head); font-size:18px}
+.two span{display:block; font-family:var(--head); font-weight:800; font-size:30px; line-height:1.1}
+.parts{margin:12px 0 0; display:grid; gap:8px}
+.parts div{display:grid; grid-template-columns:92px 1fr; gap:10px; align-items:baseline; border-top:1.5px dashed var(--line); padding-top:8px}
+.parts dt{font-family:var(--head); font-weight:800; color:var(--s)}
+.parts dd{margin:0; font-size:16px}
+.yesno{list-style:none; padding:0; margin:0 0 12px; display:grid; gap:8px}
+.yesno li{display:flex; gap:10px; align-items:baseline; background:var(--sheet); border:1.5px solid var(--line); border-radius:10px; padding:11px 14px; font-size:16.5px}
+.yesno li::before{flex:none; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:14px; transform:translateY(4px)}
+.yesno li.y::before{content:"✓"; background:var(--s); color:var(--on-s)}
+.yesno li.n::before{content:"✕"; background:var(--line); color:var(--ink)}
+.yesno li.n{color:var(--ink-soft)}
+.next-steps ol{list-style:none; padding:0; margin:8px 0 0; display:grid; gap:6px}
+.next-steps li{border-left:8px solid var(--s); background:var(--paper); border-radius:6px; padding:8px 12px; font-size:16.5px}
+.next-steps li.end{border-left-color:var(--ink)}
+.next-steps li b{display:block; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.angles-help{padding:10px 14px}
+.angles-help summary{cursor:pointer; font-weight:700}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -499,6 +528,7 @@ const coDone = i => !!S.sel[i] && ["like","where","task","did","work","next"].ev
 let cur = "home", ci = 0;
 function go(to, push){
   if (to === "co1" || to === "co2"){ ci = to === "co1" ? 0 : 1; to = "co"; }
+  if (to === "learn" && cur !== "learn") lp = 0;
   document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
   cur = to;
   ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech, tips:renderTips}[to])();
@@ -524,7 +554,7 @@ function renderHome(){
     ? `<span class="co-pill" style="${cvars(S.sel[i])}">${S.sel[i]}</span>${esc(CO[S.sel[i]].t)}`
     : (i === 0 ? "Choisir, puis préparer" : "La même chose, une 2e fois");
   const items = [
-    ["learn", "Comprendre la consigne", "2 minutes de lecture", S.learned],
+    ["learn", "Comprendre la consigne", "Comment se passe le TP5 · 4 écrans", S.learned],
     ["co1", "Ma compétence 1", coLine(0), nFilled(0) > 0],
     ["co2", "Ma compétence 2", coLine(1), nFilled(1) > 0]
   ];
@@ -535,8 +565,10 @@ function renderHome(){
       <p><b>10 minutes</b> · <b>2 compétences</b> · <b>3 étapes</b></p>
     </div>
     <ol class="path">${items.map(([to,t,s,started],i) => `
+      ${i===0?`<li class="grp">La théorie</li>`:i===1?`<li class="grp">La préparation</li>`:""}
       <li class="${st[i]?"done":""}${i===nextI?" now":""}" style="${svars(i)}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
-        <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button></li>`).join("")}
+        <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button>
+        ${i>0 && (nFilled(i-1) > 0 || S.entry[i-1]) ? `<button class="erase" data-erase="${i-1}">Effacer la compétence ${i}</button>` : ""}</li>`).join("")}
     </ol>
     ${any ? `<button class="result" data-go="speech"><b>Mon speech</b><span>Relire · PDF &rarr;</span></button>` : ""}
     <div class="links"><ul>
@@ -545,6 +577,15 @@ function renderHome(){
       <li><a href="simulation-tp.html">Le simulateur d'examen <span>TP1 à TP5</span></a></li>
     </ul></div>
     ${any || S.learned ? `<div class="reset"><button class="btn" id="bReset">Tout recommencer</button><small id="resetMsg"></small></div>` : ""}`;
+  document.querySelectorAll("[data-erase]").forEach(b => b.onclick = () => {
+    const i = +b.dataset.erase;
+    if (b.dataset.armed !== "1"){
+      b.dataset.armed = "1"; b.classList.add("armed"); b.textContent = `Oui, effacer la compétence ${i+1}`;
+      clearTimeout(b._t); b._t = setTimeout(() => { if (b.isConnected){ b.dataset.armed = ""; b.classList.remove("armed"); b.textContent = `Effacer la compétence ${i+1}`; } }, 6000);
+      return;
+    }
+    S.sel[i] = null; S.entry[i] = null; S.prep[i] = {}; S.step[i] = 0; save(); renderHome();
+  });
   if ($("bReset")) $("bReset").onclick = () => {
     const b = $("bReset");
     if (b.dataset.armed !== "1"){
@@ -562,35 +603,60 @@ function renderHome(){
    ÉTAPE 1 : COMPRENDRE LA CONSIGNE
    ===================================================================== */
 let mi = 0;
+let lp = 0;
+const LEARN = [
+  {h:"Le TP5 en bref", html:`
+    <div class="card"><p class="big-rule">À l'examen, vous parlez <em>10 minutes</em> de votre travail à l'Espace Entreprise.</p></div>
+    <div class="two"><div><b>Compétence 1</b><span>5 min</span></div><div><b>Compétence 2</b><span>5 min</span></div></div>
+    <div class="card"><p class="say">C'est <b>vous</b> qui choisissez les 2 compétences, avant l'examen.</p></div>`},
+  {h:"Une compétence, 4 parties", html:`
+    <div class="card">
+      <div class="min-bar"><span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span></div>
+      <dl class="parts">
+        <div><dt>Pourquoi</dt><dd>Pourquoi vous avez choisi cette compétence.</dd></div>
+        <div><dt>Situation</dt><dd>Une mission que vous avez faite.</dd></div>
+        <div><dt>Analyse</dt><dd>Ce qui était difficile, ce qui a marché, ce que vous changeriez.</dd></div>
+        <div><dt>Et si…</dt><dd>Ce que vous auriez fait si c'était différent.</dd></div>
+      </dl>
+    </div>
+    <div class="card"><p class="say">Le même schéma, pour chacune des 2 compétences.</p></div>`},
+  {h:"La règle d'or", html:`
+    <div class="card rule-card"><p class="big-rule">Une mission <em>vraiment faite</em>, et <em>réussie</em>.</p></div>
+    <ul class="yesno">
+      <li class="y"><span>Une mission précise : un lieu, un moment, ce que <b>vous</b> avez fait</span></li>
+      <li class="y"><span>Un défi relevé : il y avait une difficulté, et vous vous en êtes sorti·e</span></li>
+      <li class="n"><span>Pas un échec</span></li>
+      <li class="n"><span>Pas « d'habitude je fais… » : une seule fois, racontée</span></li>
+    </ul>`},
+  {h:"Ce que les expert·e·s regardent", html:`
+    <div class="card"><ul class="crit">
+      <li>Pourquoi ce choix, et une situation claire</li>
+      <li>Ce qui était difficile, ce qui a marché, ce que vous changeriez</li>
+      <li>Ce que vous feriez si c'était différent</li>
+    </ul></div>
+    <div class="card next-steps"><h2>Et maintenant, on prépare</h2>
+      <ol>
+        <li style="${'${svars(1)}'}"><b>Étape 2</b> Ma compétence 1</li>
+        <li style="${'${svars(2)}'}"><b>Étape 3</b> Ma compétence 2</li>
+        <li class="end"><b>À la fin</b> Mon speech, en PDF</li>
+      </ol>
+    </div>`}
+];
 function renderLearn(){
   backHome();
+  lp = Math.max(0, Math.min(LEARN.length - 1, lp));
+  const L = LEARN[lp], last = lp === LEARN.length - 1;
   $("s-learn").innerHTML = `
-    <div class="head"><div class="k">Étape 1</div><h1>Comprendre la consigne</h1></div>
-    <div class="card rule-card">
-      <p class="big-rule">Racontez <em>une mission que vous avez vraiment faite</em>, et réussie, sous l'angle d'<em>une compétence</em>.</p>
-    </div>
-    <div class="card">
-      <h2>5 minutes par compétence</h2>
-      <div class="min-bar">
-        <span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span>
-      </div>
-    </div>
-    <div class="card">
-      <h2>Une mission, plusieurs angles</h2>
-      <div class="missions" id="missions"></div>
-      <div class="angles" id="angles"></div>
-    </div>
-    <div class="card">
-      <h2>Ce que les expert·e·s regardent</h2>
-      <ul class="crit">
-        <li>Pourquoi ce choix, et une situation claire</li>
-        <li>Ce qui était difficile, ce qui a marché, ce que vous changeriez</li>
-        <li>Ce que vous feriez si c'était différent</li>
-      </ul>
-    </div>
-    <div class="nav"><button class="btn solid" id="learnOk">C'est clair &rarr;</button></div>`;
-  renderMissions();
-  $("learnOk").onclick = () => { S.learned = true; save(); go("co1"); };
+    <div class="head"><div class="k">Étape 1 · La théorie</div><h1>${L.h}</h1>
+      <div class="prog">${LEARN.map((_,j) => `<i class="${j<lp?"done":j===lp?"on":""}"></i>`).join("")}</div></div>
+    ${L.html.replace(/\$\{svars\((\d)\)\}/g, (_,n) => svars(+n))}
+    <div class="nav">${lp>0?`<button class="btn" id="lPrev" aria-label="Précédent">&larr;</button>`:""}
+      <button class="btn solid" id="lNext">${last ? "Commencer la préparation" : "Suivant"} &rarr;</button></div>`;
+  if ($("lPrev")) $("lPrev").onclick = () => { lp--; renderLearn(); window.scrollTo(0,0); };
+  $("lNext").onclick = () => {
+    if (!last){ lp++; renderLearn(); window.scrollTo(0,0); return; }
+    S.learned = true; save(); lp = 0; go("co1");
+  };
 }
 function renderMissions(){
   $("missions").innerHTML = MISSIONS.slice(0,4).map((x,i) => `<button class="${i===mi?"on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
@@ -640,7 +706,10 @@ function renderCo(){
   }
   else if (kind === "pick"){
     if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
-    h += `<p class="tip" style="margin-top:0">Touchez une compétence.</p>` + damier();
+    h += `<details class="card angles-help"><summary>Une même mission, plusieurs compétences : voir un exemple</summary>
+      <p style="margin:8px 0 4px">C'est l'angle qui change : ce que vous mettez en avant.</p>
+      <div class="missions" id="missions"></div><div class="angles" id="angles"></div></details>
+      <p class="tip" style="margin-top:0">Touchez une compétence.</p>` + damier();
   }
   else if (kind === "mission"){
     h += `${k ? "" : `<p class="tip" style="margin-top:0">Une mission vraiment faite, et réussie.</p>`}
@@ -688,6 +757,7 @@ function renderCo(){
   });
   $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
   $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
+  if ($("missions")) renderMissions();
   const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
   if ($("bPrev")) $("bPrev").onclick = () => move(-1);
   if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
