@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mon TP5 (test)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='22' rx='5' fill='%231F2A44'/%3E%3Crect x='7' y='12' width='8' height='4' rx='2' fill='%232F6CC4'/%3E%3Crect x='13' y='18' width='12' height='4' rx='2' fill='%23C43E57'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/app.css">
+<script src="../assets/konvink.js"></script>
+<script>
+/* Même thème que le site (choisi sur l'accueil, mémorisé sur l'appareil) */
+(function(){
+  var r = document.documentElement;
+  try{ var k = localStorage.getItem("mp-theme"); if (k) r.dataset.skin = k; }catch(e){}
+  try{ var p = JSON.parse(localStorage.getItem("mp-prefs") || "{}") || {};
+       ["big","plain","still"].forEach(function(x){ if (p[x]) r.setAttribute("data-"+x, ""); }); }catch(e){}
+})();
+</script>
+<style>
+:root{ --c:#2F6CC4; --on-c:#fff; --ok:#2E8558; }
+body{padding-bottom:48px}
+.wrap.narrow{max-width:680px}
+[hidden]{display:none !important}
+.btn.solid:hover{background:var(--ink); color:var(--sheet); opacity:.88}
+
+/* Barre du haut */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:14px; min-height:44px}
+.bar a,.bar button.link{font:inherit; font-weight:700; text-decoration:none; color:var(--ink-soft); font-size:15px; background:none; border:0; padding:0; cursor:pointer}
+.bar a:hover,.bar button.link:hover{color:var(--ink)}
+.save-state{font-size:12.5px; color:var(--ink-soft)}
+
+/* Étiquettes de source */
+.tag-off,.tag-no{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:999px; padding:1px 7px; vertical-align:2px; margin-left:4px; white-space:nowrap}
+.tag-off{background:var(--ink); color:var(--sheet)}
+.tag-no{border:1.5px dashed var(--ink-soft); color:var(--ink-soft)}
+
+/* Accueil du coach */
+.intro h1{font-family:var(--head); font-weight:800; font-size:clamp(30px,8vw,44px); line-height:1.02; letter-spacing:-.02em; margin:18px 0 8px}
+.intro p{margin:0 0 18px; font-size:18px; color:var(--ink-soft)}
+.intro p b{color:var(--ink)}
+
+.path{list-style:none; padding:0; margin:0 0 22px; position:relative}
+.path li{position:relative; padding-left:62px; margin:0 0 12px}
+.path li::before{content:""; position:absolute; left:23px; top:46px; bottom:-14px; width:3px; background:var(--line); border-radius:2px}
+.path li:last-child::before{display:none}
+.path li.done::before{background:var(--ok)}
+.path .dot{position:absolute; left:0; top:8px; width:48px; height:48px; border-radius:50%; display:grid; place-items:center;
+  font-family:var(--head); font-weight:800; font-size:22px; background:var(--sheet); border:3px solid var(--line); color:var(--ink-soft); z-index:1}
+.path li.now .dot{border-color:var(--ink); color:var(--ink)}
+.path li.done .dot{background:var(--ok); border-color:var(--ok); color:#fff}
+.stage{display:block; width:100%; text-align:left; font:inherit; color:var(--ink); background:var(--sheet); border:2px solid var(--line);
+  border-radius:var(--radius-sm); padding:14px 16px; cursor:pointer; text-decoration:none}
+.stage:hover{border-color:var(--ink)}
+.path li.now .stage{border:3px solid var(--ink); box-shadow:5px 5px 0 var(--bubble)}
+.stage .st{display:block; font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.path li.now .stage .st{color:var(--bubble)}
+.path li.done .stage .st{color:var(--ok)}
+.stage b{display:block; font-family:var(--head); font-weight:800; font-size:21px; line-height:1.15; margin:2px 0 3px}
+.stage small{display:block; font-size:15px; color:var(--ink-soft); line-height:1.35}
+.stage .co-pill{display:inline-block; font-family:var(--head); font-weight:800; font-size:14px; background:var(--c); color:var(--on-c); border-radius:6px; padding:0 7px; margin-right:6px}
+
+.result{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:var(--sheet); border:2px dashed var(--line); border-radius:var(--radius-sm); padding:12px 16px; margin:0 0 22px}
+.result b{font-family:var(--head); font-size:17px}
+.result small{display:block; color:var(--ink-soft); font-size:14px}
+
+.links h2{font-family:var(--head); font-size:15px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:0 0 8px}
+.links ul{list-style:none; padding:0; margin:0; display:grid; gap:8px}
+.links a{display:flex; justify-content:space-between; gap:10px; text-decoration:none; font-weight:700; background:var(--sheet); border:1.5px solid var(--line); border-radius:10px; padding:11px 14px}
+.links a:hover{border-color:var(--ink)}
+.links a span{font-weight:400; color:var(--ink-soft); font-size:14px}
+
+/* Écrans d'étape */
+.head{margin:10px 0 14px}
+.head .k{font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.head h1{font-family:var(--head); font-weight:800; font-size:clamp(26px,7vw,34px); line-height:1.08; margin:2px 0 0; letter-spacing:-.01em}
+.prog{display:flex; gap:5px; margin:10px 0 0}
+.prog i{flex:1; height:6px; border-radius:3px; background:var(--line)}
+.prog i.on{background:var(--ink)}
+.prog i.done{background:var(--ok)}
+
+.card{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; margin:0 0 12px}
+.card h2{font-family:var(--head); font-weight:800; font-size:20px; margin:0 0 6px; line-height:1.2}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.big-rule{font-family:var(--head); font-weight:800; font-size:22px; line-height:1.25; margin:0 0 6px}
+.big-rule em{font-style:normal; background:linear-gradient(transparent 60%, color-mix(in srgb,var(--bubble) 30%, transparent) 60%)}
+
+.min-bar{display:flex; gap:3px; border-radius:10px; overflow:hidden; margin:8px 0 4px}
+.min-bar span{flex:var(--m) 1 0; background:var(--ink); color:var(--sheet); text-align:center; padding:8px 2px; font-size:13px; font-weight:700; line-height:1.15}
+.min-bar span small{display:block; font-weight:400; opacity:.85}
+.min-bar span:last-child{background:repeating-linear-gradient(135deg,var(--ink) 0 6px, color-mix(in srgb,var(--ink) 75%, var(--sheet)) 6px 12px)}
+.note-s{font-size:14px; color:var(--ink-soft); margin:4px 0 0}
+
+.crit{list-style:none; padding:0; margin:6px 0 0; display:grid; gap:6px}
+.crit li{display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start; font-size:15.5px}
+.crit b{font-family:var(--head); font-size:20px; text-align:center; background:var(--paper); border-radius:8px; padding:2px 0}
+
+.missions{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px}
+.missions button{font:inherit; font-size:14.5px; font-weight:700; color:var(--ink); background:var(--paper); border:2px solid var(--line); border-radius:999px; padding:6px 12px; cursor:pointer}
+.missions button.on{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.angles{display:grid; gap:8px}
+.angle{border:1.5px solid var(--line); border-left:7px solid var(--c); border-radius:8px; padding:9px 12px; font-size:15.5px}
+.angle b{font-family:var(--head)}
+.angle q{display:block; font-style:italic; margin-top:3px; color:var(--ink-soft)}
+
+/* Choix d'entrée */
+.doors{display:grid; gap:10px; margin:4px 0 12px}
+.door{display:block; text-align:left; font:inherit; color:var(--ink); background:var(--sheet); border:2.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; cursor:pointer}
+.door:hover,.door:focus-visible{border-color:var(--ink)}
+.door b{display:block; font-family:var(--head); font-weight:800; font-size:20px}
+.door small{display:block; color:var(--ink-soft); font-size:15px; margin-top:2px}
+
+/* Damier */
+.reminder{background:var(--paper); border-left:4px solid var(--ink); border-radius:0 8px 8px 0; padding:9px 12px; margin:0 0 12px; font-size:15.5px}
+.reminder b{display:block; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft)}
+.dco{margin:0 0 14px}
+.dco h3{font-family:var(--head); font-size:16px; margin:0 0 6px; display:flex; gap:8px; align-items:center; line-height:1.2}
+.dco h3 i{font-style:normal; width:28px; height:28px; border-radius:7px; background:var(--c); color:var(--on-c); display:grid; place-items:center; font-weight:800; flex:none}
+.dco h3 a{margin-left:auto; font-family:var(--body); font-size:13px; font-weight:700; color:var(--ink-soft); white-space:nowrap}
+.tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:8px}
+.tile{font:inherit; text-align:left; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-top:6px solid var(--c); border-radius:10px; padding:8px 10px 10px; cursor:pointer; min-height:88px; position:relative}
+.tile:hover{border-color:var(--c)}
+.tile b{display:block; font-family:var(--head); font-weight:800; font-size:20px; line-height:1}
+.tile span{display:block; font-size:13.5px; line-height:1.3; margin-top:4px}
+.tile.sel{background:var(--c); color:var(--on-c)}
+.tile.taken{opacity:.5}
+.tile em{display:block; font-style:normal; font-size:12px; font-weight:700; margin-top:4px}
+.tile.off{border-style:dashed; border-top:6px dashed var(--line); color:var(--ink-soft); cursor:default; background:transparent}
+
+/* Fiche compétence */
+dialog.sheet{border:0; padding:0; width:min(640px,100vw); max-width:100vw; max-height:90vh; margin:auto auto 0; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--sheet); color:var(--ink)}
+@media (min-width:700px){ dialog.sheet{margin:auto; border-radius:var(--radius-lg)} }
+dialog.sheet::backdrop{background:rgba(10,14,28,.55)}
+.sheet-head{background:var(--c); color:var(--on-c); padding:14px 18px 12px; position:sticky; top:0}
+.sheet-head .x{position:absolute; top:10px; right:10px; font:inherit; font-size:15px; font-weight:700; border:2px solid currentColor; color:inherit; background:transparent; border-radius:999px; padding:4px 12px; cursor:pointer}
+.sheet-head .code{font-family:var(--head); font-weight:800; font-size:28px; line-height:1}
+.sheet-head h3{font-family:var(--head); font-weight:800; font-size:19px; line-height:1.2; margin:4px 70px 0 0}
+.sheet-body{padding:12px 18px 18px}
+.sheet-body h4{font-family:var(--head); font-size:15.5px; margin:12px 0 3px}
+.sheet-body p,.sheet-body ul{margin:0 0 6px}
+.sheet-body ul{padding-left:20px}
+.sheet-body details{border:1.5px solid var(--line); border-radius:8px; padding:8px 12px; margin:10px 0}
+.sheet-body summary{cursor:pointer; font-weight:700}
+.sheet-acts{display:grid; gap:8px; margin-top:14px}
+.sheet-acts .btn{justify-content:center; white-space:normal; text-align:center}
+
+/* Questions */
+.field{margin:0 0 16px}
+.field label{display:block; font-weight:700; margin:0 0 5px; font-size:17px; line-height:1.3}
+.field textarea{width:100%; font:inherit; font-size:16px; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-radius:10px; padding:10px 12px; min-height:84px; resize:vertical}
+.field textarea:focus{outline:none; border-color:var(--ink)}
+.starters{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 0}
+.starters button{font:inherit; font-size:14px; color:var(--ink); background:var(--paper); border:1.5px solid var(--line); border-radius:999px; padding:4px 11px; cursor:pointer}
+.starters button:hover{border-color:var(--ink)}
+.tip{font-size:15px; color:var(--ink-soft); margin:-4px 0 14px}
+.ifs{display:grid; gap:6px; margin:0 0 14px}
+.ifs label{display:flex; gap:10px; align-items:flex-start; border:2px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; background:var(--sheet); font-size:16px}
+.ifs input{width:20px; height:20px; accent-color:var(--ink); margin:2px 0 0; flex:none}
+.ifs label:has(input:checked){border-color:var(--ink)}
+.nav{display:flex; justify-content:space-between; gap:10px; margin:6px 0 0; position:sticky; bottom:0; padding:10px 0 12px; background:linear-gradient(transparent, var(--paper) 30%)}
+.nav .btn{padding:13px 20px; font-size:16px}
+.nav .btn.solid{flex:1; justify-content:center; max-width:320px; margin-left:auto}
+
+/* Mon speech */
+.speech{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; margin:0 0 14px}
+.speech h2{font-family:var(--head); font-weight:800; font-size:20px; margin:0 0 8px; display:flex; gap:8px; align-items:baseline; line-height:1.2}
+.speech h2 i{font-style:normal; background:var(--c); color:var(--on-c); border-radius:6px; padding:0 8px; flex:none}
+.sp{border-top:1.5px dashed var(--line); padding:8px 0 6px}
+.sp h3{font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:0 0 2px}
+.sp p{margin:0 0 4px; white-space:pre-wrap; font-size:16.5px}
+.sp .empty{color:var(--alert); font-style:italic}
+.done-box{text-align:center; padding:18px 10px 6px}
+.done-box b{display:block; font-family:var(--head); font-weight:800; font-size:26px}
+.actions-col{display:grid; gap:8px; margin:10px 0 0}
+.actions-col .btn{justify-content:center}
+
+.foot-src{font-size:13px; color:var(--ink-soft); margin-top:24px}
+
+
+/* ---- v2 : couleurs par étape, en-têtes pleins ---- */
+.intro p{font-size:19px; color:var(--ink)}
+.path li .dot{border-color:var(--s); color:var(--s)}
+.path li.now .dot, .path li.done .dot{background:var(--s); border-color:var(--s); color:var(--on-s)}
+.path li.done::before{background:var(--s)}
+.path .stage{border-left:10px solid var(--s)}
+.path li.now .stage{border:3px solid var(--s); border-left-width:10px; box-shadow:5px 5px 0 var(--s)}
+.path .stage .st, .path li.now .stage .st, .path li.done .stage .st{color:var(--s)}
+button.result{width:100%; font:inherit; color:var(--ink); cursor:pointer; text-align:left; border-style:solid}
+button.result:hover{border-color:var(--ink)}
+button.result span{font-weight:700}
+.links ul{gap:6px}
+.head{background:var(--s); color:var(--on-s); border-radius:var(--radius-sm); padding:14px 16px 14px; margin:10px 0 14px}
+.head .k{color:inherit; opacity:.85; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.chip-min{background:var(--on-s); color:var(--s); border-radius:999px; padding:0 9px; font-size:12.5px; letter-spacing:0; text-transform:none; opacity:1}
+.head .prog i{background:color-mix(in srgb, var(--on-s) 30%, transparent)}
+.head .prog i.on{background:var(--on-s)}
+.head .prog i.done{background:color-mix(in srgb, var(--on-s) 70%, transparent)}
+.nav .btn.solid, .actions-col .btn.solid{background:var(--s); border-color:var(--s); color:var(--on-s)}
+.card h2{display:flex; align-items:center; gap:8px}
+.card h2::before{content:""; width:10px; height:10px; border-radius:50%; background:var(--s); flex:none}
+.rule-card{border:3px solid var(--s)}
+.big-rule em{background:linear-gradient(transparent 58%, color-mix(in srgb,var(--s) 35%, transparent) 58%)}
+.min-bar span{background:var(--s); color:var(--on-s)}
+.min-bar span:last-child{background:repeating-linear-gradient(135deg,var(--s) 0 6px, color-mix(in srgb,var(--s) 70%, var(--sheet)) 6px 12px)}
+.crit{counter-reset:k}
+.crit li{display:flex; gap:10px; align-items:baseline; counter-increment:k; font-size:16.5px}
+.crit li::before{content:counter(k); flex:none; width:26px; height:26px; border-radius:50%; background:var(--s); color:var(--on-s); display:grid; place-items:center; font-weight:800; font-size:14px; transform:translateY(5px)}
+.reminder{border-left-color:var(--s)}
+.door{border-left:8px solid var(--s)}
+.door:hover,.door:focus-visible{border-color:var(--s)}
+.field textarea:focus{border-color:var(--s)}
+.tips{list-style:none; padding:0; margin:0 0 12px; display:grid; gap:8px; counter-reset:t}
+.tips li{counter-increment:t; display:grid; grid-template-columns:34px 1fr; column-gap:12px; background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px}
+.tips li::before{content:counter(t); grid-row:span 2; width:34px; height:34px; border-radius:50%; background:var(--ink); color:var(--sheet); display:grid; place-items:center; font-family:var(--head); font-weight:800}
+.tips b{font-family:var(--head); font-size:18px}
+.tips span{color:var(--ink-soft); font-size:15.5px}
+.reset{margin:22px 0 0; text-align:center}
+.reset .btn{border-color:var(--line); color:var(--ink-soft); font-size:14px; padding:8px 16px}
+.reset .btn:hover{border-color:var(--ink); background:transparent; color:var(--ink)}
+.reset .btn.armed{border-color:var(--alert); background:var(--alert); color:#fff}
+.reset small{display:block; margin-top:6px; font-size:13.5px; color:var(--alert)}
+@media print{
+  body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .screen,.bar,.foot-src,dialog{display:none !important}
+  #s-speech{display:block !important}
+  #s-speech .no-print{display:none !important}
+  .speech{border:1px solid #999; break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+  <div class="bar">
+    <a href="../index.html" id="barBack">&larr; Mon parcours PQual</a>
+    <span class="save-state" id="saveState">Enregistré sur cet appareil</span>
+  </div>
+
+  <section class="screen" id="s-home"></section>
+  <section class="screen" id="s-learn" hidden></section>
+  <section class="screen" id="s-co" hidden></section>
+  <section class="screen" id="s-speech" hidden></section>
+  <section class="screen" id="s-tips" hidden></section>
+
+  <p class="foot-src" id="footSrc" hidden>Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26) et plan de formation employé·e de commerce CFC. Ce qui est marqué est une aide de l'Espace Entreprise. Vos réponses restent sur cet appareil.</p>
+</div>
+
+<dialog class="sheet" id="sheet"></dialog>
+
+<script>
+const DCO = {
+  A:"Travail au sein de structures d'activité et d'organisation dynamiques",
+  B:"Interaction dans un milieu de travail interconnecté",
+  C:"Coordination des processus de travail en entreprise",
+  D:"Gestion des relations avec les clients et les fournisseurs",
+  E:"Utilisation des technologies numériques du monde du travail"
+};
+/* Compétences liées aux options : non sélectionnables pour le TP5 */
+const OFF = {
+  c6:"Exécuter des travaux de comptabilité financière",
+  d5:"Situations exigeantes dans la langue nationale",
+  d6:"Situations exigeantes dans la langue étrangère",
+  e5:"Mettre en place et gérer des technologies",
+  e6:"Évaluer de grandes quantités de données"
+};
+/* t  = intitulé officiel (profil de qualification)
+   off = situation de travail du plan de formation (officiel)
+   bref, angle, ex = aides de l'Espace Entreprise (non officiel)
+   easy = facile à illustrer à l'Espace Entreprise (non officiel) */
+const CO = {
+a1:{t:"Examiner et développer des compétences commerciales", easy:0,
+ bref:"Faire le point sur ce que vous savez faire, et vous fixer des objectifs pour progresser.",
+ angle:"Votre propre progression : un bilan, un objectif que vous vous êtes fixé, ce que vous avez changé.",
+ ex:["Préparer et mener votre entretien de bilan de stage","Vous fixer un objectif précis (ex. des courriels sans fautes) et l'atteindre","Demander un retour et changer votre façon de travailler"],
+ off:"Les employés de commerce s'informent sur les possibilités de développement dans leur champ professionnel. Ils procèdent régulièrement à un bilan personnel et, en concertation avec leur supérieur hiérarchique, définissent des mesures pour continuer à développer leurs compétences professionnelles."},
+a2:{t:"Développer et utiliser des réseaux propres au domaine commercial", easy:0,
+ bref:"Créer des contacts utiles et s'en servir pour avancer dans son travail.",
+ angle:"Les personnes que vous avez contactées, et ce que ce contact vous a permis d'obtenir.",
+ ex:["Trouver la bonne personne dans une autre équipe pour débloquer un dossier","Reprendre contact avec quelqu'un d'un ancien stage pour une information","Vous présenter et créer un contact lors d'un événement"],
+ off:"Les employés de commerce développent un réseau spécifique à leur profession et entretiennent leurs contacts avec d'autres professionnels par le biais de divers canaux. Ils utilisent leurs contacts pour se présenter lors de mandats, obtenir des informations pertinentes et échanger sur leurs expériences."},
+a3:{t:"Recevoir et exécuter des mandats propres au domaine commercial", easy:1,
+ bref:"Recevoir une demande, la comprendre, la réaliser et livrer un résultat qui satisfait.",
+ angle:"Le chemin du mandat : comprendre la demande, planifier, livrer, recevoir le retour.",
+ ex:["Un mandat reçu de votre formateur, avec un délai serré","Une demande floue que vous avez fait préciser avant de commencer","Un travail rendu, corrigé après un retour, puis validé"],
+ off:"Les employés de commerce vendent leur profil de compétence dans des situations de concurrence interne et externe pour des mandats propres au domaine commercial. Ils fournissent des services conformément aux mandats qui leur ont été confiés et vérifient la bonne exécution du mandat à la satisfaction du client. Les employés de commerce réfléchissent à leur réussite, analysent leurs actions et en déduisent des mesures d'amélioration."},
+a4:{t:"Agir de manière responsable dans la société", easy:0,
+ bref:"Faire des choix réfléchis et responsables, pour soi et pour l'entreprise.",
+ angle:"Un choix responsable que vous avez fait au travail, et son effet.",
+ ex:["Proposer un geste durable au bureau (papier, énergie, tri)","Refuser ou signaler une demande qui vous semblait incorrecte","Tenir compte de l'égalité ou de l'inclusion dans un document"],
+ off:"Les employés de commerce agissent de manière responsable sur le plan personnel et dans la société. Ils planifient leurs actions consciemment et en tirent des conclusions pour eux-mêmes et leurs activités en tant qu'employés de commerce. En outre, les employés de commerce construisent leur identité de manière réfléchie et analysent son impact sur la société et l'entreprise."},
+a5:{t:"Intégrer des questions politiques et une approche culturelle dans ses actions", easy:0,
+ bref:"Tenir compte des valeurs, de la politique et de la culture dans son travail.",
+ angle:"Une situation où une question de valeurs, de culture ou d'actualité politique a influencé ce que vous avez fait.",
+ ex:["Adapter une communication à un public d'une autre culture","Défendre un point de vue avec des arguments dans un débat d'équipe","Participer à un projet culturel ou sportif"],
+ off:"Les employés de commerce analysent les questions politiques actuelles ainsi que les intérêts et les valeurs des parties prenantes. Ils développent leurs attitudes et leurs valeurs pour créer leur propre cadre de référence éthique. Ils exercent leurs droits politiques et incluent les questions politiques pertinentes dans leurs actions en tant qu'employés de commerce. En outre, les employés de commerce développent et élargissent leurs propres formes de création et d'expression. Ils en tirent des conclusions pour eux-mêmes et pour leurs actions en tant qu'employés de commerce."},
+b1:{t:"Collaborer et communiquer dans différentes équipes", easy:1,
+ bref:"Bien travailler avec les autres, même quand l'équipe change ou que ça coince.",
+ angle:"Comment vous avez travaillé avec l'équipe : vous intégrer, respecter les règles, régler une tension.",
+ ex:["Vous intégrer dans une nouvelle équipe au début d'un stage","Régler un désaccord sur la répartition des tâches","Travailler avec un·e collègue dans une autre langue"],
+ off:"Les employés de commerce exercent leurs activités dans des constellations d'équipes changeantes. Ils communiquent dans la langue nationale de la région, en anglais ou dans une deuxième langue nationale. Les employés de commerce s'informent des coutumes propres à d'autres cultures et en tiennent compte dans leurs activités de coopération et de communication. Ils respectent à tout moment les directives, les accords et les délais et prennent des mesures en temps utile en cas d'écarts."},
+b2:{t:"Coordonner les interfaces dans les processus en entreprise", easy:0,
+ bref:"Faire le lien entre deux équipes ou services pour que l'information passe bien.",
+ angle:"Le passage d'une information ou d'un travail entre deux équipes, et comment vous avez évité le malentendu.",
+ ex:["Transmettre une demande d'une équipe à une autre","Expliquer simplement un document technique à quelqu'un","Proposer une meilleure façon de se passer les dossiers"],
+ off:"Les employés de commerce font le lien au niveau des interfaces entre divers domaines de fonctions et groupes d'intérêts et intègrent les différents intérêts des acteurs impliqués dans leur travail. Ils coordonnent les interfaces avec des outils propres au domaine commercial, traduisent des contenus techniques et spécialisés exigeants en informations adaptées au public cible et documentent les activités correspondantes. Ils font des suggestions d'amélioration aux services compétents."},
+b3:{t:"Participer aux discussions économiques", easy:0,
+ bref:"Discuter d'un sujet économique et comprendre son effet sur l'entreprise.",
+ angle:"Un sujet économique dont vous avez parlé, comment vous vous êtes informé·e, et ce que ça change pour l'entreprise.",
+ ex:["La hausse des prix d'un fournisseur et ce qu'elle change","Présenter une actualité économique à l'équipe","Argumenter votre avis en séance, sources à l'appui"],
+ off:"Les employés de commerce discutent de sujets économiques avec leurs collègues en tenant compte notamment des questions d'éthique, de morale, de technologie, d'écologie, de durabilité et de droit. En cas d'incertitude, ils font des recherches sur Internet et remettent en question le sérieux et la qualité de leurs résultats. Les employés de commerce réfléchissent aux développements actuels de la politique économique et à leur impact sur le secteur économique et sur l'entreprise dans laquelle ils travaillent. Ils expliquent également les intérêts spécifiques de l'entreprise aux différents groupes d'intérêts."},
+b4:{t:"Exécuter des tâches de gestion de projets propres au domaine commercial et traiter des projets partiels", easy:1,
+ bref:"Prendre en charge une partie d'un projet : planning, budget, suivi.",
+ angle:"Votre rôle dans un projet : ce que vous avez planifié, suivi, et comment vous avez réagi à un retard.",
+ ex:["Une partie d'un projet d'équipe avec un calendrier","Tenir un tableau de suivi des tâches","Signaler un retard et proposer une solution"],
+ off:"Les employés de commerce traitent des petits lots de travail et des projets partiels. Ils créent et gèrent des environnements de travail, élaborent des calendriers et coordonnent la collaboration des acteurs impliqués. Les employés de commerce surveillent le déroulement du projet et informent la direction du projet et les autres personnes concernées en cas d'écarts."},
+b5:{t:"Participer à la réalisation de processus de changement en entreprise", easy:0,
+ bref:"Accompagner un changement dans l'entreprise et y contribuer.",
+ angle:"Un changement (outil, procédure, organisation) : comment vous l'avez vécu, aidé, amélioré.",
+ ex:["Le passage à un nouvel outil ou logiciel","Une nouvelle procédure à appliquer dans l'équipe","Une idée d'amélioration que vous avez proposée"],
+ off:"Les employés de commerce s'informent sur les processus de changement en entreprise et leur signification pour leur domaine d'activité. Ils analysent les effets sur leur environnement de travail, soumettent des idées de mise en œuvre et mettent en œuvre les changements selon les instructions de leur supérieur."},
+c1:{t:"Planifier, coordonner et optimiser des tâches et des ressources dans un environnement de travail commercial", easy:1,
+ bref:"Organiser son travail, gérer les priorités, organiser un événement.",
+ angle:"Comment vous avez organisé le travail : priorités, temps, ressources, événement.",
+ ex:["Une journée chargée que vous avez réussi à prioriser","Organiser un événement interne (séance, apéro, visite)","Revoir votre planning après un imprévu"],
+ off:"Les employés de commerce planifient et coordonnent des tâches et les ressources. Ils recherchent des informations et veillent à ce que les ressources soient utilisées efficacement. Ils participent à l'organisation d'événements internes et externes et mettent en œuvre des mesures respectueuses de l'environnement. Les employés de commerce vérifient leur capacité d'organisation, leur gestion du temps, leurs techniques de travail et l'utilisation de leurs ressources personnelles et de l'entreprise et en déduisent des mesures d'optimisation."},
+c2:{t:"Coordonner et mettre en œuvre des processus de soutien propres au domaine commercial", easy:1,
+ bref:"Les tâches administratives qui font tourner le service : documents, agenda, procès-verbal, classement.",
+ angle:"Un travail administratif que vous avez bien fait, et pourquoi il a aidé l'équipe.",
+ ex:["Rédiger le procès-verbal d'une séance","Gérer un agenda et des rendez-vous","Réorganiser un classement ou un archivage"],
+ off:"Les employés de commerce créent divers documents pour soutenir les processus administratifs, gèrent les rendez-vous et organisent le classement. Ils interprètent les documents administratifs et liés au personnel et répondent aux demandes de renseignements à ce sujet. Les employés de commerce réfléchissent à leurs activités de soutien et suggèrent les mesures nécessaires."},
+c3:{t:"Documenter, coordonner et mettre en œuvre des processus en entreprise", easy:0,
+ bref:"Décrire une procédure, l'appliquer, l'expliquer aux autres et l'améliorer.",
+ angle:"Une procédure : comment vous l'avez décrite, appliquée ou expliquée, et ce que vous avez amélioré.",
+ ex:["Rédiger un mode d'emploi pour un·e nouvel·le apprenti·e","Dessiner le schéma d'une procédure","Former un·e collègue à une tâche"],
+ off:"Les employés de commerce élaborent des documents et des calendriers pour des processus en entreprise. Ils exécutent les tâches du processus avec les outils spécifiés, en tenant compte des exigences de la sécurité au travail, de la protection de la santé et de la durabilité, et instruisent les employés. Les employés de commerce analysent les problèmes dans les flux de processus et élaborent des suggestions d'amélioration."},
+c4:{t:"Mettre en œuvre des activités de marketing et de communication", easy:1,
+ bref:"Communiquer vers un public : choisir le message, le support et le canal.",
+ angle:"Une action de communication : pour qui, quel message, quel canal, quel résultat.",
+ ex:["Une publication pour un réseau social ou une infolettre","Une affiche ou un flyer pour un événement","Un envoi d'information à des client·e·s"],
+ off:"Les employés de commerce communiquent avec des groupes d'intérêts internes et externes conformément au concept d'information et de communication de l'entreprise dans la langue nationale de la région et dans une langue étrangère, réfléchissent à leur comportement en matière de communication et en déduisent des mesures d'amélioration. Ils se tiennent également informés des développements dans le domaine de la communication, en tirent des idées pour des innovations dans l'entreprise et testent de nouveaux moyens et formes de communication. Ils soutiennent également les activités de marketing et de communication."},
+c5:{t:"Assurer le suivi et le contrôle d'opérations financières", easy:0,
+ bref:"Budgets, factures, décomptes : préparer, contrôler, corriger.",
+ angle:"Une tâche avec des chiffres : ce que vous avez préparé ou contrôlé, et l'erreur que vous avez évitée.",
+ ex:["Établir une facture","Préparer le budget d'un événement","Contrôler des notes de frais et corriger une erreur"],
+ off:"Les employés de commerce préparent des budgets pour des événements, des projets partiels et autres mandats ainsi que des décomptes de frais et recettes effectifs. Ils vérifient les écarts et proposent des mesures en temps opportun au service compétent. Ils établissent des factures et agissent en tenant compte des coûts. Ils vérifient les opérations financières dans leur domaine de travail et les corrigent si nécessaire en concertation avec leur supérieur hiérarchique."},
+d1:{t:"Prendre en compte les besoins des clients et des fournisseurs", easy:1,
+ bref:"Comprendre ce que veut un·e client·e ou un fournisseur, répondre et transmettre.",
+ angle:"Une demande reçue : comment vous avez compris le besoin et fait en sorte que l'information arrive au bon endroit.",
+ ex:["Un appel téléphonique transmis au bon service","Un courriel en attente que vous avez traité","L'accueil d'un·e visiteur·euse"],
+ off:"Les employés de commerce communiquent avec les clients et les fournisseurs dans la langue nationale de la région ou dans une langue étrangère. Ils répondent à leurs demandes, prennent note de leurs besoins, les transmettent si nécessaire au service compétent et assurent le flux d'informations."},
+d2:{t:"Mener des entretiens d'information et de conseil avec des clients et des fournisseurs", easy:0,
+ bref:"Conseiller quelqu'un : comprendre son besoin et proposer une solution adaptée.",
+ angle:"Un entretien de conseil : ce que vous avez demandé, proposé, et comment vous avez répondu à une objection.",
+ ex:["Conseiller un·e client·e sur une prestation","Demander des informations précises à un fournisseur","Répondre à une personne qui n'était pas convaincue"],
+ off:"Les employés de commerce mènent des entretiens de conseil avec des clients et des entretiens d'information avec des fournisseurs dans la langue nationale de la région ou dans une langue étrangère. Ils créent un climat de confiance, clarifient les besoins et présentent des offres et des solutions adaptées. Les employés de commerce répondent aux objections des clients ou des fournisseurs et argumentent de manière à trouver une solution. Ils analysent les réactions positives et négatives des clients et des fournisseurs et en déduisent des propositions d'amélioration pour leurs futurs entretiens."},
+d3:{t:"Mener des entretiens de vente et de négociation avec des clients et des fournisseurs", easy:0,
+ bref:"Vendre ou négocier : argumenter, faire une offre, conclure.",
+ angle:"Une vente ou une négociation : vos arguments, l'offre, et comment vous avez conclu.",
+ ex:["Comparer des offres de fournisseurs et négocier","Présenter une offre à un·e client·e","Négocier un délai ou un prix"],
+ off:"Les employés de commerce mènent des entretiens de vente et de négociation dans la langue nationale de la région ou dans une langue étrangère. Ils clarifient les besoins, préparent des offres pour les clients et argumentent lors des entretiens de vente en se concentrant sur les avantages. Si nécessaire, les employés de commerce demandent des offres de fournisseurs potentiels, les vérifient et en tirent des arguments pour les entretiens de vente ou de négociation. Ils les terminent en temps opportun. Les employés de commerce analysent les feed-back des clients et des fournisseurs et en tirent des mesures d'optimisation pour leurs futurs entretiens."},
+d4:{t:"Entretenir les relations avec les clients et les fournisseurs", easy:0,
+ bref:"Garder de bonnes relations dans la durée et rendre les client·e·s satisfait·e·s.",
+ angle:"Une relation que vous avez entretenue ou réparée : ce que vous avez fait pour que la personne revienne.",
+ ex:["Relancer un·e client·e après une prestation","Traiter une réclamation sans perdre la personne","Mettre en place un petit sondage de satisfaction"],
+ off:"Les employés de commerce entretiennent les relations avec les clients et les fournisseurs dans la langue nationale de la région ou dans une langue étrangère via les canaux de communication appropriés. Ils mettent en œuvre des mesures visant à fidéliser les clients et les fournisseurs et à accroître la satisfaction des clients. Ils vérifient l'efficacité des mesures et proposent des améliorations."},
+e1:{t:"Utiliser des applications propres au domaine commercial", easy:1,
+ bref:"Utiliser les logiciels du bureau, aider les autres, régler un problème, protéger les données.",
+ angle:"Un outil numérique : ce que vous en avez fait, le problème que vous avez réglé, la règle de sécurité respectée.",
+ ex:["Mettre à jour une base de données","Aider un·e collègue sur Excel ou Word","Repérer un courriel frauduleux (hameçonnage)"],
+ off:"Les employés de commerce utilisent les logiciels et les systèmes des technologies de l'information et de la communication de leur domaine de travail et soutiennent les différents groupes d'intérêts dans leur utilisation. Ils mettent à jour les données et le contenu des bases de données et des systèmes de gestion de contenu. Les employés de commerce se conforment aux dispositions légales, identifient les risques en matière de sécurité des données et prennent des mesures. Ils résolvent eux-mêmes les problèmes technologiques ou les transmettent au service compétent. Ils prennent également des mesures pour réduire la consommation d'énergie dans le domaine informatique."},
+e2:{t:"Rechercher et évaluer des informations dans le domaine commercial et économique", easy:1,
+ bref:"Chercher une information, vérifier qu'elle est fiable, la présenter clairement.",
+ angle:"Une recherche : où vous avez cherché, comment vous avez vérifié, ce que vous avez rendu.",
+ ex:["Comparer des fournisseurs sur Internet","Vérifier une information avec une source officielle","Préparer une synthèse pour l'équipe"],
+ off:"Les employés de commerce effectuent des recherches liées à leurs mandats à l'aide de diverses sources d'information. Ils vérifient la qualité et la pertinence pour l'entreprise des résultats de leurs recherches, préparent les informations pertinentes et les documentent pour une utilisation ultérieure dans le respect des prescriptions légales. Les employés de commerce analysent leur approche de la recherche et en déduisent des mesures d'optimisation."},
+e3:{t:"Évaluer et préparer des données et des statistiques en lien avec le marché et l'entreprise", easy:0,
+ bref:"Analyser des chiffres, les interpréter et les présenter.",
+ angle:"Des chiffres : ce que vous avez calculé, ce que vous en avez conclu, comment vous l'avez montré.",
+ ex:["Les résultats d'un sondage dans Excel, avec un graphique","Contrôler que des chiffres sont plausibles","Un tableau de suivi pour l'équipe"],
+ off:"Les employés de commerce effectuent des analyses de contenus ainsi que des évaluations quantitatives de moindre envergure, préparent les résultats, tirent des conclusions et remettent les informations qu'ils ont préparées au service compétent. Ils vérifient la plausibilité des bases de données et des statistiques et en déduisent des mesures correctives."},
+e4:{t:"Préparer des contenus en lien avec l'entreprise à l'aide d'outils multimédia", easy:1,
+ bref:"Créer un contenu (présentation, visuel, modèle) adapté au public et au canal.",
+ angle:"Un contenu que vous avez créé : pour qui, avec quel outil, et comment vous avez vérifié la qualité.",
+ ex:["Une présentation PowerPoint pour une séance","Un modèle de document pour l'équipe","Un visuel ou une courte vidéo"],
+ off:"Les employés de commerce préparent des contenus avec des programmes adaptés. Ce faisant, ils tiennent compte de l'objectif, des groupes cibles, de l'information et du canal médiatique. Les employés de commerce créent des modèles pour les supports d'information et les formats des médias. Ils vérifient également la qualité des articles internes et externes et prennent des mesures correctives si nécessaire."}
+};
+
+/* Une mission, plusieurs compétences (non officiel) */
+const MISSIONS = [
+ {m:"Organiser un événement pour l'équipe", a:[
+   ["c1","Vous racontez comment vous avez planifié les tâches, le temps et le matériel.","J'ai organisé la séance du 12 mars : j'ai fait un rétroplanning et réparti les tâches."],
+   ["c5","Vous racontez le budget : ce que vous avez prévu, dépensé, contrôlé.","Pour cet apéro, j'avais 200 francs : j'ai fait le budget et comparé les dépenses."],
+   ["c4","Vous racontez l'invitation : pour qui, quel message, quel canal.","J'ai créé l'invitation et choisi de l'envoyer par courriel et sur l'écran d'accueil."]]},
+ {m:"Répondre à un·e client·e mécontent·e", a:[
+   ["d1","Vous racontez comment vous avez compris sa demande et transmis l'information.","Un client attendait une réponse depuis trois jours : j'ai d'abord clarifié ce qu'il voulait."],
+   ["d4","Vous racontez comment vous avez gardé la relation et regagné sa confiance.","Après sa réclamation, je l'ai rappelé pour vérifier qu'il était satisfait."],
+   ["b2","Vous racontez le lien avec l'équipe qui devait régler le problème.","Le problème venait d'une autre équipe : j'ai fait le lien pour que la réponse arrive vite."]]},
+ {m:"Utiliser un nouveau logiciel", a:[
+   ["e1","Vous racontez l'outil : comment vous l'avez pris en main et le problème réglé.","Nous sommes passés à un nouveau logiciel : j'ai réglé un problème d'accès moi-même."],
+   ["b5","Vous racontez le changement : comment l'équipe l'a vécu et ce que vous avez apporté.","Le changement inquiétait l'équipe : j'ai proposé une courte démonstration."],
+   ["c3","Vous racontez la procédure que vous avez écrite pour les autres.","J'ai rédigé un mode d'emploi d'une page pour les nouveaux apprenti·e·s."]]},
+ {m:"Rédiger le procès-verbal d'une séance", a:[
+   ["c2","Vous racontez le document : préparation, prise de notes, mise au propre, diffusion.","J'ai rédigé le PV de la séance d'équipe et l'ai envoyé le jour même."],
+   ["a3","Vous racontez le mandat : la demande, le délai, le retour reçu.","Ma responsable m'a confié le PV ; elle m'a fait un retour et j'ai corrigé."],
+   ["b1","Vous racontez la collaboration : faire valider les décisions par l'équipe.","Deux collègues n'étaient pas d'accord sur une décision : j'ai vérifié avec eux avant d'envoyer."]]},
+ {m:"Préparer une présentation", a:[
+   ["e4","Vous racontez le support : public, outil, mise en forme, vérification.","J'ai créé une présentation de 8 diapositives pour la séance des formateurs."],
+   ["e2","Vous racontez la recherche : sources, vérification, sélection.","J'ai cherché les chiffres sur le site officiel et vérifié les dates."],
+   ["c1","Vous racontez l'organisation : délai, étapes, priorités.","J'avais deux jours : j'ai découpé le travail en quatre étapes."]]},
+ {m:"Accueillir un·e nouvel·le apprenti·e", a:[
+   ["b1","Vous racontez l'intégration dans l'équipe.","J'ai accueilli une nouvelle apprentie et je l'ai présentée à l'équipe."],
+   ["c3","Vous racontez les procédures que vous lui avez expliquées.","Je lui ai montré la procédure du courrier avec une fiche que j'avais faite."],
+   ["a2","Vous racontez le réseau : à qui vous l'avez présentée et pourquoi.","Je lui ai indiqué qui contacter dans chaque équipe."]]}
+];
+
+/* Questions « Et si… » (non officiel) */
+const IFS = [
+ "Et si vous aviez eu deux fois moins de temps ?",
+ "Et si la personne en face avait été mécontente ?",
+ "Et si l'outil ou le logiciel était tombé en panne ?",
+ "Et si vous aviez dû le faire seul·e, sans aide ?",
+ "Et si une personne clé avait été absente ?",
+ "Et si vous aviez dû le faire en anglais ?"
+];
+
+
+
+/* =====================================================================
+   ÉTAT (sur l'appareil uniquement, compatible avec le simulateur TP)
+   ===================================================================== */
+const KEY = "pqual-tp5-v1";
+const blank = () => ({v:1, learned:false, sel:[null,null], entry:[null,null], prep:[{},{}], step:[0,0]});
+let S = blank();
+try{ const raw = localStorage.getItem(KEY); if (raw){ const o = JSON.parse(raw); if (o && o.v === 1){ S = Object.assign(blank(), o); S.entry = S.entry || [null,null]; } } }catch(e){}
+let saveT;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); setSave("Enregistré sur cet appareil"); }
+  catch(e){ setSave("Enregistrement impossible sur ce navigateur"); }
+}
+function setSave(t){ $("saveState").textContent = t; }
+
+/* Couleurs des domaines : celles du thème choisi sur le site */
+const PAL = {
+  classique:["#2F6CC4","#A35C00","#2E8558","#A8378A","#137F8C"],
+  soiree:["#FF4FA3","#3EE0F0","#B6F23A","#FFB020","#B590FF"],
+  ferme:["#B3261E","#2F6B3A","#8A5D00","#2D5F8A","#7A4A23"],
+  plage:["#0A7FA6","#C7402B","#0B7F74","#B4530B","#2E59A8"],
+  banque:["#1B3A6B","#1F5E4A","#8A1C34","#7D5F10","#4A5A70"],
+  sport:["#D61A2B","#1D4ED8","#15803D","#C2410C","#111827"],
+  arcade:["#56B4E9","#E69F00","#F0E442","#009E73","#CC79A7"]
+};
+const pal = PAL[document.documentElement.dataset.skin] || PAL.classique;
+function onColor(hex){
+  const h = String(hex).replace("#",""); if (h.length !== 6) return "#FFFFFF";
+  const ch = i => { const c = parseInt(h.slice(i,i+2),16)/255; return c <= .03928 ? c/12.92 : Math.pow((c+.055)/1.055, 2.4); };
+  const L = .2126*ch(0) + .7152*ch(2) + .0722*ch(4);
+  return L > .36 ? "#12152B" : "#FFFFFF";
+}
+const colorOf = code => pal["ABCDE".indexOf(code[0].toUpperCase())] || pal[0];
+const STEPC = [pal[0], pal[1], pal[3]];
+const svars = i => { const c = STEPC[i]; return `--s:${c};--on-s:${onColor(c)}`; };
+const cvars = code => { const c = colorOf(code); return `--c:${c};--on-c:${onColor(c)}`; };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const $ = id => document.getElementById(id);
+const konv = k => (window.KONVINK && window.KONVINK[k]) || "";
+const has = v => typeof v === "string" && v.trim() !== "";
+
+/* =====================================================================
+   LES QUESTIONS DE PRÉPARATION (une compétence = 5 écrans)
+   ===================================================================== */
+const Q = {
+  why:{h:"Pourquoi cette compétence ?", min:"1 min", fields:[
+    ["like","Qu'est-ce qui vous plaît dans cette compétence ?","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
+    ["strong","Pourquoi êtes-vous fort·e dans ce domaine ?","Ex. On me confie souvent l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
+  context:{h:"Le contexte", min:"Situation · 1 min", fields:[
+    ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…","Pendant mon stage chez…"]],
+    ["task","Qu'est-ce qu'on vous a demandé ?","Ex. Organiser la séance d'équipe du jeudi, en trois jours.",["On m'a demandé de…","Ma mission était de…"]]]},
+  challenge:{h:"Le défi relevé", min:"Situation · 1 min", fields:[
+    ["chal","Qu'est-ce qui était difficile ?","Ex. La salle était déjà prise et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
+    ["did","Qu'avez-vous fait, vous ?","Ex. J'ai trouvé une autre salle, réparti les tâches et envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
+    ["res","Quel a été le résultat ?","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
+  analysis:{h:"Avec le recul", min:"2 min", fields:[
+    ["work","Qu'est-ce qui a fait que ça a marché ?","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
+    ["next","Que feriez-vous autrement la prochaine fois ?","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
+  alt:{h:"Et si… ?", min:"1 min", ifs:true, fields:[
+    ["altA","Ce que vous auriez fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]}
+};
+const FIELDS = ["like","strong","where","task","chal","did","res","work","next","altA"];
+const seqOf = i => ["start", ...(S.entry[i] === "mission" ? ["mission","pick"] : ["pick","mission"]), "why","context","challenge","analysis","alt","done"];
+const nFilled = i => FIELDS.filter(f => has(S.prep[i][f])).length + (S.sel[i] ? 1 : 0);
+const NTOT = FIELDS.length + 1;
+const coDone = i => !!S.sel[i] && ["like","where","task","did","work","next"].every(f => has(S.prep[i][f]));
+
+/* =====================================================================
+   NAVIGATION
+   ===================================================================== */
+let cur = "home", ci = 0;
+function go(to, push){
+  if (to === "co1" || to === "co2"){ ci = to === "co1" ? 0 : 1; to = "co"; }
+  document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
+  cur = to;
+  ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech, tips:renderTips}[to])();
+  const sv = to === "learn" ? 0 : to === "co" ? ci + 1 : -1;
+  $("s-"+to).style.cssText = (to === "co" && S.sel[ci] ? cvars(S.sel[ci]) + ";" : "") + (sv >= 0 ? svars(sv) : "--s:var(--ink);--on-s:var(--sheet)");
+  $("saveState").hidden = to === "home";
+  window.scrollTo(0,0);
+  const h = to === "co" ? "co"+(ci+1) : to;
+  try{ if (push !== false && location.hash.slice(1) !== h) history.pushState(null, "", "#"+h); }catch(e){}
+}
+window.addEventListener("popstate", () => route());
+function route(){ const h = (location.hash || "").slice(1); go(["learn","co1","co2","speech","tips"].includes(h) ? h : "home", false); }
+document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b){ e.preventDefault(); go(b.dataset.go); } });
+
+/* =====================================================================
+   ACCUEIL : LE CHEMIN EN 3 ÉTAPES
+   ===================================================================== */
+function renderHome(){
+  const st = [S.learned, coDone(0), coDone(1)];
+  const nextI = st.indexOf(false);
+  const label = (i, started) => st[i] ? "Fait" : i === nextI ? (started ? "Continuer ici" : "Commencer ici") : started ? "En cours" : "À faire";
+  const coLine = i => S.sel[i]
+    ? `<span class="co-pill" style="${cvars(S.sel[i])}">${S.sel[i]}</span>${esc(CO[S.sel[i]].t)}`
+    : (i === 0 ? "Choisir, puis préparer" : "La même chose, une 2e fois");
+  const items = [
+    ["learn", "Comprendre la consigne", "2 minutes de lecture", S.learned],
+    ["co1", "Ma compétence 1", coLine(0), nFilled(0) > 0],
+    ["co2", "Ma compétence 2", coLine(1), nFilled(1) > 0]
+  ];
+  const any = nFilled(0) + nFilled(1) > 0;
+  $("s-home").innerHTML = `
+    <div class="intro">
+      <h1>Mon TP5,<br>pas à pas</h1>
+      <p><b>10 minutes</b> · <b>2 compétences</b> · <b>3 étapes</b></p>
+    </div>
+    <ol class="path">${items.map(([to,t,s,started],i) => `
+      <li class="${st[i]?"done":""}${i===nextI?" now":""}" style="${svars(i)}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
+        <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button></li>`).join("")}
+    </ol>
+    ${any ? `<button class="result" data-go="speech"><b>Mon speech</b><span>Relire · PDF &rarr;</span></button>` : ""}
+    <div class="links"><ul>
+      <li><a href="#tips" data-go="tips">Les conseils du coach <span>&rarr;</span></a></li>
+      <li><a href="${esc(konv("accueil"))}" target="_blank" rel="noopener">Le Guide pratique <span>Konvink</span></a></li>
+      <li><a href="simulation-tp.html">Le simulateur d'examen <span>TP1 à TP5</span></a></li>
+    </ul></div>
+    ${any || S.learned ? `<div class="reset"><button class="btn" id="bReset">Tout recommencer</button><small id="resetMsg"></small></div>` : ""}`;
+  if ($("bReset")) $("bReset").onclick = () => {
+    const b = $("bReset");
+    if (b.dataset.armed !== "1"){
+      b.dataset.armed = "1"; b.classList.add("armed"); b.textContent = "Oui, tout effacer";
+      $("resetMsg").textContent = "Vos 2 compétences et toutes vos réponses seront effacées de cet appareil.";
+      clearTimeout(b._t); b._t = setTimeout(() => { if (b.isConnected){ b.dataset.armed = ""; b.classList.remove("armed"); b.textContent = "Tout recommencer"; $("resetMsg").textContent = ""; } }, 6000);
+      return;
+    }
+    S = blank(); save(); renderHome(); window.scrollTo(0,0);
+  };
+  $("barBack").textContent = "← Mon parcours PQual"; $("barBack").href = "../index.html"; $("barBack").onclick = null;
+}
+
+/* =====================================================================
+   ÉTAPE 1 : COMPRENDRE LA CONSIGNE
+   ===================================================================== */
+let mi = 0;
+function renderLearn(){
+  backHome();
+  $("s-learn").innerHTML = `
+    <div class="head"><div class="k">Étape 1</div><h1>Comprendre la consigne</h1></div>
+    <div class="card rule-card">
+      <p class="big-rule">Racontez <em>une mission que vous avez vraiment faite</em>, et réussie, sous l'angle d'<em>une compétence</em>.</p>
+    </div>
+    <div class="card">
+      <h2>5 minutes par compétence</h2>
+      <div class="min-bar">
+        <span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Une mission, plusieurs angles</h2>
+      <div class="missions" id="missions"></div>
+      <div class="angles" id="angles"></div>
+    </div>
+    <div class="card">
+      <h2>Ce que les expert·e·s regardent</h2>
+      <ul class="crit">
+        <li>Pourquoi ce choix, et une situation claire</li>
+        <li>Ce qui était difficile, ce qui a marché, ce que vous changeriez</li>
+        <li>Ce que vous feriez si c'était différent</li>
+      </ul>
+    </div>
+    <div class="nav"><button class="btn solid" id="learnOk">C'est clair &rarr;</button></div>`;
+  renderMissions();
+  $("learnOk").onclick = () => { S.learned = true; save(); go("co1"); };
+}
+function renderMissions(){
+  $("missions").innerHTML = MISSIONS.slice(0,4).map((x,i) => `<button class="${i===mi?"on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
+  $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderMissions(); });
+  $("angles").innerHTML = MISSIONS[mi].a.map(([k,how,first]) =>
+    `<div class="angle" style="${cvars(k)}"><b>${k}</b> · ${esc(how)}<q>${esc(first)}</q></div>`).join("");
+}
+const TIPS = [
+  ["Une vraie mission", "Que vous avez faite vous-même, à l'Espace Entreprise."],
+  ["Une réussite", "Un défi relevé, pas un échec. Vous pouvez parler de ce qui était difficile."],
+  ["Parlez de vous", "« J'ai fait… », pas « on a fait… »."],
+  ["L'analyse compte", "Ce qui a marché et ce que vous changeriez : c'est là qu'on fait la différence."],
+  ["Préparez le « Et si… »", "Si vous parlez bien, on ne vous coupe pas toujours. Mais soyez prêt·e."],
+  ["Vos mandats pratiques", "Ils peuvent vous donner des idées. Ce n'est pas obligatoire de les reprendre."],
+  ["À voix haute", "Répétez sans lire, plusieurs fois. Chronométrez-vous : 5 minutes par compétence."]
+];
+function renderTips(){
+  backHome();
+  $("s-tips").innerHTML = `<div class="head"><div class="k">Mon TP5</div><h1>Les conseils du coach</h1></div>
+    <ol class="tips">${TIPS.map(([t,d]) => `<li><b>${esc(t)}</b><span>${esc(d)}</span></li>`).join("")}</ol>
+    <div class="nav"><button class="btn solid" data-go="home">Retour à mes 3 étapes</button></div>`;
+}
+function backHome(){ $("barBack").textContent = "← Mes 3 étapes"; $("barBack").href = "#home"; $("barBack").onclick = e => { e.preventDefault(); go("home"); }; }
+
+/* =====================================================================
+   ÉTAPES 2 ET 3 : PRÉPARER UNE COMPÉTENCE
+   ===================================================================== */
+function renderCo(){
+  backHome();
+  const seq = seqOf(ci);
+  let st = Math.min(S.step[ci] || 0, seq.length - 1);
+  if (seq[st] !== "start" && !S.entry[ci]) st = 0;
+  const kind = seq[st], k = S.sel[ci], p = S.prep[ci];
+  const visible = seq.filter(x => x !== "start" && x !== "done");
+  const pos = visible.indexOf(kind);
+  document.getElementById("s-co").setAttribute("style", (k ? cvars(k) + ";" : "") + svars(ci + 1));
+  let h = `<div class="head"><div class="k">Étape ${ci+2} · Compétence ${ci+1}${k?` · ${k}`:""}${Q[kind]?`<span class="chip-min">${Q[kind].min}</span>`:""}</div><h1>${headTitle(kind)}</h1>
+    ${kind!=="start" ? `<div class="prog">${visible.map((_,j) => `<i class="${j<pos||kind==="done"?"done":j===pos?"on":""}"></i>`).join("")}</div>` : ""}</div>`;
+
+  if (kind === "start"){
+    if (k) h += `<div class="reminder"><b>Déjà choisie</b>${k} · ${esc(CO[k].t)}</div>`;
+    h += `<div class="doors">
+        <button class="door" data-entry="co"><b>J'ai une compétence en tête</b><small>Je la choisis, puis je trouve la mission.</small></button>
+        <button class="door" data-entry="mission"><b>J'ai une mission en tête</b><small>Je la décris, puis je choisis l'angle.</small></button>
+      </div>
+      ${ci===1 && !S.sel[0] ? `<p class="note-s">Conseil : commencez plutôt par la <a href="#co1" data-go="co1">compétence 1</a>.</p>` : ""}`;
+  }
+  else if (kind === "pick"){
+    if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
+    h += `<p class="tip" style="margin-top:0">Touchez une compétence.</p>` + damier();
+  }
+  else if (kind === "mission"){
+    h += `${k ? "" : `<p class="tip" style="margin-top:0">Une mission vraiment faite, et réussie.</p>`}
+      ${k ? `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>` : ""}
+      <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
+      <textarea id="f-mission" data-f="mission" rows="2" placeholder="Ex. J'ai organisé la séance d'équipe du jeudi.">${esc(p.mission||"")}</textarea>
+      <div class="starters"><button type="button" data-start="mission">J'ai…</button><button type="button" data-start="mission">On m'a demandé de…</button></div></div>
+      ${k ? `<details class="card" style="padding:10px 14px"><summary style="cursor:pointer;font-weight:700">Des idées pour ${k}</summary><ul style="margin:8px 0 0;padding-left:20px">${CO[k].ex.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
+  }
+  else if (Q[kind]){
+    const q = Q[kind];
+    if (kind === "why") h += `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>`;
+    if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
+    h += q.fields.map(([f,lab,ph,starts]) => {
+      const val = p[f] != null ? p[f] : (f === "task" && has(p.mission) ? p.mission : "");
+      return `<div class="field"><label for="f-${f}">${esc(lab)}</label>
+      <textarea id="f-${f}" data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(val)}</textarea>
+      <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`;
+    }).join("");
+  }
+  else if (kind === "done"){
+    h += `<div class="done-box"><b>Compétence ${ci+1} prête</b></div>` + speechCard(ci) +
+      `<div class="actions-col">${ci===0 ? `<button class="btn solid" data-go="co2">Passer à ma compétence 2 &rarr;</button>` : `<button class="btn solid" data-go="speech">Voir mon speech complet</button>`}
+       <button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
+  }
+
+  if (kind !== "start" && kind !== "done"){
+    const canNext = kind === "pick" ? !!k : true;
+    h += `<div class="nav"><button class="btn" id="bPrev" aria-label="Précédent">&larr;</button>
+      ${canNext ? `<button class="btn solid" id="bNext">${kind==="alt"?"Terminer":kind==="pick"?`Continuer avec ${k}`:"Suivant"} &rarr;</button>` : ""}</div>`;
+  }
+  $("s-co").innerHTML = h;
+
+  /* liaisons */
+  $("s-co").querySelectorAll("[data-entry]").forEach(b => b.onclick = () => {
+    S.entry[ci] = b.dataset.entry; S.step[ci] = 1; save(); renderCo(); window.scrollTo(0,0);
+  });
+  $("s-co").querySelectorAll("textarea").forEach(t => {
+    if (t.dataset.f === "task" && p.task == null && has(t.value)) p.task = t.value;
+    t.addEventListener("input", () => { p[t.dataset.f] = t.value; setSave("Enregistrement…"); clearTimeout(saveT); saveT = setTimeout(save, 400); });
+  });
+  $("s-co").querySelectorAll("[data-start]").forEach(b => b.onclick = () => {
+    const t = $("f-"+b.dataset.start); const sep = t.value && !/\s$/.test(t.value) ? " " : "";
+    t.value += sep + b.textContent + " "; t.dispatchEvent(new Event("input")); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+  });
+  $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
+  $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
+  const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
+  if ($("bPrev")) $("bPrev").onclick = () => move(-1);
+  if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
+}
+function headTitle(kind){
+  return {start:"Par où commencer ?", pick:"Choisir la compétence", mission:"Votre mission", done:"Bravo"}[kind] || Q[kind].h;
+}
+
+/* Damier des compétences */
+function damier(){
+  const other = S.sel[1-ci];
+  return "ABCDE".split("").map(L => {
+    const codes = Object.keys(CO).filter(k => k[0] === L.toLowerCase());
+    const offs = Object.keys(OFF).filter(k => k[0] === L.toLowerCase());
+    const dl = konv(L);
+    return `<div class="dco" style="${cvars(L)}"><h3><i>${L}</i>${esc(DCO[L])}${dl?`<a href="${esc(dl)}" target="_blank" rel="noopener">Guide</a>`:""}</h3>
+      <div class="tiles">${codes.map(k => {
+        const mine = S.sel[ci] === k, taken = other === k;
+        return `<button class="tile${mine?" sel":""}${taken?" taken":""}" data-co="${k}"><b>${k}</b><span>${esc(CO[k].t)}</span>${mine?"<em>Mon choix</em>":taken?`<em>Déjà choisie (compétence ${2-ci})</em>`:""}</button>`;
+      }).join("")}${offs.map(k => `<div class="tile off"><b>${k}</b><span>${esc(OFF[k])}</span><em>Option, non sélectionnable</em></div>`).join("")}</div></div>`;
+  }).join("");
+}
+function openSheet(k){
+  const c = CO[k], d = $("sheet"), link = konv(k);
+  const mine = S.sel[ci] === k, taken = S.sel[1-ci] === k;
+  d.setAttribute("style", cvars(k));
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
+   <div class="sheet-body">
+    <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
+    <h4>Des idées à l'Espace Entreprise</h4>
+    <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <details><summary>Le texte officiel</summary><p style="margin-top:8px">${esc(c.off)}</p></details>
+    <div class="sheet-acts">
+      ${taken ? `<button class="btn" disabled>Déjà choisie pour la compétence ${2-ci}</button>`
+        : mine ? `<button class="btn solid" id="shKeep">Garder ${k} &rarr;</button>`
+        : `<button class="btn solid" id="shAdd">Je choisis ${k} &rarr;</button>`}
+      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir la théorie (Guide pratique)</a>` : ""}
+    </div>
+   </div>`;
+  const close = () => { d.close(); };
+  $("shX").onclick = close;
+  d.onclick = e => { if (e.target === d) close(); };
+  const pick = () => { S.sel[ci] = k; S.step[ci] = seqOf(ci).indexOf("pick") + 1; save(); close(); renderCo(); window.scrollTo(0,0); };
+  if ($("shAdd")) $("shAdd").onclick = pick;
+  if ($("shKeep")) $("shKeep").onclick = pick;
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
+  d.scrollTop = 0;
+}
+
+/* =====================================================================
+   MON SPEECH (relecture, PDF)
+   ===================================================================== */
+function speechCard(i){
+  const k = S.sel[i], p = S.prep[i];
+  if (!k) return `<div class="speech"><h2>Compétence ${i+1}</h2><p class="empty" style="color:var(--alert);font-style:italic;margin:0">Pas encore choisie.</p></div>`;
+  const line = v => has(v) ? `<p>${esc(v.trim())}</p>` : "";
+  const part = (t, vals) => `<div class="sp"><h3>${t}</h3>${vals.some(has) ? vals.map(line).join("") : `<p class="empty">à compléter</p>`}</div>`;
+  return `<div class="speech" style="${cvars(k)}"><h2><i>${k}</i>${esc(CO[k].t)}</h2>
+    ${part("Pourquoi cette compétence · 1 min", [p.like, p.strong])}
+    ${part("La situation · 1 min", [p.where, p.task, p.chal, p.did, p.res])}
+    ${part("Avec le recul · 2 min", [p.work, p.next])}
+    ${part("Et si… · 1 min", [p.altQ != null && p.altQ !== "" ? IFS[+p.altQ] : "", p.altA])}
+  </div>`;
+}
+function renderSpeech(){
+  backHome();
+  $("s-speech").innerHTML = `<div class="head"><div class="k">Mon TP5</div><h1>Mon speech</h1></div>
+    <div class="actions-col no-print" style="margin:0 0 14px"><button class="btn solid" id="bPdf">Enregistrer en PDF</button></div>
+    ${speechCard(0)}${speechCard(1)}
+    <div class="actions-col no-print"><button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
+  $("bPdf").onclick = () => window.print();
+}
+
+route();
+</script>
+</body>
+</html>
