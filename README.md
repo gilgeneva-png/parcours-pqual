@@ -33,6 +33,8 @@ Aperçu d'un brouillon sans toucher au site publié : copier le fichier sous un 
 | `index.html` | Accueil : planning (Gantt) et ressources | Non |
 | `etape.html` | Page d'une étape | Non |
 | `assets/` | Mise en forme et fonctionnement (repris des mandats pratiques) | Non |
+| `assets/konvink.js` | Liens vers le Guide pratique (Konvink), un par compétence | Oui, pour compléter les liens |
+| `jeux/tp5.html` | Outil « Préparer mon TP5 » (entretien de réflexion) | Non |
 
 ## Le Guide pratique
 

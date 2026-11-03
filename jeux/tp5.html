@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon TP5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='22' rx='5' fill='%231F2A44'/%3E%3Crect x='7' y='12' width='8' height='4' rx='2' fill='%232F6CC4'/%3E%3Crect x='13' y='18' width='12' height='4' rx='2' fill='%23C43E57'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/app.css">
+<script src="../assets/konvink.js"></script>
+<script>
+/* Même thème que le site (choisi sur l'accueil, mémorisé sur l'appareil) */
+(function(){
+  var r = document.documentElement;
+  try{ var k = localStorage.getItem("mp-theme"); if (k) r.dataset.skin = k; }catch(e){}
+  try{ var p = JSON.parse(localStorage.getItem("mp-prefs") || "{}") || {};
+       ["big","plain","still"].forEach(function(x){ if (p[x]) r.setAttribute("data-"+x, ""); }); }catch(e){}
+})();
+</script>
+<style>
+:root{ --c:#2F6CC4; --on-c:#fff; --ok:#2E8558; }
+body{padding-bottom:40px}
+.wrap.narrow{max-width:720px}
+[hidden]{display:none !important}
+
+/* En-tête */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:16px}
+.bar a{font-weight:700; text-decoration:none; color:var(--ink-soft); font-size:15px}
+.bar a:hover{color:var(--ink)}
+.save-state{font-size:13px; color:var(--ink-soft)}
+
+.hero{margin:14px 0 18px; border-radius:var(--radius-lg); background:var(--ink); color:var(--sheet); padding:22px 20px 20px}
+.hero .chip{background:rgba(255,255,255,.18)}
+.hero h1{font-family:var(--head); font-weight:800; font-size:clamp(28px,7vw,42px); line-height:1.05; margin:10px 0 8px; letter-spacing:-.02em}
+.hero p{margin:0; font-size:17px; opacity:.92}
+
+/* Tags de source */
+.tag-off,.tag-no{display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:999px; padding:1px 8px; vertical-align:2px; margin-left:4px; white-space:nowrap}
+.tag-off{background:var(--ink); color:var(--sheet)}
+.tag-no{border:1.5px dashed var(--ink-soft); color:var(--ink-soft)}
+
+/* Frise des 10 minutes */
+.timeline{display:flex; gap:3px; margin:10px 0 6px; border-radius:10px; overflow:hidden}
+.timeline span{flex:var(--m) 1 0; min-width:0; padding:8px 2px; text-align:center; font-size:13px; overflow-wrap:anywhere; font-weight:700; line-height:1.15; color:var(--on-c); background:var(--c)}
+.timeline span.alt{background:repeating-linear-gradient(135deg,var(--c) 0 6px, color-mix(in srgb,var(--c) 70%, var(--sheet)) 6px 12px)}
+.timeline span.co2{filter:saturate(.75) brightness(.9)}
+.timeline small{display:block; font-weight:400; opacity:.9}
+.tl-row{margin:8px 0 0}
+.tl-k{display:block; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:2px}
+.timeline{margin:0}
+.tl-legend{font-size:13px; color:var(--ink-soft); margin:8px 0 0}
+
+/* Menu des étapes */
+.steps{list-style:none; padding:0; margin:0 0 16px; display:grid; gap:10px}
+.step{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; width:100%; text-align:left; font:inherit; color:var(--ink);
+  background:var(--sheet); border:2px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; cursor:pointer}
+.step:hover{border-color:var(--ink)}
+.step .n{width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-family:var(--head); font-weight:800; font-size:19px; background:var(--paper); border:2px solid var(--line)}
+.step.done .n{background:var(--ok); border-color:var(--ok); color:#fff}
+.step b{display:block; font-family:var(--head); font-weight:800; font-size:18px; line-height:1.2}
+.step small{display:block; color:var(--ink-soft); font-size:14.5px; line-height:1.35}
+.step .go{font-weight:700; font-size:14px}
+
+/* Blocs */
+.block{padding:18px 18px; border-radius:var(--radius-sm)}
+.block h2{font-size:21px}
+.note{border-left:4px solid var(--c); background:var(--paper); padding:10px 12px; border-radius:0 8px 8px 0; margin:10px 0; font-size:15.5px}
+.note b{display:block}
+
+/* Grille 3-3-3 */
+.grid333{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 4px}
+.grid333 div{border:1.5px solid var(--line); border-radius:8px; padding:10px; background:var(--paper)}
+.grid333 b{display:block; font-family:var(--head); font-size:26px; line-height:1}
+.grid333 span{display:block; font-weight:700; font-size:14.5px; margin:4px 0 2px}
+.grid333 small{display:block; color:var(--ink-soft); font-size:13px; line-height:1.3}
+@media (max-width:520px){ .grid333{grid-template-columns:1fr} .grid333 div{display:grid; grid-template-columns:44px 1fr; column-gap:8px} .grid333 b{grid-row:span 2; align-self:center} }
+
+/* Quiz */
+.q-card{background:var(--sheet); border:2px solid var(--line); border-radius:var(--radius-sm); padding:18px}
+.q-count{font-size:13.5px; font-weight:700; color:var(--ink-soft); margin:0 0 6px}
+.q-text{font-family:var(--head); font-weight:700; font-size:21px; line-height:1.25; margin:0 0 14px}
+.q-btns{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.q-btns .btn{justify-content:center; padding:14px; font-size:17px}
+.q-fb{margin-top:14px; padding:12px; border-radius:8px; border:2px solid var(--line)}
+.q-fb.good{border-color:var(--ok)}
+.q-fb.bad{border-color:var(--alert)}
+.q-fb b{display:block; margin-bottom:2px}
+.q-fb.good b{color:var(--ok)} .q-fb.bad b{color:var(--alert)}
+
+/* Choix des compétences */
+.slots{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 14px; position:sticky; top:0; z-index:5; background:var(--paper); padding:8px 0}
+.slot{border:2px dashed var(--line); border-radius:var(--radius-sm); padding:8px 10px; min-height:62px; background:var(--sheet); font-size:14px; line-height:1.25}
+.slot.full{border-style:solid; border-color:var(--c)}
+.slot .k{font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
+.slot b{font-family:var(--head); font-size:18px; margin-right:4px}
+.dco{margin:0 0 16px}
+.dco h3{font-family:var(--head); font-size:17px; margin:0 0 6px; display:flex; gap:8px; align-items:center}
+.dco h3 i{font-style:normal; width:28px; height:28px; border-radius:7px; background:var(--c); color:var(--on-c); display:grid; place-items:center; font-weight:800; flex:none}
+.dco h3 a{margin-left:auto; font-family:var(--body); font-size:13.5px; font-weight:700; color:var(--ink-soft)}
+.tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px}
+.tile{font:inherit; text-align:left; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-top:6px solid var(--c); border-radius:10px; padding:8px 10px 10px; cursor:pointer; min-height:92px; position:relative}
+.tile:hover{border-color:var(--c)}
+.tile b{display:block; font-family:var(--head); font-weight:800; font-size:20px; line-height:1}
+.tile span{display:block; font-size:13.5px; line-height:1.3; margin-top:4px}
+.tile.sel{background:var(--c); color:var(--on-c)}
+.tile.sel::after{content:attr(data-slot); position:absolute; top:6px; right:8px; font-size:12px; font-weight:800; background:var(--sheet); color:var(--ink); border-radius:999px; padding:0 7px}
+.tile.off{border-style:dashed; border-top:6px dashed var(--line); color:var(--ink-soft); cursor:not-allowed; background:transparent}
+.tile.off em{display:block; font-style:normal; font-size:12px; margin-top:4px}
+
+/* Fiche compétence (dialog) */
+dialog.sheet{border:0; padding:0; width:min(680px,100vw); max-width:100vw; max-height:92vh; margin:auto auto 0; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--sheet); color:var(--ink)}
+@media (min-width:700px){ dialog.sheet{margin:auto; border-radius:var(--radius-lg)} }
+dialog.sheet::backdrop{background:rgba(10,14,28,.55)}
+.sheet-head{background:var(--c); color:var(--on-c); padding:16px 18px 14px; position:sticky; top:0}
+.sheet-head .x{position:absolute; top:10px; right:10px; font:inherit; font-size:15px; font-weight:700; border:2px solid currentColor; color:inherit; background:transparent; border-radius:999px; padding:4px 12px; cursor:pointer}
+.sheet-head .code{font-family:var(--head); font-weight:800; font-size:30px; line-height:1}
+.sheet-head h3{font-family:var(--head); font-weight:800; font-size:20px; line-height:1.2; margin:4px 60px 0 0}
+.sheet-body{padding:14px 18px 18px}
+.sheet-body h4{font-family:var(--head); font-size:16px; margin:14px 0 4px}
+.sheet-body p,.sheet-body ul{margin:0 0 8px}
+.sheet-body ul{padding-left:20px}
+.sheet-body details{border:1.5px solid var(--line); border-radius:8px; padding:8px 12px; margin:12px 0}
+.sheet-body summary{cursor:pointer; font-weight:700}
+.sheet-acts{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.easy{display:inline-block; font-size:13px; font-weight:700; color:var(--ok); border:1.5px solid var(--ok); border-radius:999px; padding:1px 9px; margin-top:6px}
+
+/* Une mission, plusieurs angles */
+.missions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.missions .btn{justify-content:center; white-space:normal; text-align:center; border-width:2px; border-color:var(--line)}
+.missions .btn.on{border-color:var(--ink); background:var(--ink); color:var(--sheet)}
+.angles{display:grid; gap:8px; margin-top:12px}
+.angle{border:2px solid var(--line); border-left:8px solid var(--c); border-radius:8px; padding:10px 12px; background:var(--sheet)}
+.angle b{font-family:var(--head)}
+.angle q{display:block; font-style:italic; margin-top:4px}
+@media (max-width:420px){ .missions{grid-template-columns:1fr} }
+
+/* Assistant de préparation */
+.wiz-top{display:flex; align-items:center; gap:10px; margin:6px 0 12px}
+.wiz-co{font-family:var(--head); font-weight:800; background:var(--c); color:var(--on-c); border-radius:8px; padding:4px 10px; font-size:18px}
+.wiz-t{font-size:14px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.dots{display:flex; gap:6px; margin:0 0 12px}
+.dots i{flex:1; height:6px; border-radius:3px; background:var(--line)}
+.dots i.on{background:var(--c)}
+.dots i.done{background:color-mix(in srgb,var(--c) 55%, var(--line))}
+.wiz h2{font-family:var(--head); font-weight:800; font-size:24px; margin:0 0 2px; line-height:1.15}
+.wiz .time{font-size:14px; font-weight:700; color:var(--ink-soft); margin:0 0 10px}
+.field{margin:0 0 14px}
+.field label{display:block; font-weight:700; margin:0 0 4px; font-size:16px}
+.field label small{font-weight:400; color:var(--ink-soft)}
+.field textarea{width:100%; font:inherit; font-size:16px; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-radius:10px; padding:10px 12px; min-height:76px; resize:vertical}
+.field textarea:focus{outline:none; border-color:var(--c)}
+.starters{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 0}
+.starters button{font:inherit; font-size:13.5px; color:var(--ink); background:var(--paper); border:1.5px solid var(--line); border-radius:999px; padding:4px 10px; cursor:pointer}
+.starters button:hover{border-color:var(--ink)}
+.ifs{display:grid; gap:6px; margin:0 0 12px}
+.ifs label{display:flex; gap:10px; align-items:flex-start; border:2px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; background:var(--sheet)}
+.ifs input{width:20px; height:20px; accent-color:var(--c); margin:2px 0 0; flex:none}
+.ifs label:has(input:checked){border-color:var(--c)}
+.wiz-nav{display:flex; justify-content:space-between; gap:10px; margin-top:6px}
+.wiz-nav .btn{padding:12px 20px; font-size:16px}
+.check label{padding:8px 4px}
+.check input:checked + span{text-decoration:none; color:var(--ink)}
+
+/* Fiche finale */
+.fiche{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:18px; margin-bottom:14px}
+.fiche h2{font-family:var(--head); font-size:22px; margin:0 0 4px; display:flex; gap:10px; align-items:baseline}
+.fiche h2 i{font-style:normal; background:var(--c); color:var(--on-c); border-radius:7px; padding:1px 9px}
+.fiche .part{border-top:1.5px dashed var(--line); padding:8px 0}
+.fiche .part h3{font-size:14px; text-transform:uppercase; letter-spacing:.04em; margin:0 0 2px; color:var(--ink-soft)}
+.fiche .part h3 small{text-transform:none; letter-spacing:0; font-weight:400}
+.fiche .part p{margin:0 0 4px; white-space:pre-wrap}
+.fiche .empty{color:var(--alert); font-style:italic}
+.tools{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px}
+.foot-src{font-size:13.5px; color:var(--ink-soft); margin-top:22px}
+
+@media print{
+  .bar,.tools,.hero,.no-print,.foot-src{display:none !important}
+  body{background:#fff; color:#000; font-size:12pt; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .fiche{border:1px solid #999; break-inside:avoid}
+  .screen{display:none !important} #s-fiche{display:block !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap narrow">
+  <div class="bar">
+    <a href="../index.html">&larr; Mon parcours PQual</a>
+    <span class="save-state" id="saveState">Enregistré sur cet appareil</span>
+  </div>
+
+  <!-- ================= ACCUEIL ================= -->
+  <section class="screen" id="s-home">
+    <div class="hero">
+      <span class="chip">TP5 · Entretien de réflexion · 9 points</span>
+      <h1>Préparer mon TP5</h1>
+      <p>Vous parlez de vous : 2 compétences, 2 situations vécues. Ça se prépare avant l'examen. Commencez ici.</p>
+    </div>
+
+    <div class="block">
+      <h2>Les 10 minutes <span class="tag-off">officiel</span></h2>
+      <div class="tl-row"><span class="tl-k">Compétence 1</span><div class="timeline">
+        <span style="--m:1">Choix<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1" class="alt">Et si…<small>1'</small></span>
+      </div></div>
+      <div class="tl-row"><span class="tl-k">Compétence 2</span><div class="timeline">
+        <span style="--m:1" class="co2">Choix<small>1'</small></span><span style="--m:1" class="co2">Situation<small>1'</small></span><span style="--m:2" class="co2">Analyse<small>2'</small></span><span style="--m:1" class="co2 alt">Et si…<small>1'</small></span>
+      </div></div>
+      <p class="tl-legend">Durées « environ » selon la présentation PQUAL. La minute du choix est une estimation <span class="tag-no">non officiel</span></p>
+      <p class="note" style="margin-top:12px"><b>Bon à savoir <span class="tag-no">non officiel</span></b>
+      Si vous parlez bien, les expert·e·s ne vous coupent pas, et la question « Et si… » ne vient pas toujours. Préparez-la quand même.</p>
+    </div>
+
+    <ol class="steps" id="menu"></ol>
+  </section>
+
+  <!-- ================= 1. COMPRENDRE ================= -->
+  <section class="screen" id="s-learn" hidden>
+    <div class="wiz-top"><button class="btn" data-go="home">&larr; Retour</button></div>
+    <div class="block">
+      <h2>Comment on vous note <span class="tag-off">officiel</span></h2>
+      <div class="grid333">
+        <div><b>3</b><span>Choix + situation</span><small>Le choix est justifié, la situation est claire et concrète.</small></div>
+        <div><b>3</b><span>Analyse</span><small>Les défis, vos points forts et les pierres d'achoppement sont reconnus.</small></div>
+        <div><b>3</b><span>Et si…</span><small>Vous décrivez une bonne façon d'agir dans une autre situation.</small></div>
+      </div>
+    </div>
+    <div class="q-card" id="quiz"></div>
+  </section>
+
+  <!-- ================= 2. CHOISIR ================= -->
+  <section class="screen" id="s-choose" hidden>
+    <div class="wiz-top"><button class="btn" data-go="home">&larr; Retour</button></div>
+    <div class="slots" id="slots"></div>
+
+    <div class="block no-print">
+      <h2>Comment choisir</h2>
+      <p>Prenez <b>une mission que vous avez réussie</b> à l'Espace Entreprise. Puis choisissez <b>l'angle</b> sous lequel vous la racontez : c'est ça, la compétence.</p>
+      <p class="note"><b>Vos mandats pratiques peuvent aider <span class="tag-no">non officiel</span></b>
+      Chaque mandat pratique des 4 stages portait sur une compétence : c'est une piste. Mais vous n'êtes pas obligé·e de reprendre un mandat. N'importe quelle mission réussie convient, à condition de la raconter sous l'angle de la compétence choisie.</p>
+      <button class="btn solid" data-go="prism">Voir : une mission, plusieurs compétences</button>
+    </div>
+
+    <p style="margin:6px 0 10px; font-size:15px; color:var(--ink-soft)">Touchez une compétence pour lire sa fiche. <span class="tag-off">officiel</span> Profil de qualification</p>
+    <div id="dcos"></div>
+    <button class="btn solid" id="toPrep1" data-go="prep1" hidden>Préparer ma compétence 1 &rarr;</button>
+  </section>
+
+  <!-- ================= PRISME ================= -->
+  <section class="screen" id="s-prism" hidden>
+    <div class="wiz-top"><button class="btn" data-go="choose">&larr; Retour au choix</button></div>
+    <div class="block">
+      <h2>Une mission, plusieurs compétences <span class="tag-no">non officiel</span></h2>
+      <p>La même mission peut se raconter de plusieurs façons. Ce qui change : <b>ce que vous mettez en avant</b>. Choisissez une mission :</p>
+      <div class="missions" id="missions"></div>
+      <div class="angles" id="angles"></div>
+    </div>
+  </section>
+
+  <!-- ================= 3-4. PRÉPARER ================= -->
+  <section class="screen" id="s-prep" hidden>
+    <div class="wiz-top">
+      <button class="btn" data-go="home">&larr;</button>
+      <span class="wiz-co" id="wizCo">a1</span>
+      <span class="wiz-t" id="wizT"></span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="block wiz" id="wiz"></div>
+  </section>
+
+  <!-- ================= 5. MA FICHE ================= -->
+  <section class="screen" id="s-fiche" hidden>
+    <div class="wiz-top no-print"><button class="btn" data-go="home">&larr; Retour</button></div>
+    <div class="tools">
+      <button class="btn solid" id="bPrint">Imprimer / PDF</button>
+      <button class="btn" id="bExport">Sauvegarder (fichier)</button>
+      <label class="btn" for="fImport">Reprendre un fichier</label>
+      <input type="file" id="fImport" accept="application/json,.json" hidden>
+      <button class="btn" id="bReset">Tout effacer</button>
+    </div>
+    <p class="note no-print"><b>Vos réponses restent sur cet appareil.</b> Personne d'autre ne les voit. Si vous changez de téléphone ou videz le navigateur, elles disparaissent : faites une sauvegarde en fichier, ou imprimez votre fiche pour en parler avec votre formateur.</p>
+    <div id="ficheOut"></div>
+  </section>
+
+  <p class="foot-src">Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26), diapositives 24, 25 et 27 ; plan de formation employé·e de commerce CFC (textes repris dans le Guide pratique). Tout ce qui est marqué <span class="tag-no">non officiel</span> est une aide de l'Espace Entreprise.</p>
+</div>
+
+<dialog class="sheet" id="sheet"></dialog>
+
+<script>
+/* =====================================================================
+   DONNÉES
+   ===================================================================== */
+const DCO = {
+  A:"Travail au sein de structures d'activité et d'organisation dynamiques",
+  B:"Interaction dans un milieu de travail interconnecté",
+  C:"Coordination des processus de travail en entreprise",
+  D:"Gestion des relations avec les clients et les fournisseurs",
+  E:"Utilisation des technologies numériques du monde du travail"
+};
+/* Compétences liées aux options : non sélectionnables pour le TP5 */
+const OFF = {
+  c6:"Exécuter des travaux de comptabilité financière",
+  d5:"Situations exigeantes dans la langue nationale",
+  d6:"Situations exigeantes dans la langue étrangère",
+  e5:"Mettre en place et gérer des technologies",
+  e6:"Évaluer de grandes quantités de données"
+};
+/* t  = intitulé officiel (profil de qualification)
+   off = situation de travail du plan de formation (officiel)
+   bref, angle, ex = aides de l'Espace Entreprise (non officiel)
+   easy = facile à illustrer à l'Espace Entreprise (non officiel) */
+const CO = {
+a1:{t:"Examiner et développer des compétences commerciales", easy:0,
+ bref:"Faire le point sur ce que vous savez faire, et vous fixer des objectifs pour progresser.",
+ angle:"Votre propre progression : un bilan, un objectif que vous vous êtes fixé, ce que vous avez changé.",
+ ex:["Préparer et mener votre entretien de bilan de stage","Vous fixer un objectif précis (ex. des courriels sans fautes) et l'atteindre","Demander un retour et changer votre façon de travailler"],
+ off:"Les employés de commerce s'informent sur les possibilités de développement dans leur champ professionnel. Ils procèdent régulièrement à un bilan personnel et, en concertation avec leur supérieur hiérarchique, définissent des mesures pour continuer à développer leurs compétences professionnelles."},
+a2:{t:"Développer et utiliser des réseaux propres au domaine commercial", easy:0,
+ bref:"Créer des contacts utiles et s'en servir pour avancer dans son travail.",
+ angle:"Les personnes que vous avez contactées, et ce que ce contact vous a permis d'obtenir.",
+ ex:["Trouver la bonne personne dans une autre équipe pour débloquer un dossier","Reprendre contact avec quelqu'un d'un ancien stage pour une information","Vous présenter et créer un contact lors d'un événement"],
+ off:"Les employés de commerce développent un réseau spécifique à leur profession et entretiennent leurs contacts avec d'autres professionnels par le biais de divers canaux. Ils utilisent leurs contacts pour se présenter lors de mandats, obtenir des informations pertinentes et échanger sur leurs expériences."},
+a3:{t:"Recevoir et exécuter des mandats propres au domaine commercial", easy:1,
+ bref:"Recevoir une demande, la comprendre, la réaliser et livrer un résultat qui satisfait.",
+ angle:"Le chemin du mandat : comprendre la demande, planifier, livrer, recevoir le retour.",
+ ex:["Un mandat reçu de votre formateur, avec un délai serré","Une demande floue que vous avez fait préciser avant de commencer","Un travail rendu, corrigé après un retour, puis validé"],
+ off:"Les employés de commerce vendent leur profil de compétence dans des situations de concurrence interne et externe pour des mandats propres au domaine commercial. Ils fournissent des services conformément aux mandats qui leur ont été confiés et vérifient la bonne exécution du mandat à la satisfaction du client. Les employés de commerce réfléchissent à leur réussite, analysent leurs actions et en déduisent des mesures d'amélioration."},
+a4:{t:"Agir de manière responsable dans la société", easy:0,
+ bref:"Faire des choix réfléchis et responsables, pour soi et pour l'entreprise.",
+ angle:"Un choix responsable que vous avez fait au travail, et son effet.",
+ ex:["Proposer un geste durable au bureau (papier, énergie, tri)","Refuser ou signaler une demande qui vous semblait incorrecte","Tenir compte de l'égalité ou de l'inclusion dans un document"],
+ off:"Les employés de commerce agissent de manière responsable sur le plan personnel et dans la société. Ils planifient leurs actions consciemment et en tirent des conclusions pour eux-mêmes et leurs activités en tant qu'employés de commerce. En outre, les employés de commerce construisent leur identité de manière réfléchie et analysent son impact sur la société et l'entreprise."},
+a5:{t:"Intégrer des questions politiques et une approche culturelle dans ses actions", easy:0,
+ bref:"Tenir compte des valeurs, de la politique et de la culture dans son travail.",
+ angle:"Une situation où une question de valeurs, de culture ou d'actualité politique a influencé ce que vous avez fait.",
+ ex:["Adapter une communication à un public d'une autre culture","Défendre un point de vue avec des arguments dans un débat d'équipe","Participer à un projet culturel ou sportif"],
+ off:"Les employés de commerce analysent les questions politiques actuelles ainsi que les intérêts et les valeurs des parties prenantes. Ils développent leurs attitudes et leurs valeurs pour créer leur propre cadre de référence éthique. Ils exercent leurs droits politiques et incluent les questions politiques pertinentes dans leurs actions en tant qu'employés de commerce. En outre, les employés de commerce développent et élargissent leurs propres formes de création et d'expression. Ils en tirent des conclusions pour eux-mêmes et pour leurs actions en tant qu'employés de commerce."},
+b1:{t:"Collaborer et communiquer dans différentes équipes", easy:1,
+ bref:"Bien travailler avec les autres, même quand l'équipe change ou que ça coince.",
+ angle:"Comment vous avez travaillé avec l'équipe : vous intégrer, respecter les règles, régler une tension.",
+ ex:["Vous intégrer dans une nouvelle équipe au début d'un stage","Régler un désaccord sur la répartition des tâches","Travailler avec un·e collègue dans une autre langue"],
+ off:"Les employés de commerce exercent leurs activités dans des constellations d'équipes changeantes. Ils communiquent dans la langue nationale de la région, en anglais ou dans une deuxième langue nationale. Les employés de commerce s'informent des coutumes propres à d'autres cultures et en tiennent compte dans leurs activités de coopération et de communication. Ils respectent à tout moment les directives, les accords et les délais et prennent des mesures en temps utile en cas d'écarts."},
+b2:{t:"Coordonner les interfaces dans les processus en entreprise", easy:0,
+ bref:"Faire le lien entre deux équipes ou services pour que l'information passe bien.",
+ angle:"Le passage d'une information ou d'un travail entre deux équipes, et comment vous avez évité le malentendu.",
+ ex:["Transmettre une demande d'une équipe à une autre","Expliquer simplement un document technique à quelqu'un","Proposer une meilleure façon de se passer les dossiers"],
+ off:"Les employés de commerce font le lien au niveau des interfaces entre divers domaines de fonctions et groupes d'intérêts et intègrent les différents intérêts des acteurs impliqués dans leur travail. Ils coordonnent les interfaces avec des outils propres au domaine commercial, traduisent des contenus techniques et spécialisés exigeants en informations adaptées au public cible et documentent les activités correspondantes. Ils font des suggestions d'amélioration aux services compétents."},
+b3:{t:"Participer aux discussions économiques", easy:0,
+ bref:"Discuter d'un sujet économique et comprendre son effet sur l'entreprise.",
+ angle:"Un sujet économique dont vous avez parlé, comment vous vous êtes informé·e, et ce que ça change pour l'entreprise.",
+ ex:["La hausse des prix d'un fournisseur et ce qu'elle change","Présenter une actualité économique à l'équipe","Argumenter votre avis en séance, sources à l'appui"],
+ off:"Les employés de commerce discutent de sujets économiques avec leurs collègues en tenant compte notamment des questions d'éthique, de morale, de technologie, d'écologie, de durabilité et de droit. En cas d'incertitude, ils font des recherches sur Internet et remettent en question le sérieux et la qualité de leurs résultats. Les employés de commerce réfléchissent aux développements actuels de la politique économique et à leur impact sur le secteur économique et sur l'entreprise dans laquelle ils travaillent. Ils expliquent également les intérêts spécifiques de l'entreprise aux différents groupes d'intérêts."},
+b4:{t:"Exécuter des tâches de gestion de projets propres au domaine commercial et traiter des projets partiels", easy:1,
+ bref:"Prendre en charge une partie d'un projet : planning, budget, suivi.",
+ angle:"Votre rôle dans un projet : ce que vous avez planifié, suivi, et comment vous avez réagi à un retard.",
+ ex:["Une partie d'un projet d'équipe avec un calendrier","Tenir un tableau de suivi des tâches","Signaler un retard et proposer une solution"],
+ off:"Les employés de commerce traitent des petits lots de travail et des projets partiels. Ils créent et gèrent des environnements de travail, élaborent des calendriers et coordonnent la collaboration des acteurs impliqués. Les employés de commerce surveillent le déroulement du projet et informent la direction du projet et les autres personnes concernées en cas d'écarts."},
+b5:{t:"Participer à la réalisation de processus de changement en entreprise", easy:0,
+ bref:"Accompagner un changement dans l'entreprise et y contribuer.",
+ angle:"Un changement (outil, procédure, organisation) : comment vous l'avez vécu, aidé, amélioré.",
+ ex:["Le passage à un nouvel outil ou logiciel","Une nouvelle procédure à appliquer dans l'équipe","Une idée d'amélioration que vous avez proposée"],
+ off:"Les employés de commerce s'informent sur les processus de changement en entreprise et leur signification pour leur domaine d'activité. Ils analysent les effets sur leur environnement de travail, soumettent des idées de mise en œuvre et mettent en œuvre les changements selon les instructions de leur supérieur."},
+c1:{t:"Planifier, coordonner et optimiser des tâches et des ressources dans un environnement de travail commercial", easy:1,
+ bref:"Organiser son travail, gérer les priorités, organiser un événement.",
+ angle:"Comment vous avez organisé le travail : priorités, temps, ressources, événement.",
+ ex:["Une journée chargée que vous avez réussi à prioriser","Organiser un événement interne (séance, apéro, visite)","Revoir votre planning après un imprévu"],
+ off:"Les employés de commerce planifient et coordonnent des tâches et les ressources. Ils recherchent des informations et veillent à ce que les ressources soient utilisées efficacement. Ils participent à l'organisation d'événements internes et externes et mettent en œuvre des mesures respectueuses de l'environnement. Les employés de commerce vérifient leur capacité d'organisation, leur gestion du temps, leurs techniques de travail et l'utilisation de leurs ressources personnelles et de l'entreprise et en déduisent des mesures d'optimisation."},
+c2:{t:"Coordonner et mettre en œuvre des processus de soutien propres au domaine commercial", easy:1,
+ bref:"Les tâches administratives qui font tourner le service : documents, agenda, procès-verbal, classement.",
+ angle:"Un travail administratif que vous avez bien fait, et pourquoi il a aidé l'équipe.",
+ ex:["Rédiger le procès-verbal d'une séance","Gérer un agenda et des rendez-vous","Réorganiser un classement ou un archivage"],
+ off:"Les employés de commerce créent divers documents pour soutenir les processus administratifs, gèrent les rendez-vous et organisent le classement. Ils interprètent les documents administratifs et liés au personnel et répondent aux demandes de renseignements à ce sujet. Les employés de commerce réfléchissent à leurs activités de soutien et suggèrent les mesures nécessaires."},
+c3:{t:"Documenter, coordonner et mettre en œuvre des processus en entreprise", easy:0,
+ bref:"Décrire une procédure, l'appliquer, l'expliquer aux autres et l'améliorer.",
+ angle:"Une procédure : comment vous l'avez décrite, appliquée ou expliquée, et ce que vous avez amélioré.",
+ ex:["Rédiger un mode d'emploi pour un·e nouvel·le apprenti·e","Dessiner le schéma d'une procédure","Former un·e collègue à une tâche"],
+ off:"Les employés de commerce élaborent des documents et des calendriers pour des processus en entreprise. Ils exécutent les tâches du processus avec les outils spécifiés, en tenant compte des exigences de la sécurité au travail, de la protection de la santé et de la durabilité, et instruisent les employés. Les employés de commerce analysent les problèmes dans les flux de processus et élaborent des suggestions d'amélioration."},
+c4:{t:"Mettre en œuvre des activités de marketing et de communication", easy:1,
+ bref:"Communiquer vers un public : choisir le message, le support et le canal.",
+ angle:"Une action de communication : pour qui, quel message, quel canal, quel résultat.",
+ ex:["Une publication pour un réseau social ou une infolettre","Une affiche ou un flyer pour un événement","Un envoi d'information à des client·e·s"],
+ off:"Les employés de commerce communiquent avec des groupes d'intérêts internes et externes conformément au concept d'information et de communication de l'entreprise dans la langue nationale de la région et dans une langue étrangère, réfléchissent à leur comportement en matière de communication et en déduisent des mesures d'amélioration. Ils se tiennent également informés des développements dans le domaine de la communication, en tirent des idées pour des innovations dans l'entreprise et testent de nouveaux moyens et formes de communication. Ils soutiennent également les activités de marketing et de communication."},
+c5:{t:"Assurer le suivi et le contrôle d'opérations financières", easy:0,
+ bref:"Budgets, factures, décomptes : préparer, contrôler, corriger.",
+ angle:"Une tâche avec des chiffres : ce que vous avez préparé ou contrôlé, et l'erreur que vous avez évitée.",
+ ex:["Établir une facture","Préparer le budget d'un événement","Contrôler des notes de frais et corriger une erreur"],
+ off:"Les employés de commerce préparent des budgets pour des événements, des projets partiels et autres mandats ainsi que des décomptes de frais et recettes effectifs. Ils vérifient les écarts et proposent des mesures en temps opportun au service compétent. Ils établissent des factures et agissent en tenant compte des coûts. Ils vérifient les opérations financières dans leur domaine de travail et les corrigent si nécessaire en concertation avec leur supérieur hiérarchique."},
+d1:{t:"Prendre en compte les besoins des clients et des fournisseurs", easy:1,
+ bref:"Comprendre ce que veut un·e client·e ou un fournisseur, répondre et transmettre.",
+ angle:"Une demande reçue : comment vous avez compris le besoin et fait en sorte que l'information arrive au bon endroit.",
+ ex:["Un appel téléphonique transmis au bon service","Un courriel en attente que vous avez traité","L'accueil d'un·e visiteur·euse"],
+ off:"Les employés de commerce communiquent avec les clients et les fournisseurs dans la langue nationale de la région ou dans une langue étrangère. Ils répondent à leurs demandes, prennent note de leurs besoins, les transmettent si nécessaire au service compétent et assurent le flux d'informations."},
+d2:{t:"Mener des entretiens d'information et de conseil avec des clients et des fournisseurs", easy:0,
+ bref:"Conseiller quelqu'un : comprendre son besoin et proposer une solution adaptée.",
+ angle:"Un entretien de conseil : ce que vous avez demandé, proposé, et comment vous avez répondu à une objection.",
+ ex:["Conseiller un·e client·e sur une prestation","Demander des informations précises à un fournisseur","Répondre à une personne qui n'était pas convaincue"],
+ off:"Les employés de commerce mènent des entretiens de conseil avec des clients et des entretiens d'information avec des fournisseurs dans la langue nationale de la région ou dans une langue étrangère. Ils créent un climat de confiance, clarifient les besoins et présentent des offres et des solutions adaptées. Les employés de commerce répondent aux objections des clients ou des fournisseurs et argumentent de manière à trouver une solution. Ils analysent les réactions positives et négatives des clients et des fournisseurs et en déduisent des propositions d'amélioration pour leurs futurs entretiens."},
+d3:{t:"Mener des entretiens de vente et de négociation avec des clients et des fournisseurs", easy:0,
+ bref:"Vendre ou négocier : argumenter, faire une offre, conclure.",
+ angle:"Une vente ou une négociation : vos arguments, l'offre, et comment vous avez conclu.",
+ ex:["Comparer des offres de fournisseurs et négocier","Présenter une offre à un·e client·e","Négocier un délai ou un prix"],
+ off:"Les employés de commerce mènent des entretiens de vente et de négociation dans la langue nationale de la région ou dans une langue étrangère. Ils clarifient les besoins, préparent des offres pour les clients et argumentent lors des entretiens de vente en se concentrant sur les avantages. Si nécessaire, les employés de commerce demandent des offres de fournisseurs potentiels, les vérifient et en tirent des arguments pour les entretiens de vente ou de négociation. Ils les terminent en temps opportun. Les employés de commerce analysent les feed-back des clients et des fournisseurs et en tirent des mesures d'optimisation pour leurs futurs entretiens."},
+d4:{t:"Entretenir les relations avec les clients et les fournisseurs", easy:0,
+ bref:"Garder de bonnes relations dans la durée et rendre les client·e·s satisfait·e·s.",
+ angle:"Une relation que vous avez entretenue ou réparée : ce que vous avez fait pour que la personne revienne.",
+ ex:["Relancer un·e client·e après une prestation","Traiter une réclamation sans perdre la personne","Mettre en place un petit sondage de satisfaction"],
+ off:"Les employés de commerce entretiennent les relations avec les clients et les fournisseurs dans la langue nationale de la région ou dans une langue étrangère via les canaux de communication appropriés. Ils mettent en œuvre des mesures visant à fidéliser les clients et les fournisseurs et à accroître la satisfaction des clients. Ils vérifient l'efficacité des mesures et proposent des améliorations."},
+e1:{t:"Utiliser des applications propres au domaine commercial", easy:1,
+ bref:"Utiliser les logiciels du bureau, aider les autres, régler un problème, protéger les données.",
+ angle:"Un outil numérique : ce que vous en avez fait, le problème que vous avez réglé, la règle de sécurité respectée.",
+ ex:["Mettre à jour une base de données","Aider un·e collègue sur Excel ou Word","Repérer un courriel frauduleux (hameçonnage)"],
+ off:"Les employés de commerce utilisent les logiciels et les systèmes des technologies de l'information et de la communication de leur domaine de travail et soutiennent les différents groupes d'intérêts dans leur utilisation. Ils mettent à jour les données et le contenu des bases de données et des systèmes de gestion de contenu. Les employés de commerce se conforment aux dispositions légales, identifient les risques en matière de sécurité des données et prennent des mesures. Ils résolvent eux-mêmes les problèmes technologiques ou les transmettent au service compétent. Ils prennent également des mesures pour réduire la consommation d'énergie dans le domaine informatique."},
+e2:{t:"Rechercher et évaluer des informations dans le domaine commercial et économique", easy:1,
+ bref:"Chercher une information, vérifier qu'elle est fiable, la présenter clairement.",
+ angle:"Une recherche : où vous avez cherché, comment vous avez vérifié, ce que vous avez rendu.",
+ ex:["Comparer des fournisseurs sur Internet","Vérifier une information avec une source officielle","Préparer une synthèse pour l'équipe"],
+ off:"Les employés de commerce effectuent des recherches liées à leurs mandats à l'aide de diverses sources d'information. Ils vérifient la qualité et la pertinence pour l'entreprise des résultats de leurs recherches, préparent les informations pertinentes et les documentent pour une utilisation ultérieure dans le respect des prescriptions légales. Les employés de commerce analysent leur approche de la recherche et en déduisent des mesures d'optimisation."},
+e3:{t:"Évaluer et préparer des données et des statistiques en lien avec le marché et l'entreprise", easy:0,
+ bref:"Analyser des chiffres, les interpréter et les présenter.",
+ angle:"Des chiffres : ce que vous avez calculé, ce que vous en avez conclu, comment vous l'avez montré.",
+ ex:["Les résultats d'un sondage dans Excel, avec un graphique","Contrôler que des chiffres sont plausibles","Un tableau de suivi pour l'équipe"],
+ off:"Les employés de commerce effectuent des analyses de contenus ainsi que des évaluations quantitatives de moindre envergure, préparent les résultats, tirent des conclusions et remettent les informations qu'ils ont préparées au service compétent. Ils vérifient la plausibilité des bases de données et des statistiques et en déduisent des mesures correctives."},
+e4:{t:"Préparer des contenus en lien avec l'entreprise à l'aide d'outils multimédia", easy:1,
+ bref:"Créer un contenu (présentation, visuel, modèle) adapté au public et au canal.",
+ angle:"Un contenu que vous avez créé : pour qui, avec quel outil, et comment vous avez vérifié la qualité.",
+ ex:["Une présentation PowerPoint pour une séance","Un modèle de document pour l'équipe","Un visuel ou une courte vidéo"],
+ off:"Les employés de commerce préparent des contenus avec des programmes adaptés. Ce faisant, ils tiennent compte de l'objectif, des groupes cibles, de l'information et du canal médiatique. Les employés de commerce créent des modèles pour les supports d'information et les formats des médias. Ils vérifient également la qualité des articles internes et externes et prennent des mesures correctives si nécessaire."}
+};
+
+/* Une mission, plusieurs compétences (non officiel) */
+const MISSIONS = [
+ {m:"Organiser un événement pour l'équipe", a:[
+   ["c1","Vous racontez comment vous avez planifié les tâches, le temps et le matériel.","J'ai organisé la séance du 12 mars : j'ai fait un rétroplanning et réparti les tâches."],
+   ["c5","Vous racontez le budget : ce que vous avez prévu, dépensé, contrôlé.","Pour cet apéro, j'avais 200 francs : j'ai fait le budget et comparé les dépenses."],
+   ["c4","Vous racontez l'invitation : pour qui, quel message, quel canal.","J'ai créé l'invitation et choisi de l'envoyer par courriel et sur l'écran d'accueil."]]},
+ {m:"Répondre à un·e client·e mécontent·e", a:[
+   ["d1","Vous racontez comment vous avez compris sa demande et transmis l'information.","Un client attendait une réponse depuis trois jours : j'ai d'abord clarifié ce qu'il voulait."],
+   ["d4","Vous racontez comment vous avez gardé la relation et regagné sa confiance.","Après sa réclamation, je l'ai rappelé pour vérifier qu'il était satisfait."],
+   ["b2","Vous racontez le lien avec l'équipe qui devait régler le problème.","Le problème venait d'une autre équipe : j'ai fait le lien pour que la réponse arrive vite."]]},
+ {m:"Utiliser un nouveau logiciel", a:[
+   ["e1","Vous racontez l'outil : comment vous l'avez pris en main et le problème réglé.","Nous sommes passés à un nouveau logiciel : j'ai réglé un problème d'accès moi-même."],
+   ["b5","Vous racontez le changement : comment l'équipe l'a vécu et ce que vous avez apporté.","Le changement inquiétait l'équipe : j'ai proposé une courte démonstration."],
+   ["c3","Vous racontez la procédure que vous avez écrite pour les autres.","J'ai rédigé un mode d'emploi d'une page pour les nouveaux apprenti·e·s."]]},
+ {m:"Rédiger le procès-verbal d'une séance", a:[
+   ["c2","Vous racontez le document : préparation, prise de notes, mise au propre, diffusion.","J'ai rédigé le PV de la séance d'équipe et l'ai envoyé le jour même."],
+   ["a3","Vous racontez le mandat : la demande, le délai, le retour reçu.","Ma responsable m'a confié le PV ; elle m'a fait un retour et j'ai corrigé."],
+   ["b1","Vous racontez la collaboration : faire valider les décisions par l'équipe.","Deux collègues n'étaient pas d'accord sur une décision : j'ai vérifié avec eux avant d'envoyer."]]},
+ {m:"Préparer une présentation", a:[
+   ["e4","Vous racontez le support : public, outil, mise en forme, vérification.","J'ai créé une présentation de 8 diapositives pour la séance des formateurs."],
+   ["e2","Vous racontez la recherche : sources, vérification, sélection.","J'ai cherché les chiffres sur le site officiel et vérifié les dates."],
+   ["c1","Vous racontez l'organisation : délai, étapes, priorités.","J'avais deux jours : j'ai découpé le travail en quatre étapes."]]},
+ {m:"Accueillir un·e nouvel·le apprenti·e", a:[
+   ["b1","Vous racontez l'intégration dans l'équipe.","J'ai accueilli une nouvelle apprentie et je l'ai présentée à l'équipe."],
+   ["c3","Vous racontez les procédures que vous lui avez expliquées.","Je lui ai montré la procédure du courrier avec une fiche que j'avais faite."],
+   ["a2","Vous racontez le réseau : à qui vous l'avez présentée et pourquoi.","Je lui ai indiqué qui contacter dans chaque équipe."]]}
+];
+
+/* Quiz « vrai ou faux » */
+const QUIZ = [
+ {q:"Ce sont les expert·e·s qui choisissent la compétence dont vous parlez.", r:false, off:true,
+  e:"C'est vous qui choisissez 2 compétences et qui expliquez pourquoi. Préparez-les à l'avance."},
+ {q:"Pour le TP5, je peux raconter une situation où tout a raté.", r:false, off:true,
+  e:"On attend une situation où vous avez relevé un défi « avec assurance et compétence ». Vous pouvez parler des difficultés, mais l'histoire finit bien."},
+ {q:"Une même mission peut servir pour plusieurs compétences.", r:true, off:false,
+  e:"Oui. Ce qui change, c'est l'angle : ce que vous mettez en avant. Regardez l'exemple dans « Choisir mes 2 compétences »."},
+ {q:"Je dois reprendre un de mes mandats pratiques.", r:false, off:false,
+  e:"Non. Vos mandats peuvent vous donner des idées, mais n'importe quelle mission réussie convient."},
+ {q:"Dans l'analyse, je dis aussi ce que je ferais autrement la prochaine fois.", r:true, off:true,
+  e:"Oui. L'analyse, c'est : les défis, ce qui a fait que ça a marché, et ce que vous feriez autrement."},
+ {q:"Je peux choisir les compétences d5 ou e5.", r:false, off:false,
+  e:"Non. c6, d5, d6, e5 et e6 sont liées aux options : elles ne sont pas sélectionnables pour le TP5."}
+];
+
+/* Questions « Et si… » (non officiel) */
+const IFS = [
+ "Et si vous aviez eu deux fois moins de temps ?",
+ "Et si la personne en face avait été mécontente ?",
+ "Et si l'outil ou le logiciel était tombé en panne ?",
+ "Et si vous aviez dû le faire seul·e, sans aide ?",
+ "Et si une personne clé avait été absente ?",
+ "Et si vous aviez dû le faire en anglais ?"
+];
+
+/* Étapes de préparation d'une compétence */
+const WIZ = [
+ {k:"why", h:"Pourquoi cette compétence ?", t:"Environ 1 minute à l'oral", crit:"Critère 1", fields:[
+   ["like","Ce qui me plaît dans cette compétence","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
+   ["strong","Pourquoi je suis fort·e dans ce domaine","Ex. Mon formateur m'a souvent confié l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
+ {k:"sit", h:"La situation", t:"Environ 1 minute à l'oral", crit:"Critère 1", star:true, fields:[
+   ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…"]],
+   ["task","Ma mission, le défi","Ex. Organiser la séance d'équipe en trois jours.",["On m'a demandé de…","Le défi, c'était…"]],
+   ["did","Ce que j'ai fait","Ex. J'ai fait la liste des tâches, réservé la salle, envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
+   ["res","Le résultat","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
+ {k:"ana", h:"L'analyse", t:"Environ 2 minutes à l'oral", crit:"Critère 2", fields:[
+   ["chal","Les défis que j'ai rencontrés","Ex. La salle était déjà réservée, et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
+   ["work","Ce qui a fait que ça a marché","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
+   ["next","La prochaine fois, je ferais…","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
+ {k:"alt", h:"Et si… ?", t:"Environ 1 minute à l'oral, si on vous la pose", crit:"Critère 3", ifs:true, fields:[
+   ["altA","Ce que j'aurais fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]},
+ {k:"chk", h:"Je vérifie", t:"Avant de passer à la suite", crit:"", check:true}
+];
+const CHECKS = [
+ ["c1","J'explique pourquoi j'ai choisi cette compétence (ce qui me plaît, pourquoi je suis fort·e)."],
+ ["c2","Ma situation est concrète : un lieu, un moment, ce que j'ai fait moi."],
+ ["c3","Ma situation est une réussite : j'ai relevé un défi."],
+ ["c4","Je nomme les défis, ce qui a marché, et ce que je ferais autrement."],
+ ["c5","J'ai une réponse prête pour au moins un « Et si… »."],
+ ["c6","Je l'ai dit une fois à voix haute, sans lire."]
+];
+
+/* =====================================================================
+   ÉTAT (sur l'appareil uniquement)
+   ===================================================================== */
+const KEY = "pqual-tp5-v1";
+const blank = () => ({v:1, quiz:{}, sel:[null,null], prep:[{},{}], step:[0,0]});
+let S = blank();
+try{ const raw = localStorage.getItem(KEY); if (raw){ const o = JSON.parse(raw); if (o && o.v === 1) S = Object.assign(blank(), o); } }catch(e){}
+let saveT;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); setSave("Enregistré sur cet appareil"); }
+  catch(e){ setSave("Pas d'enregistrement possible ici : faites une sauvegarde en fichier"); }
+}
+function setSave(t){ const el = document.getElementById("saveState"); el.textContent = t; }
+
+/* Couleurs des domaines : celles du thème choisi sur le site */
+const PAL = {
+  classique:["#2F6CC4","#A35C00","#2E8558","#A8378A","#137F8C"],
+  soiree:["#FF4FA3","#3EE0F0","#B6F23A","#FFB020","#B590FF"],
+  ferme:["#B3261E","#2F6B3A","#8A5D00","#2D5F8A","#7A4A23"],
+  plage:["#0A7FA6","#C7402B","#0B7F74","#B4530B","#2E59A8"],
+  banque:["#1B3A6B","#1F5E4A","#8A1C34","#7D5F10","#4A5A70"],
+  sport:["#D61A2B","#1D4ED8","#15803D","#C2410C","#111827"],
+  arcade:["#56B4E9","#E69F00","#F0E442","#009E73","#CC79A7"]
+};
+const pal = PAL[document.documentElement.dataset.skin] || PAL.classique;
+function onColor(hex){
+  const h = String(hex).replace("#",""); if (h.length !== 6) return "#FFFFFF";
+  const ch = i => { const c = parseInt(h.slice(i,i+2),16)/255; return c <= .03928 ? c/12.92 : Math.pow((c+.055)/1.055, 2.4); };
+  const L = .2126*ch(0) + .7152*ch(2) + .0722*ch(4);
+  return L > .36 ? "#12152B" : "#FFFFFF";
+}
+const colorOf = code => pal["ABCDE".indexOf(code[0].toUpperCase())] || pal[0];
+const cvars = code => { const c = colorOf(code); return `--c:${c};--on-c:${onColor(c)}`; };
+
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const $ = id => document.getElementById(id);
+const konv = k => (window.KONVINK && window.KONVINK[k]) || "";
+
+/* =====================================================================
+   NAVIGATION
+   ===================================================================== */
+let cur = "home", prepIdx = 0;
+function go(to){
+  if (to === "prep1" || to === "prep2"){
+    const i = to === "prep1" ? 0 : 1;
+    if (!S.sel[i]){ go("choose"); return; }
+    prepIdx = i; to = "prep";
+  }
+  document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
+  cur = to;
+  ({home:renderHome, learn:renderQuiz, choose:renderChoose, prism:renderPrism, prep:renderWiz, fiche:renderFiche}[to] || (()=>{}))();
+  window.scrollTo(0,0);
+  try{ history.replaceState(null, "", "#"+(to === "prep" ? "prep"+(prepIdx+1) : to)); }catch(e){}
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-go]"); if (b){ e.preventDefault(); go(b.dataset.go); }
+});
+
+/* =====================================================================
+   ACCUEIL
+   ===================================================================== */
+function filled(i){ const p = S.prep[i]; return ["like","strong","where","task","did","res","chal","work","next"].filter(k => (p[k]||"").trim()).length; }
+function renderHome(){
+  const qDone = Object.keys(S.quiz).length >= QUIZ.length;
+  const nSel = S.sel.filter(Boolean).length;
+  const items = [
+    ["learn","Comprendre le TP5","Comment on vous note, et 6 questions vrai ou faux. 3 minutes.", qDone],
+    ["choose","Choisir mes 2 compétences", nSel ? `${nSel} sur 2 choisie${nSel>1?"s":""} : ${S.sel.filter(Boolean).join(", ")}` : "Les 23 compétences possibles, avec leur fiche.", nSel === 2],
+    ["prep1","Préparer ma compétence 1", S.sel[0] ? `${S.sel[0]} · ${filled(0)} réponses sur 9` : "Choisissez d'abord vos compétences.", filled(0) >= 9],
+    ["prep2","Préparer ma compétence 2", S.sel[1] ? `${S.sel[1]} · ${filled(1)} réponses sur 9` : "Choisissez d'abord vos compétences.", filled(1) >= 9],
+    ["fiche","Ma fiche TP5","À imprimer ou à montrer à votre formateur.", false]
+  ];
+  $("menu").innerHTML = items.map(([to,t,s,done],i) =>
+    `<li><button class="step${done?" done":""}" data-go="${to}"><span class="n">${done?"&#10003;":i+1}</span><span><b>${t}</b><small>${esc(s)}</small></span><span class="go">&rarr;</span></button></li>`).join("");
+}
+
+/* =====================================================================
+   QUIZ
+   ===================================================================== */
+let qi = 0;
+function renderQuiz(){
+  if (qi >= QUIZ.length){
+    const ok = QUIZ.filter((q,i) => S.quiz[i] === q.r).length;
+    $("quiz").innerHTML = `<p class="q-count">Terminé</p><p class="q-text">${ok} bonnes réponses sur ${QUIZ.length}.</p>
+      <p>${ok === QUIZ.length ? "Vous avez compris l'essentiel." : "Relisez les explications, puis passez au choix des compétences."}</p>
+      <div class="actions"><button class="btn solid" data-go="choose">Choisir mes 2 compétences &rarr;</button><button class="btn" id="qAgain">Recommencer</button></div>`;
+    $("qAgain").onclick = () => { qi = 0; renderQuiz(); };
+    return;
+  }
+  const q = QUIZ[qi];
+  $("quiz").innerHTML = `<p class="q-count">Question ${qi+1} sur ${QUIZ.length}</p><p class="q-text">${esc(q.q)}</p>
+    <div class="q-btns"><button class="btn" data-a="1">Vrai</button><button class="btn" data-a="0">Faux</button></div><div id="qfb"></div>`;
+  $("quiz").querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+    const a = b.dataset.a === "1"; S.quiz[qi] = a; save();
+    const good = a === q.r;
+    $("quiz").querySelectorAll("[data-a]").forEach(x => { x.disabled = true; if ((x.dataset.a==="1") === a) x.classList.add("solid"); });
+    $("qfb").innerHTML = `<div class="q-fb ${good?"good":"bad"}"><b>${good?"Exact.":"Pas tout à fait."} C'est ${q.r?"vrai":"faux"}.</b>${esc(q.e)} ${q.off?'<span class="tag-off">officiel</span>':'<span class="tag-no">non officiel</span>'}</div>
+      <div class="actions" style="margin-top:12px"><button class="btn solid" id="qNext">Suivante &rarr;</button></div>`;
+    $("qNext").onclick = () => { qi++; renderQuiz(); };
+    $("qNext").focus();
+  });
+}
+
+/* =====================================================================
+   CHOIX DES COMPÉTENCES
+   ===================================================================== */
+function renderSlots(){
+  $("slots").innerHTML = [0,1].map(i => {
+    const k = S.sel[i];
+    return `<div class="slot${k?" full":""}" style="${k?cvars(k):""}"><div class="k">Compétence ${i+1}</div>${k?`<b>${k}</b>${esc(CO[k].t)}`:"À choisir"}</div>`;
+  }).join("");
+  $("toPrep1").hidden = !S.sel[0];
+}
+function renderChoose(){
+  renderSlots();
+  $("dcos").innerHTML = "ABCDE".split("").map(L => {
+    const codes = Object.keys(CO).filter(k => k[0] === L.toLowerCase());
+    const offs = Object.keys(OFF).filter(k => k[0] === L.toLowerCase());
+    const dLink = konv(L);
+    return `<div class="dco" style="${cvars(L)}"><h3><i>${L}</i>${esc(DCO[L])}${dLink?`<a href="${esc(dLink)}" target="_blank" rel="noopener">Guide pratique</a>`:""}</h3>
+      <div class="tiles">${codes.map(k => {
+        const si = S.sel.indexOf(k);
+        return `<button class="tile${si>=0?" sel":""}" data-co="${k}" ${si>=0?`data-slot="${si+1}"`:""}><b>${k}</b><span>${esc(CO[k].t)}</span></button>`;
+      }).join("")}${offs.map(k => `<div class="tile off" aria-disabled="true"><b>${k}</b><span>${esc(OFF[k])}</span><em>Option : non sélectionnable</em></div>`).join("")}</div></div>`;
+  }).join("");
+  $("dcos").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
+}
+function openSheet(k){
+  const c = CO[k], d = $("sheet"), si = S.sel.indexOf(k), link = konv(k);
+  const full = S.sel.every(Boolean);
+  d.setAttribute("style", cvars(k));
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
+   <div class="sheet-body">
+    <h4>En bref <span class="tag-no">non officiel</span></h4><p>${esc(c.bref)}</p>
+    <h4>Si vous choisissez ${k}, vous parlez de… <span class="tag-no">non officiel</span></h4><p>${esc(c.angle)}</p>
+    <h4>Idées de situations à l'Espace Entreprise <span class="tag-no">non officiel</span></h4>
+    <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    ${c.easy?'<span class="easy">Facile à illustrer à l\'Espace Entreprise</span> <span class="tag-no">non officiel</span>':""}
+    <details><summary>Texte officiel du plan de formation <span class="tag-off">officiel</span></summary><p style="margin-top:8px">${esc(c.off)}</p></details>
+    <div class="sheet-acts">
+      ${si>=0 ? `<button class="btn solid" id="shDel">Retirer de mon choix</button>`
+        : full ? `<button class="btn" disabled>Vous avez déjà 2 compétences</button>`
+        : `<button class="btn solid" id="shAdd">Choisir ${k}</button>`}
+      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir le Guide pratique (Konvink)</a>`
+             : `<span class="btn" style="border-style:dashed;cursor:default;opacity:.7">Lien Guide pratique bientôt disponible</span>`}
+    </div>
+    ${full && si<0 ? '<p style="margin-top:8px;font-size:14.5px;color:var(--ink-soft)">Retirez d\'abord une de vos 2 compétences pour choisir celle-ci.</p>':""}
+   </div>`;
+  const close = () => { d.close(); renderChoose(); };
+  $("shX").onclick = close;
+  if ($("shAdd")) $("shAdd").onclick = () => { const i = S.sel[0] ? 1 : 0; S.sel[i] = k; save(); close(); };
+  if ($("shDel")) $("shDel").onclick = () => {
+    const has = Object.values(S.prep[si]).some(v => typeof v === "string" && v.trim());
+    if (has && !confirmInline(d, si, k)) return;
+    S.sel[si] = null; S.prep[si] = {}; S.step[si] = 0; save(); close();
+  };
+  d.onclick = e => { if (e.target === d) close(); };
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
+  d.scrollTop = 0;
+}
+/* Retrait d'une compétence déjà préparée : deuxième appui pour confirmer */
+function confirmInline(d, si, k){
+  if (d.dataset.warned === k){ delete d.dataset.warned; return true; }
+  d.dataset.warned = k;
+  $("shDel").textContent = "Confirmer : retirer et effacer mes réponses";
+  return false;
+}
+
+/* =====================================================================
+   PRISME
+   ===================================================================== */
+let mi = 0;
+function renderPrism(){
+  $("missions").innerHTML = MISSIONS.map((x,i) => `<button class="btn${i===mi?" on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
+  $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderPrism(); });
+  $("angles").innerHTML = MISSIONS[mi].a.map(([k,how,first]) =>
+    `<div class="angle" style="${cvars(k)}"><b>${k} · ${esc(CO[k].t)}</b><div>${esc(how)}</div><q>${esc(first)}</q></div>`).join("") +
+    `<p class="note"><b>À retenir</b>Même mission, trois histoires différentes. À vous de choisir l'angle qui vous met le plus en valeur.</p>`;
+}
+
+/* =====================================================================
+   ASSISTANT DE PRÉPARATION
+   ===================================================================== */
+function renderWiz(){
+  const k = S.sel[prepIdx], p = S.prep[prepIdx], st = S.step[prepIdx] || 0, w = WIZ[st];
+  document.getElementById("s-prep").setAttribute("style", cvars(k));
+  $("wizCo").textContent = k;
+  $("wizT").textContent = `Compétence ${prepIdx+1} · ${CO[k].t}`;
+  $("dots").innerHTML = WIZ.map((_,i) => `<i class="${i===st?"on":i<st?"done":""}"></i>`).join("");
+  let h = `<h2>${esc(w.h)}</h2><p class="time">${esc(w.t)}${w.crit?` · ${w.crit} de la grille`:""}</p>`;
+  if (w.k === "why") h += `<p class="note"><b>Rappel : ${k}</b>${esc(CO[k].angle)} <span class="tag-no">non officiel</span></p>`;
+  if (w.star) h += `<p class="note"><b>Aide : la méthode STAR <span class="tag-no">non officiel</span></b>Situation, Tâche, Action, Résultat. Les 4 cases ci-dessous suivent cet ordre. Gardez-la courte : 1 minute, c'est 4 ou 5 phrases.</p>`;
+  if (w.ifs){
+    h += `<p>Choisissez une question qu'on pourrait vous poser sur votre situation. <span class="tag-no">non officiel</span></p><div class="ifs">${
+      IFS.map((q,i) => `<label><input type="radio" name="ifq" value="${i}" ${String(p.altQ)===String(i)?"checked":""}><span>${esc(q)}</span></label>`).join("")}</div>`;
+  }
+  if (w.fields) h += w.fields.map(([f,lab,ph,starts]) =>
+    `<div class="field"><label for="f-${f}">${esc(lab)}</label>
+     <textarea id="f-${f}" data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(p[f]||"")}</textarea>
+     <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`).join("");
+  if (w.check){
+    const ch = p.checks || {};
+    const nOk = CHECKS.filter(([id]) => ch[id]).length;
+    h += `<ul class="check">${CHECKS.map(([id,t]) => `<li><label><input type="checkbox" data-chk="${id}" ${ch[id]?"checked":""}><span>${esc(t)}</span></label></li>`).join("")}</ul>
+      <p class="note" id="chkNote"><b>${nOk} sur ${CHECKS.length}</b>${nOk === CHECKS.length ? "Prêt·e pour cette compétence." : "Ce qui n'est pas coché : revenez en arrière pour compléter."}</p>`;
+  }
+  const last = st === WIZ.length - 1;
+  h += `<div class="wiz-nav">${st>0?`<button class="btn" id="wPrev">&larr; Précédent</button>`:"<span></span>"}
+    ${last ? (prepIdx === 0 && S.sel[1] ? `<button class="btn solid" id="wNext2">Compétence 2 &rarr;</button>` : `<button class="btn solid" data-go="fiche">Voir ma fiche &rarr;</button>`)
+           : `<button class="btn solid" id="wNext">${w.k==="alt"?"Suivant (ou passer)":"Suivant"} &rarr;</button>`}</div>`;
+  $("wiz").innerHTML = h;
+
+  $("wiz").querySelectorAll("textarea").forEach(t => t.addEventListener("input", () => {
+    p[t.dataset.f] = t.value; setSave("Enregistrement…"); clearTimeout(saveT); saveT = setTimeout(save, 400);
+  }));
+  $("wiz").querySelectorAll("[data-start]").forEach(b => b.onclick = () => {
+    const t = $("f-"+b.dataset.start); const sep = t.value && !/\s$/.test(t.value) ? " " : "";
+    t.value += sep + b.textContent + " "; t.dispatchEvent(new Event("input")); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+  });
+  $("wiz").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
+  $("wiz").querySelectorAll("[data-chk]").forEach(c => c.onchange = () => { p.checks = p.checks || {}; p.checks[c.dataset.chk] = c.checked; save(); renderWiz(); });
+  const move = d => { clearTimeout(saveT); S.step[prepIdx] = Math.max(0, Math.min(WIZ.length-1, st + d)); save(); renderWiz(); window.scrollTo(0,0); };
+  if ($("wPrev")) $("wPrev").onclick = () => move(-1);
+  if ($("wNext")) $("wNext").onclick = () => move(1);
+  if ($("wNext2")) $("wNext2").onclick = () => { save(); go("prep2"); };
+}
+
+/* =====================================================================
+   FICHE FINALE, SAUVEGARDE
+   ===================================================================== */
+function renderFiche(){
+  const part = (lab, time, vals) => `<div class="part"><h3>${lab} <small>· ${time}</small></h3>${
+    vals.map(([l,v]) => v && v.trim() ? `<p>${l?`<b>${l} : </b>`:""}${esc(v.trim())}</p>` : `<p class="empty">${l?l+" : ":""}à compléter</p>`).join("")}</div>`;
+  const out = [0,1].map(i => {
+    const k = S.sel[i];
+    if (!k) return `<div class="fiche"><h2>Compétence ${i+1}</h2><p class="empty">Pas encore choisie.</p></div>`;
+    const p = S.prep[i];
+    return `<div class="fiche" style="${cvars(k)}"><h2><i>${k}</i>${esc(CO[k].t)}</h2>
+      ${part("Pourquoi ce choix","1 min",[["Ce qui me plaît",p.like],["Pourquoi je suis fort·e",p.strong]])}
+      ${part("La situation","1 min",[["Où et quand",p.where],["Ma mission",p.task],["Ce que j'ai fait",p.did],["Le résultat",p.res]])}
+      ${part("L'analyse","2 min",[["Les défis",p.chal],["Ce qui a marché",p.work],["La prochaine fois",p.next]])}
+      ${part("Et si…","1 min",[[p.altQ!=null&&p.altQ!==""?IFS[+p.altQ]:"Question",p.altA]])}
+    </div>`;
+  }).join("");
+  $("ficheOut").innerHTML = `<h1 style="font-family:var(--head);font-size:26px;margin:0 0 10px">Ma fiche TP5</h1>` + out;
+}
+$("bPrint").onclick = () => window.print();
+$("bExport").onclick = () => {
+  const blob = new Blob([JSON.stringify(S, null, 1)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "mon-tp5-" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
+$("fImport").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { try{ const o = JSON.parse(r.result); if (o && o.v === 1){ S = Object.assign(blank(), o); save(); renderFiche(); setSave("Fichier repris"); } else setSave("Ce fichier n'est pas une fiche TP5"); }catch(err){ setSave("Ce fichier n'est pas une fiche TP5"); } };
+  r.readAsText(f); e.target.value = "";
+};
+let resetArmed = false;
+$("bReset").onclick = () => {
+  if (!resetArmed){ resetArmed = true; $("bReset").textContent = "Confirmer : tout effacer"; setTimeout(() => { resetArmed = false; $("bReset").textContent = "Tout effacer"; }, 4000); return; }
+  S = blank(); save(); resetArmed = false; $("bReset").textContent = "Tout effacer"; renderFiche();
+};
+
+/* Démarrage : reprend l'écran indiqué dans l'adresse (#choose, #prep1…) */
+const start = (location.hash || "").slice(1);
+go(["learn","choose","prism","prep1","prep2","fiche"].includes(start) ? start : "home");
+</script>
+</body>
+</html>
