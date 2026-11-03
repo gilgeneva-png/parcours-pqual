@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mon TP5</title>
+<title>Mon coach TP5</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='6' width='26' height='22' rx='5' fill='%231F2A44'/%3E%3Crect x='7' y='12' width='8' height='4' rx='2' fill='%232F6CC4'/%3E%3Crect x='13' y='18' width='12' height='4' rx='2' fill='%23C43E57'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,276 +21,191 @@
 </script>
 <style>
 :root{ --c:#2F6CC4; --on-c:#fff; --ok:#2E8558; }
-body{padding-bottom:40px}
-.wrap.narrow{max-width:720px}
+body{padding-bottom:48px}
+.wrap.narrow{max-width:680px}
 [hidden]{display:none !important}
+.btn.solid:hover{background:var(--ink); color:var(--sheet); opacity:.88}
 
-/* En-tête */
-.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:16px}
-.bar a{font-weight:700; text-decoration:none; color:var(--ink-soft); font-size:15px}
-.bar a:hover{color:var(--ink)}
-.save-state{font-size:13px; color:var(--ink-soft)}
+/* Barre du haut */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:14px; min-height:44px}
+.bar a,.bar button.link{font:inherit; font-weight:700; text-decoration:none; color:var(--ink-soft); font-size:15px; background:none; border:0; padding:0; cursor:pointer}
+.bar a:hover,.bar button.link:hover{color:var(--ink)}
+.save-state{font-size:12.5px; color:var(--ink-soft)}
 
-.hero{margin:14px 0 18px; border-radius:var(--radius-lg); background:var(--ink); color:var(--sheet); padding:22px 20px 20px}
-.hero .chip{background:rgba(255,255,255,.18)}
-.hero h1{font-family:var(--head); font-weight:800; font-size:clamp(28px,7vw,42px); line-height:1.05; margin:10px 0 8px; letter-spacing:-.02em}
-.hero p{margin:0; font-size:17px; opacity:.92}
-
-/* Tags de source */
-.tag-off,.tag-no{display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:999px; padding:1px 8px; vertical-align:2px; margin-left:4px; white-space:nowrap}
+/* Étiquettes de source */
+.tag-off,.tag-no{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:999px; padding:1px 7px; vertical-align:2px; margin-left:4px; white-space:nowrap}
 .tag-off{background:var(--ink); color:var(--sheet)}
 .tag-no{border:1.5px dashed var(--ink-soft); color:var(--ink-soft)}
 
-/* Frise des 10 minutes */
-.timeline{display:flex; gap:3px; margin:10px 0 6px; border-radius:10px; overflow:hidden}
-.timeline span{flex:var(--m) 1 0; min-width:0; padding:8px 2px; text-align:center; font-size:13px; overflow-wrap:anywhere; font-weight:700; line-height:1.15; color:var(--on-c); background:var(--c)}
-.timeline span.alt{background:repeating-linear-gradient(135deg,var(--c) 0 6px, color-mix(in srgb,var(--c) 70%, var(--sheet)) 6px 12px)}
-.timeline span.co2{filter:saturate(.75) brightness(.9)}
-.timeline small{display:block; font-weight:400; opacity:.9}
-.tl-row{margin:8px 0 0}
-.tl-k{display:block; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:2px}
-.timeline{margin:0}
-.tl-legend{font-size:13px; color:var(--ink-soft); margin:8px 0 0}
+/* Accueil du coach */
+.intro h1{font-family:var(--head); font-weight:800; font-size:clamp(30px,8vw,44px); line-height:1.02; letter-spacing:-.02em; margin:18px 0 8px}
+.intro p{margin:0 0 18px; font-size:18px; color:var(--ink-soft)}
+.intro p b{color:var(--ink)}
 
-/* Menu des étapes */
-.steps{list-style:none; padding:0; margin:0 0 16px; display:grid; gap:10px}
-.step{display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; width:100%; text-align:left; font:inherit; color:var(--ink);
-  background:var(--sheet); border:2px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; cursor:pointer}
-.step:hover{border-color:var(--ink)}
-.step .n{width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-family:var(--head); font-weight:800; font-size:19px; background:var(--paper); border:2px solid var(--line)}
-.step.done .n{background:var(--ok); border-color:var(--ok); color:#fff}
-.step b{display:block; font-family:var(--head); font-weight:800; font-size:18px; line-height:1.2}
-.step small{display:block; color:var(--ink-soft); font-size:14.5px; line-height:1.35}
-.step .go{font-weight:700; font-size:14px}
+.path{list-style:none; padding:0; margin:0 0 22px; position:relative}
+.path li{position:relative; padding-left:62px; margin:0 0 12px}
+.path li::before{content:""; position:absolute; left:23px; top:46px; bottom:-14px; width:3px; background:var(--line); border-radius:2px}
+.path li:last-child::before{display:none}
+.path li.done::before{background:var(--ok)}
+.path .dot{position:absolute; left:0; top:8px; width:48px; height:48px; border-radius:50%; display:grid; place-items:center;
+  font-family:var(--head); font-weight:800; font-size:22px; background:var(--sheet); border:3px solid var(--line); color:var(--ink-soft); z-index:1}
+.path li.now .dot{border-color:var(--ink); color:var(--ink)}
+.path li.done .dot{background:var(--ok); border-color:var(--ok); color:#fff}
+.stage{display:block; width:100%; text-align:left; font:inherit; color:var(--ink); background:var(--sheet); border:2px solid var(--line);
+  border-radius:var(--radius-sm); padding:14px 16px; cursor:pointer; text-decoration:none}
+.stage:hover{border-color:var(--ink)}
+.path li.now .stage{border:3px solid var(--ink); box-shadow:5px 5px 0 var(--bubble)}
+.stage .st{display:block; font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.path li.now .stage .st{color:var(--bubble)}
+.path li.done .stage .st{color:var(--ok)}
+.stage b{display:block; font-family:var(--head); font-weight:800; font-size:21px; line-height:1.15; margin:2px 0 3px}
+.stage small{display:block; font-size:15px; color:var(--ink-soft); line-height:1.35}
+.stage .co-pill{display:inline-block; font-family:var(--head); font-weight:800; font-size:14px; background:var(--c); color:var(--on-c); border-radius:6px; padding:0 7px; margin-right:6px}
 
-/* Blocs */
-.block{padding:18px 18px; border-radius:var(--radius-sm)}
-.block h2{font-size:21px}
-.note{border-left:4px solid var(--c); background:var(--paper); padding:10px 12px; border-radius:0 8px 8px 0; margin:10px 0; font-size:15.5px}
-.note b{display:block}
+.result{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:var(--sheet); border:2px dashed var(--line); border-radius:var(--radius-sm); padding:12px 16px; margin:0 0 22px}
+.result b{font-family:var(--head); font-size:17px}
+.result small{display:block; color:var(--ink-soft); font-size:14px}
 
-/* Grille 3-3-3 */
-.grid333{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 4px}
-.grid333 div{border:1.5px solid var(--line); border-radius:8px; padding:10px; background:var(--paper)}
-.grid333 b{display:block; font-family:var(--head); font-size:26px; line-height:1}
-.grid333 span{display:block; font-weight:700; font-size:14.5px; margin:4px 0 2px}
-.grid333 small{display:block; color:var(--ink-soft); font-size:13px; line-height:1.3}
-@media (max-width:520px){ .grid333{grid-template-columns:1fr} .grid333 div{display:grid; grid-template-columns:44px 1fr; column-gap:8px} .grid333 b{grid-row:span 2; align-self:center} }
+.links h2{font-family:var(--head); font-size:15px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:0 0 8px}
+.links ul{list-style:none; padding:0; margin:0; display:grid; gap:8px}
+.links a{display:flex; justify-content:space-between; gap:10px; text-decoration:none; font-weight:700; background:var(--sheet); border:1.5px solid var(--line); border-radius:10px; padding:11px 14px}
+.links a:hover{border-color:var(--ink)}
+.links a span{font-weight:400; color:var(--ink-soft); font-size:14px}
 
-/* Quiz */
-.q-card{background:var(--sheet); border:2px solid var(--line); border-radius:var(--radius-sm); padding:18px}
-.q-count{font-size:13.5px; font-weight:700; color:var(--ink-soft); margin:0 0 6px}
-.q-text{font-family:var(--head); font-weight:700; font-size:21px; line-height:1.25; margin:0 0 14px}
-.q-btns{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-.q-btns .btn{justify-content:center; padding:14px; font-size:17px}
-.q-fb{margin-top:14px; padding:12px; border-radius:8px; border:2px solid var(--line)}
-.q-fb.good{border-color:var(--ok)}
-.q-fb.bad{border-color:var(--alert)}
-.q-fb b{display:block; margin-bottom:2px}
-.q-fb.good b{color:var(--ok)} .q-fb.bad b{color:var(--alert)}
+/* Écrans d'étape */
+.head{margin:10px 0 14px}
+.head .k{font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
+.head h1{font-family:var(--head); font-weight:800; font-size:clamp(26px,7vw,34px); line-height:1.08; margin:2px 0 0; letter-spacing:-.01em}
+.prog{display:flex; gap:5px; margin:10px 0 0}
+.prog i{flex:1; height:6px; border-radius:3px; background:var(--line)}
+.prog i.on{background:var(--ink)}
+.prog i.done{background:var(--ok)}
 
-/* Choix des compétences */
-.slots{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 14px; position:sticky; top:0; z-index:5; background:var(--paper); padding:8px 0}
-.slot{border:2px dashed var(--line); border-radius:var(--radius-sm); padding:8px 10px; min-height:62px; background:var(--sheet); font-size:14px; line-height:1.25}
-.slot.full{border-style:solid; border-color:var(--c)}
-.slot .k{font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em}
-.slot b{font-family:var(--head); font-size:18px; margin-right:4px}
-.dco{margin:0 0 16px}
-.dco h3{font-family:var(--head); font-size:17px; margin:0 0 6px; display:flex; gap:8px; align-items:center}
+.card{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; margin:0 0 12px}
+.card h2{font-family:var(--head); font-weight:800; font-size:20px; margin:0 0 6px; line-height:1.2}
+.card p{margin:0 0 8px}
+.card p:last-child{margin-bottom:0}
+.big-rule{font-family:var(--head); font-weight:800; font-size:22px; line-height:1.25; margin:0 0 6px}
+.big-rule em{font-style:normal; background:linear-gradient(transparent 60%, color-mix(in srgb,var(--bubble) 30%, transparent) 60%)}
+
+.min-bar{display:flex; gap:3px; border-radius:10px; overflow:hidden; margin:8px 0 4px}
+.min-bar span{flex:var(--m) 1 0; background:var(--ink); color:var(--sheet); text-align:center; padding:8px 2px; font-size:13px; font-weight:700; line-height:1.15}
+.min-bar span small{display:block; font-weight:400; opacity:.85}
+.min-bar span:last-child{background:repeating-linear-gradient(135deg,var(--ink) 0 6px, color-mix(in srgb,var(--ink) 75%, var(--sheet)) 6px 12px)}
+.note-s{font-size:14px; color:var(--ink-soft); margin:4px 0 0}
+
+.crit{list-style:none; padding:0; margin:6px 0 0; display:grid; gap:6px}
+.crit li{display:grid; grid-template-columns:34px 1fr; gap:10px; align-items:start; font-size:15.5px}
+.crit b{font-family:var(--head); font-size:20px; text-align:center; background:var(--paper); border-radius:8px; padding:2px 0}
+
+.missions{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px}
+.missions button{font:inherit; font-size:14.5px; font-weight:700; color:var(--ink); background:var(--paper); border:2px solid var(--line); border-radius:999px; padding:6px 12px; cursor:pointer}
+.missions button.on{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.angles{display:grid; gap:8px}
+.angle{border:1.5px solid var(--line); border-left:7px solid var(--c); border-radius:8px; padding:9px 12px; font-size:15.5px}
+.angle b{font-family:var(--head)}
+.angle q{display:block; font-style:italic; margin-top:3px; color:var(--ink-soft)}
+
+/* Choix d'entrée */
+.doors{display:grid; gap:10px; margin:4px 0 12px}
+.door{display:block; text-align:left; font:inherit; color:var(--ink); background:var(--sheet); border:2.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; cursor:pointer}
+.door:hover,.door:focus-visible{border-color:var(--ink)}
+.door b{display:block; font-family:var(--head); font-weight:800; font-size:20px}
+.door small{display:block; color:var(--ink-soft); font-size:15px; margin-top:2px}
+
+/* Damier */
+.reminder{background:var(--paper); border-left:4px solid var(--ink); border-radius:0 8px 8px 0; padding:9px 12px; margin:0 0 12px; font-size:15.5px}
+.reminder b{display:block; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft)}
+.dco{margin:0 0 14px}
+.dco h3{font-family:var(--head); font-size:16px; margin:0 0 6px; display:flex; gap:8px; align-items:center; line-height:1.2}
 .dco h3 i{font-style:normal; width:28px; height:28px; border-radius:7px; background:var(--c); color:var(--on-c); display:grid; place-items:center; font-weight:800; flex:none}
-.dco h3 a{margin-left:auto; font-family:var(--body); font-size:13.5px; font-weight:700; color:var(--ink-soft)}
-.tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px}
-.tile{font:inherit; text-align:left; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-top:6px solid var(--c); border-radius:10px; padding:8px 10px 10px; cursor:pointer; min-height:92px; position:relative}
+.dco h3 a{margin-left:auto; font-family:var(--body); font-size:13px; font-weight:700; color:var(--ink-soft); white-space:nowrap}
+.tiles{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:8px}
+.tile{font:inherit; text-align:left; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-top:6px solid var(--c); border-radius:10px; padding:8px 10px 10px; cursor:pointer; min-height:88px; position:relative}
 .tile:hover{border-color:var(--c)}
 .tile b{display:block; font-family:var(--head); font-weight:800; font-size:20px; line-height:1}
 .tile span{display:block; font-size:13.5px; line-height:1.3; margin-top:4px}
 .tile.sel{background:var(--c); color:var(--on-c)}
-.tile.sel::after{content:attr(data-slot); position:absolute; top:6px; right:8px; font-size:12px; font-weight:800; background:var(--sheet); color:var(--ink); border-radius:999px; padding:0 7px}
-.tile.off{border-style:dashed; border-top:6px dashed var(--line); color:var(--ink-soft); cursor:not-allowed; background:transparent}
-.tile.off em{display:block; font-style:normal; font-size:12px; margin-top:4px}
+.tile.taken{opacity:.5}
+.tile em{display:block; font-style:normal; font-size:12px; font-weight:700; margin-top:4px}
+.tile.off{border-style:dashed; border-top:6px dashed var(--line); color:var(--ink-soft); cursor:default; background:transparent}
 
-/* Fiche compétence (dialog) */
-dialog.sheet{border:0; padding:0; width:min(680px,100vw); max-width:100vw; max-height:92vh; margin:auto auto 0; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--sheet); color:var(--ink)}
+/* Fiche compétence */
+dialog.sheet{border:0; padding:0; width:min(640px,100vw); max-width:100vw; max-height:90vh; margin:auto auto 0; border-radius:var(--radius-lg) var(--radius-lg) 0 0; background:var(--sheet); color:var(--ink)}
 @media (min-width:700px){ dialog.sheet{margin:auto; border-radius:var(--radius-lg)} }
 dialog.sheet::backdrop{background:rgba(10,14,28,.55)}
-.sheet-head{background:var(--c); color:var(--on-c); padding:16px 18px 14px; position:sticky; top:0}
+.sheet-head{background:var(--c); color:var(--on-c); padding:14px 18px 12px; position:sticky; top:0}
 .sheet-head .x{position:absolute; top:10px; right:10px; font:inherit; font-size:15px; font-weight:700; border:2px solid currentColor; color:inherit; background:transparent; border-radius:999px; padding:4px 12px; cursor:pointer}
-.sheet-head .code{font-family:var(--head); font-weight:800; font-size:30px; line-height:1}
-.sheet-head h3{font-family:var(--head); font-weight:800; font-size:20px; line-height:1.2; margin:4px 60px 0 0}
-.sheet-body{padding:14px 18px 18px}
-.sheet-body h4{font-family:var(--head); font-size:16px; margin:14px 0 4px}
-.sheet-body p,.sheet-body ul{margin:0 0 8px}
+.sheet-head .code{font-family:var(--head); font-weight:800; font-size:28px; line-height:1}
+.sheet-head h3{font-family:var(--head); font-weight:800; font-size:19px; line-height:1.2; margin:4px 70px 0 0}
+.sheet-body{padding:12px 18px 18px}
+.sheet-body h4{font-family:var(--head); font-size:15.5px; margin:12px 0 3px}
+.sheet-body p,.sheet-body ul{margin:0 0 6px}
 .sheet-body ul{padding-left:20px}
-.sheet-body details{border:1.5px solid var(--line); border-radius:8px; padding:8px 12px; margin:12px 0}
+.sheet-body details{border:1.5px solid var(--line); border-radius:8px; padding:8px 12px; margin:10px 0}
 .sheet-body summary{cursor:pointer; font-weight:700}
-.sheet-acts{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
-.easy{display:inline-block; font-size:13px; font-weight:700; color:var(--ok); border:1.5px solid var(--ok); border-radius:999px; padding:1px 9px; margin-top:6px}
+.sheet-acts{display:grid; gap:8px; margin-top:14px}
+.sheet-acts .btn{justify-content:center; white-space:normal; text-align:center}
 
-/* Une mission, plusieurs angles */
-.missions{display:grid; grid-template-columns:1fr 1fr; gap:8px}
-.missions .btn{justify-content:center; white-space:normal; text-align:center; border-width:2px; border-color:var(--line)}
-.missions .btn.on{border-color:var(--ink); background:var(--ink); color:var(--sheet)}
-.angles{display:grid; gap:8px; margin-top:12px}
-.angle{border:2px solid var(--line); border-left:8px solid var(--c); border-radius:8px; padding:10px 12px; background:var(--sheet)}
-.angle b{font-family:var(--head)}
-.angle q{display:block; font-style:italic; margin-top:4px}
-@media (max-width:420px){ .missions{grid-template-columns:1fr} }
-
-/* Assistant de préparation */
-.wiz-top{display:flex; align-items:center; gap:10px; margin:6px 0 12px}
-.wiz-co{font-family:var(--head); font-weight:800; background:var(--c); color:var(--on-c); border-radius:8px; padding:4px 10px; font-size:18px}
-.wiz-t{font-size:14px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
-.dots{display:flex; gap:6px; margin:0 0 12px}
-.dots i{flex:1; height:6px; border-radius:3px; background:var(--line)}
-.dots i.on{background:var(--c)}
-.dots i.done{background:color-mix(in srgb,var(--c) 55%, var(--line))}
-.wiz h2{font-family:var(--head); font-weight:800; font-size:24px; margin:0 0 2px; line-height:1.15}
-.wiz .time{font-size:14px; font-weight:700; color:var(--ink-soft); margin:0 0 10px}
-.field{margin:0 0 14px}
-.field label{display:block; font-weight:700; margin:0 0 4px; font-size:16px}
-.field label small{font-weight:400; color:var(--ink-soft)}
-.field textarea{width:100%; font:inherit; font-size:16px; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-radius:10px; padding:10px 12px; min-height:76px; resize:vertical}
-.field textarea:focus{outline:none; border-color:var(--c)}
+/* Questions */
+.field{margin:0 0 16px}
+.field label{display:block; font-weight:700; margin:0 0 5px; font-size:17px; line-height:1.3}
+.field textarea{width:100%; font:inherit; font-size:16px; color:var(--ink); background:var(--sheet); border:2px solid var(--line); border-radius:10px; padding:10px 12px; min-height:84px; resize:vertical}
+.field textarea:focus{outline:none; border-color:var(--ink)}
 .starters{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 0}
-.starters button{font:inherit; font-size:13.5px; color:var(--ink); background:var(--paper); border:1.5px solid var(--line); border-radius:999px; padding:4px 10px; cursor:pointer}
+.starters button{font:inherit; font-size:14px; color:var(--ink); background:var(--paper); border:1.5px solid var(--line); border-radius:999px; padding:4px 11px; cursor:pointer}
 .starters button:hover{border-color:var(--ink)}
-.ifs{display:grid; gap:6px; margin:0 0 12px}
-.ifs label{display:flex; gap:10px; align-items:flex-start; border:2px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; background:var(--sheet)}
-.ifs input{width:20px; height:20px; accent-color:var(--c); margin:2px 0 0; flex:none}
-.ifs label:has(input:checked){border-color:var(--c)}
-.wiz-nav{display:flex; justify-content:space-between; gap:10px; margin-top:6px}
-.wiz-nav .btn{padding:12px 20px; font-size:16px}
-.check label{padding:8px 4px}
-.check input:checked + span{text-decoration:none; color:var(--ink)}
+.tip{font-size:15px; color:var(--ink-soft); margin:-4px 0 14px}
+.ifs{display:grid; gap:6px; margin:0 0 14px}
+.ifs label{display:flex; gap:10px; align-items:flex-start; border:2px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; background:var(--sheet); font-size:16px}
+.ifs input{width:20px; height:20px; accent-color:var(--ink); margin:2px 0 0; flex:none}
+.ifs label:has(input:checked){border-color:var(--ink)}
+.nav{display:flex; justify-content:space-between; gap:10px; margin:6px 0 0; position:sticky; bottom:0; padding:10px 0 12px; background:linear-gradient(transparent, var(--paper) 30%)}
+.nav .btn{padding:13px 20px; font-size:16px}
+.nav .btn.solid{flex:1; justify-content:center; max-width:320px; margin-left:auto}
 
-/* Fiche finale */
-.fiche{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:18px; margin-bottom:14px}
-.fiche h2{font-family:var(--head); font-size:22px; margin:0 0 4px; display:flex; gap:10px; align-items:baseline}
-.fiche h2 i{font-style:normal; background:var(--c); color:var(--on-c); border-radius:7px; padding:1px 9px}
-.fiche .part{border-top:1.5px dashed var(--line); padding:8px 0}
-.fiche .part h3{font-size:14px; text-transform:uppercase; letter-spacing:.04em; margin:0 0 2px; color:var(--ink-soft)}
-.fiche .part h3 small{text-transform:none; letter-spacing:0; font-weight:400}
-.fiche .part p{margin:0 0 4px; white-space:pre-wrap}
-.fiche .empty{color:var(--alert); font-style:italic}
-.tools{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px}
-.foot-src{font-size:13.5px; color:var(--ink-soft); margin-top:22px}
+/* Mon speech */
+.speech{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; margin:0 0 14px}
+.speech h2{font-family:var(--head); font-weight:800; font-size:20px; margin:0 0 8px; display:flex; gap:8px; align-items:baseline; line-height:1.2}
+.speech h2 i{font-style:normal; background:var(--c); color:var(--on-c); border-radius:6px; padding:0 8px; flex:none}
+.sp{border-top:1.5px dashed var(--line); padding:8px 0 6px}
+.sp h3{font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:0 0 2px}
+.sp p{margin:0 0 4px; white-space:pre-wrap; font-size:16.5px}
+.sp .empty{color:var(--alert); font-style:italic}
+.done-box{text-align:center; padding:18px 10px 6px}
+.done-box b{display:block; font-family:var(--head); font-weight:800; font-size:26px}
+.actions-col{display:grid; gap:8px; margin:10px 0 0}
+.actions-col .btn{justify-content:center}
+
+.foot-src{font-size:13px; color:var(--ink-soft); margin-top:24px}
 
 @media print{
-  .bar,.tools,.hero,.no-print,.foot-src{display:none !important}
-  body{background:#fff; color:#000; font-size:12pt; -webkit-print-color-adjust:exact; print-color-adjust:exact}
-  .fiche{border:1px solid #999; break-inside:avoid}
-  .screen{display:none !important} #s-fiche{display:block !important}
+  body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .screen,.bar,.foot-src,dialog{display:none !important}
+  #s-speech{display:block !important}
+  #s-speech .no-print{display:none !important}
+  .speech{border:1px solid #999; break-inside:avoid}
 }
 </style>
 </head>
 <body>
 <div class="wrap narrow">
   <div class="bar">
-    <a href="../index.html">&larr; Mon parcours PQual</a>
+    <a href="../index.html" id="barBack">&larr; Mon parcours PQual</a>
     <span class="save-state" id="saveState">Enregistré sur cet appareil</span>
   </div>
 
-  <!-- ================= ACCUEIL ================= -->
-  <section class="screen" id="s-home">
-    <div class="hero">
-      <span class="chip">TP5 · Entretien de réflexion · 9 points</span>
-      <h1>Préparer mon TP5</h1>
-      <p>Vous parlez de vous : 2 compétences, 2 situations vécues. Ça se prépare avant l'examen. Commencez ici.</p>
-    </div>
+  <section class="screen" id="s-home"></section>
+  <section class="screen" id="s-learn" hidden></section>
+  <section class="screen" id="s-co" hidden></section>
+  <section class="screen" id="s-speech" hidden></section>
 
-    <div class="block">
-      <h2>Les 10 minutes <span class="tag-off">officiel</span></h2>
-      <div class="tl-row"><span class="tl-k">Compétence 1</span><div class="timeline">
-        <span style="--m:1">Choix<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1" class="alt">Et si…<small>1'</small></span>
-      </div></div>
-      <div class="tl-row"><span class="tl-k">Compétence 2</span><div class="timeline">
-        <span style="--m:1" class="co2">Choix<small>1'</small></span><span style="--m:1" class="co2">Situation<small>1'</small></span><span style="--m:2" class="co2">Analyse<small>2'</small></span><span style="--m:1" class="co2 alt">Et si…<small>1'</small></span>
-      </div></div>
-      <p class="tl-legend">Durées « environ » selon la présentation PQUAL. La minute du choix est une estimation <span class="tag-no">non officiel</span></p>
-      <p class="note" style="margin-top:12px"><b>Bon à savoir <span class="tag-no">non officiel</span></b>
-      Si vous parlez bien, les expert·e·s ne vous coupent pas, et la question « Et si… » ne vient pas toujours. Préparez-la quand même.</p>
-    </div>
-
-    <ol class="steps" id="menu"></ol>
-  </section>
-
-  <!-- ================= 1. COMPRENDRE ================= -->
-  <section class="screen" id="s-learn" hidden>
-    <div class="wiz-top"><button class="btn" data-go="home">&larr; Retour</button></div>
-    <div class="block">
-      <h2>Comment on vous note <span class="tag-off">officiel</span></h2>
-      <div class="grid333">
-        <div><b>3</b><span>Choix + situation</span><small>Le choix est justifié, la situation est claire et concrète.</small></div>
-        <div><b>3</b><span>Analyse</span><small>Les défis, vos points forts et les pierres d'achoppement sont reconnus.</small></div>
-        <div><b>3</b><span>Et si…</span><small>Vous décrivez une bonne façon d'agir dans une autre situation.</small></div>
-      </div>
-    </div>
-    <div class="q-card" id="quiz"></div>
-  </section>
-
-  <!-- ================= 2. CHOISIR ================= -->
-  <section class="screen" id="s-choose" hidden>
-    <div class="wiz-top"><button class="btn" data-go="home">&larr; Retour</button></div>
-    <div class="slots" id="slots"></div>
-
-    <div class="block no-print">
-      <h2>Comment choisir</h2>
-      <p>Prenez <b>une mission que vous avez réussie</b> à l'Espace Entreprise. Puis choisissez <b>l'angle</b> sous lequel vous la racontez : c'est ça, la compétence.</p>
-      <p class="note"><b>Vos mandats pratiques peuvent aider <span class="tag-no">non officiel</span></b>
-      Chaque mandat pratique des 4 stages portait sur une compétence : c'est une piste. Mais vous n'êtes pas obligé·e de reprendre un mandat. N'importe quelle mission réussie convient, à condition de la raconter sous l'angle de la compétence choisie.</p>
-      <button class="btn solid" data-go="prism">Voir : une mission, plusieurs compétences</button>
-    </div>
-
-    <p style="margin:6px 0 10px; font-size:15px; color:var(--ink-soft)">Touchez une compétence pour lire sa fiche. <span class="tag-off">officiel</span> Profil de qualification</p>
-    <div id="dcos"></div>
-    <button class="btn solid" id="toPrep1" data-go="prep1" hidden>Préparer ma compétence 1 &rarr;</button>
-  </section>
-
-  <!-- ================= PRISME ================= -->
-  <section class="screen" id="s-prism" hidden>
-    <div class="wiz-top"><button class="btn" data-go="choose">&larr; Retour au choix</button></div>
-    <div class="block">
-      <h2>Une mission, plusieurs compétences <span class="tag-no">non officiel</span></h2>
-      <p>La même mission peut se raconter de plusieurs façons. Ce qui change : <b>ce que vous mettez en avant</b>. Choisissez une mission :</p>
-      <div class="missions" id="missions"></div>
-      <div class="angles" id="angles"></div>
-    </div>
-  </section>
-
-  <!-- ================= 3-4. PRÉPARER ================= -->
-  <section class="screen" id="s-prep" hidden>
-    <div class="wiz-top">
-      <button class="btn" data-go="home">&larr;</button>
-      <span class="wiz-co" id="wizCo">a1</span>
-      <span class="wiz-t" id="wizT"></span>
-    </div>
-    <div class="dots" id="dots"></div>
-    <div class="block wiz" id="wiz"></div>
-  </section>
-
-  <!-- ================= 5. MA FICHE ================= -->
-  <section class="screen" id="s-fiche" hidden>
-    <div class="wiz-top no-print"><button class="btn" data-go="home">&larr; Retour</button></div>
-    <div class="tools">
-      <button class="btn solid" id="bPrint">Imprimer / PDF</button>
-      <button class="btn" id="bExport">Sauvegarder (fichier)</button>
-      <label class="btn" for="fImport">Reprendre un fichier</label>
-      <input type="file" id="fImport" accept="application/json,.json" hidden>
-      <button class="btn" id="bReset">Tout effacer</button>
-    </div>
-    <p class="note no-print"><b>Vos réponses restent sur cet appareil.</b> Personne d'autre ne les voit. Si vous changez de téléphone ou videz le navigateur, elles disparaissent : faites une sauvegarde en fichier, ou imprimez votre fiche pour en parler avec votre formateur.</p>
-    <div id="ficheOut"></div>
-  </section>
-
-  <p class="foot-src">Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26), diapositives 24, 25 et 27 ; plan de formation employé·e de commerce CFC (textes repris dans le Guide pratique). Tout ce qui est marqué <span class="tag-no">non officiel</span> est une aide de l'Espace Entreprise.</p>
+  <p class="foot-src" id="footSrc" hidden>Sources officielles : présentation PQUAL « Partie pratique 3Cp » (version 28.01.26) et plan de formation employé·e de commerce CFC. Ce qui est marqué <span class="tag-no">non officiel</span> est une aide de l'Espace Entreprise. Vos réponses restent sur cet appareil.</p>
 </div>
 
 <dialog class="sheet" id="sheet"></dialog>
 
 <script>
-/* =====================================================================
-   DONNÉES
-   ===================================================================== */
 const DCO = {
   A:"Travail au sein de structures d'activité et d'organisation dynamiques",
   B:"Interaction dans un milieu de travail interconnecté",
@@ -456,22 +371,6 @@ const MISSIONS = [
    ["a2","Vous racontez le réseau : à qui vous l'avez présentée et pourquoi.","Je lui ai indiqué qui contacter dans chaque équipe."]]}
 ];
 
-/* Quiz « vrai ou faux » */
-const QUIZ = [
- {q:"Ce sont les expert·e·s qui choisissent la compétence dont vous parlez.", r:false, off:true,
-  e:"C'est vous qui choisissez 2 compétences et qui expliquez pourquoi. Préparez-les à l'avance."},
- {q:"Pour le TP5, je peux raconter une situation où tout a raté.", r:false, off:true,
-  e:"On attend une situation où vous avez relevé un défi « avec assurance et compétence ». Vous pouvez parler des difficultés, mais l'histoire finit bien."},
- {q:"Une même mission peut servir pour plusieurs compétences.", r:true, off:false,
-  e:"Oui. Ce qui change, c'est l'angle : ce que vous mettez en avant. Regardez l'exemple dans « Choisir mes 2 compétences »."},
- {q:"Je dois reprendre un de mes mandats pratiques.", r:false, off:false,
-  e:"Non. Vos mandats peuvent vous donner des idées, mais n'importe quelle mission réussie convient."},
- {q:"Dans l'analyse, je dis aussi ce que je ferais autrement la prochaine fois.", r:true, off:true,
-  e:"Oui. L'analyse, c'est : les défis, ce qui a fait que ça a marché, et ce que vous feriez autrement."},
- {q:"Je peux choisir les compétences d5 ou e5.", r:false, off:false,
-  e:"Non. c6, d5, d6, e5 et e6 sont liées aux options : elles ne sont pas sélectionnables pour le TP5."}
-];
-
 /* Questions « Et si… » (non officiel) */
 const IFS = [
  "Et si vous aviez eu deux fois moins de temps ?",
@@ -482,46 +381,21 @@ const IFS = [
  "Et si vous aviez dû le faire en anglais ?"
 ];
 
-/* Étapes de préparation d'une compétence */
-const WIZ = [
- {k:"why", h:"Pourquoi cette compétence ?", t:"Environ 1 minute à l'oral", crit:"Critère 1", fields:[
-   ["like","Ce qui me plaît dans cette compétence","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
-   ["strong","Pourquoi je suis fort·e dans ce domaine","Ex. Mon formateur m'a souvent confié l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
- {k:"sit", h:"La situation", t:"Environ 1 minute à l'oral", crit:"Critère 1", star:true, fields:[
-   ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…"]],
-   ["task","Ma mission, le défi","Ex. Organiser la séance d'équipe en trois jours.",["On m'a demandé de…","Le défi, c'était…"]],
-   ["did","Ce que j'ai fait","Ex. J'ai fait la liste des tâches, réservé la salle, envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
-   ["res","Le résultat","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
- {k:"ana", h:"L'analyse", t:"Environ 2 minutes à l'oral", crit:"Critère 2", fields:[
-   ["chal","Les défis que j'ai rencontrés","Ex. La salle était déjà réservée, et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
-   ["work","Ce qui a fait que ça a marché","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
-   ["next","La prochaine fois, je ferais…","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
- {k:"alt", h:"Et si… ?", t:"Environ 1 minute à l'oral, si on vous la pose", crit:"Critère 3", ifs:true, fields:[
-   ["altA","Ce que j'aurais fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]},
- {k:"chk", h:"Je vérifie", t:"Avant de passer à la suite", crit:"", check:true}
-];
-const CHECKS = [
- ["c1","J'explique pourquoi j'ai choisi cette compétence (ce qui me plaît, pourquoi je suis fort·e)."],
- ["c2","Ma situation est concrète : un lieu, un moment, ce que j'ai fait moi."],
- ["c3","Ma situation est une réussite : j'ai relevé un défi."],
- ["c4","Je nomme les défis, ce qui a marché, et ce que je ferais autrement."],
- ["c5","J'ai une réponse prête pour au moins un « Et si… »."],
- ["c6","Je l'ai dit une fois à voix haute, sans lire."]
-];
+
 
 /* =====================================================================
-   ÉTAT (sur l'appareil uniquement)
+   ÉTAT (sur l'appareil uniquement, compatible avec le simulateur TP)
    ===================================================================== */
 const KEY = "pqual-tp5-v1";
-const blank = () => ({v:1, quiz:{}, sel:[null,null], prep:[{},{}], step:[0,0]});
+const blank = () => ({v:1, learned:false, sel:[null,null], entry:[null,null], prep:[{},{}], step:[0,0]});
 let S = blank();
-try{ const raw = localStorage.getItem(KEY); if (raw){ const o = JSON.parse(raw); if (o && o.v === 1) S = Object.assign(blank(), o); } }catch(e){}
+try{ const raw = localStorage.getItem(KEY); if (raw){ const o = JSON.parse(raw); if (o && o.v === 1){ S = Object.assign(blank(), o); S.entry = S.entry || [null,null]; } } }catch(e){}
 let saveT;
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(S)); setSave("Enregistré sur cet appareil"); }
-  catch(e){ setSave("Pas d'enregistrement possible ici : faites une sauvegarde en fichier"); }
+  catch(e){ setSave("Enregistrement impossible sur ce navigateur"); }
 }
-function setSave(t){ const el = document.getElementById("saveState"); el.textContent = t; }
+function setSave(t){ $("saveState").textContent = t; }
 
 /* Couleurs des domaines : celles du thème choisi sur le site */
 const PAL = {
@@ -542,241 +416,286 @@ function onColor(hex){
 }
 const colorOf = code => pal["ABCDE".indexOf(code[0].toUpperCase())] || pal[0];
 const cvars = code => { const c = colorOf(code); return `--c:${c};--on-c:${onColor(c)}`; };
-
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const $ = id => document.getElementById(id);
 const konv = k => (window.KONVINK && window.KONVINK[k]) || "";
+const has = v => typeof v === "string" && v.trim() !== "";
+
+/* =====================================================================
+   LES QUESTIONS DE PRÉPARATION (une compétence = 5 écrans)
+   ===================================================================== */
+const Q = {
+  why:{h:"Pourquoi cette compétence ?", min:"≈ 1 min à l'oral", tip:"Les expert·e·s veulent savoir pourquoi vous l'avez choisie.", fields:[
+    ["like","Qu'est-ce qui vous plaît dans cette compétence ?","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
+    ["strong","Pourquoi êtes-vous fort·e dans ce domaine ?","Ex. On me confie souvent l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
+  context:{h:"Le contexte", min:"≈ 1 min à l'oral, avec l'écran suivant", tip:"Une vraie mission, que vous avez faite vous-même.", fields:[
+    ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…","Pendant mon stage chez…"]],
+    ["task","Qu'est-ce qu'on vous a demandé ?","Ex. Organiser la séance d'équipe du jeudi, en trois jours.",["On m'a demandé de…","Ma mission était de…"]]]},
+  challenge:{h:"Le défi relevé", min:"suite de la situation", tip:"Racontez une réussite : ce qui était difficile, et comment vous vous en êtes sorti·e.", fields:[
+    ["chal","Qu'est-ce qui était difficile ?","Ex. La salle était déjà prise et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
+    ["did","Qu'avez-vous fait, vous ?","Ex. J'ai trouvé une autre salle, réparti les tâches et envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
+    ["res","Quel a été le résultat ?","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
+  analysis:{h:"Avec le recul", min:"≈ 2 min à l'oral", tip:"C'est l'analyse : elle vaut 3 points à elle seule.", fields:[
+    ["work","Qu'est-ce qui a fait que ça a marché ?","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
+    ["next","Que feriez-vous autrement la prochaine fois ?","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
+  alt:{h:"Et si… ?", min:"≈ 1 min à l'oral, si on vous la pose", tip:"Les expert·e·s peuvent vous demander comment vous auriez fait si les choses s'étaient passées autrement. Choisissez une question et préparez une réponse.", ifs:true, fields:[
+    ["altA","Ce que vous auriez fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]}
+};
+const FIELDS = ["like","strong","where","task","chal","did","res","work","next","altA"];
+const seqOf = i => ["start", ...(S.entry[i] === "mission" ? ["mission","pick"] : ["pick","mission"]), "why","context","challenge","analysis","alt","done"];
+const nFilled = i => FIELDS.filter(f => has(S.prep[i][f])).length + (S.sel[i] ? 1 : 0);
+const NTOT = FIELDS.length + 1;
+const coDone = i => !!S.sel[i] && ["like","where","task","did","work","next"].every(f => has(S.prep[i][f]));
 
 /* =====================================================================
    NAVIGATION
    ===================================================================== */
-let cur = "home", prepIdx = 0;
-function go(to){
-  if (to === "prep1" || to === "prep2"){
-    const i = to === "prep1" ? 0 : 1;
-    if (!S.sel[i]){ go("choose"); return; }
-    prepIdx = i; to = "prep";
-  }
+let cur = "home", ci = 0;
+function go(to, push){
+  if (to === "co1" || to === "co2"){ ci = to === "co1" ? 0 : 1; to = "co"; }
   document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
   cur = to;
-  ({home:renderHome, learn:renderQuiz, choose:renderChoose, prism:renderPrism, prep:renderWiz, fiche:renderFiche}[to] || (()=>{}))();
+  ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech}[to])();
+  $("footSrc").hidden = to !== "learn";
+  $("saveState").hidden = to === "home";
   window.scrollTo(0,0);
-  try{ history.replaceState(null, "", "#"+(to === "prep" ? "prep"+(prepIdx+1) : to)); }catch(e){}
+  const h = to === "co" ? "co"+(ci+1) : to;
+  try{ if (push !== false && location.hash.slice(1) !== h) history.pushState(null, "", "#"+h); }catch(e){}
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-go]"); if (b){ e.preventDefault(); go(b.dataset.go); }
-});
+window.addEventListener("popstate", () => route());
+function route(){ const h = (location.hash || "").slice(1); go(["learn","co1","co2","speech"].includes(h) ? h : "home", false); }
+document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b){ e.preventDefault(); go(b.dataset.go); } });
 
 /* =====================================================================
-   ACCUEIL
+   ACCUEIL : LE CHEMIN EN 3 ÉTAPES
    ===================================================================== */
-function filled(i){ const p = S.prep[i]; return ["like","strong","where","task","did","res","chal","work","next"].filter(k => (p[k]||"").trim()).length; }
 function renderHome(){
-  const qDone = Object.keys(S.quiz).length >= QUIZ.length;
-  const nSel = S.sel.filter(Boolean).length;
+  const st = [S.learned, coDone(0), coDone(1)];
+  const nextI = st.indexOf(false);
+  const label = (i, started) => st[i] ? "Fait" : i === nextI ? (started ? "Continuer ici" : "Commencer ici") : started ? "En cours" : "À faire";
+  const coLine = i => S.sel[i]
+    ? `<span class="co-pill" style="${cvars(S.sel[i])}">${S.sel[i]}</span>${esc(CO[S.sel[i]].t)}`
+    : (i === 0 ? "Choisir une compétence et préparer ce que vous allez dire." : "Même chose avec une deuxième compétence.");
   const items = [
-    ["learn","Comprendre le TP5","Comment on vous note, et 6 questions vrai ou faux. 3 minutes.", qDone],
-    ["choose","Choisir mes 2 compétences", nSel ? `${nSel} sur 2 choisie${nSel>1?"s":""} : ${S.sel.filter(Boolean).join(", ")}` : "Les 23 compétences possibles, avec leur fiche.", nSel === 2],
-    ["prep1","Préparer ma compétence 1", S.sel[0] ? `${S.sel[0]} · ${filled(0)} réponses sur 9` : "Choisissez d'abord vos compétences.", filled(0) >= 9],
-    ["prep2","Préparer ma compétence 2", S.sel[1] ? `${S.sel[1]} · ${filled(1)} réponses sur 9` : "Choisissez d'abord vos compétences.", filled(1) >= 9],
-    ["fiche","Ma fiche TP5","À imprimer ou à montrer à votre formateur.", false]
+    ["learn", "Comprendre la consigne", "Ce qu'on attend de vous, en 2 minutes.", S.learned],
+    ["co1", "Ma compétence 1", coLine(0), nFilled(0) > 0],
+    ["co2", "Ma compétence 2", coLine(1), nFilled(1) > 0]
   ];
-  $("menu").innerHTML = items.map(([to,t,s,done],i) =>
-    `<li><button class="step${done?" done":""}" data-go="${to}"><span class="n">${done?"&#10003;":i+1}</span><span><b>${t}</b><small>${esc(s)}</small></span><span class="go">&rarr;</span></button></li>`).join("");
-}
-
-/* =====================================================================
-   QUIZ
-   ===================================================================== */
-let qi = 0;
-function renderQuiz(){
-  if (qi >= QUIZ.length){
-    const ok = QUIZ.filter((q,i) => S.quiz[i] === q.r).length;
-    $("quiz").innerHTML = `<p class="q-count">Terminé</p><p class="q-text">${ok} bonnes réponses sur ${QUIZ.length}.</p>
-      <p>${ok === QUIZ.length ? "Vous avez compris l'essentiel." : "Relisez les explications, puis passez au choix des compétences."}</p>
-      <div class="actions"><button class="btn solid" data-go="choose">Choisir mes 2 compétences &rarr;</button><button class="btn" id="qAgain">Recommencer</button></div>`;
-    $("qAgain").onclick = () => { qi = 0; renderQuiz(); };
-    return;
-  }
-  const q = QUIZ[qi];
-  $("quiz").innerHTML = `<p class="q-count">Question ${qi+1} sur ${QUIZ.length}</p><p class="q-text">${esc(q.q)}</p>
-    <div class="q-btns"><button class="btn" data-a="1">Vrai</button><button class="btn" data-a="0">Faux</button></div><div id="qfb"></div>`;
-  $("quiz").querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
-    const a = b.dataset.a === "1"; S.quiz[qi] = a; save();
-    const good = a === q.r;
-    $("quiz").querySelectorAll("[data-a]").forEach(x => { x.disabled = true; if ((x.dataset.a==="1") === a) x.classList.add("solid"); });
-    $("qfb").innerHTML = `<div class="q-fb ${good?"good":"bad"}"><b>${good?"Exact.":"Pas tout à fait."} C'est ${q.r?"vrai":"faux"}.</b>${esc(q.e)} ${q.off?'<span class="tag-off">officiel</span>':'<span class="tag-no">non officiel</span>'}</div>
-      <div class="actions" style="margin-top:12px"><button class="btn solid" id="qNext">Suivante &rarr;</button></div>`;
-    $("qNext").onclick = () => { qi++; renderQuiz(); };
-    $("qNext").focus();
-  });
-}
-
-/* =====================================================================
-   CHOIX DES COMPÉTENCES
-   ===================================================================== */
-function renderSlots(){
-  $("slots").innerHTML = [0,1].map(i => {
-    const k = S.sel[i];
-    return `<div class="slot${k?" full":""}" style="${k?cvars(k):""}"><div class="k">Compétence ${i+1}</div>${k?`<b>${k}</b>${esc(CO[k].t)}`:"À choisir"}</div>`;
-  }).join("");
-  $("toPrep1").hidden = !S.sel[0];
-}
-function renderChoose(){
-  renderSlots();
-  $("dcos").innerHTML = "ABCDE".split("").map(L => {
-    const codes = Object.keys(CO).filter(k => k[0] === L.toLowerCase());
-    const offs = Object.keys(OFF).filter(k => k[0] === L.toLowerCase());
-    const dLink = konv(L);
-    return `<div class="dco" style="${cvars(L)}"><h3><i>${L}</i>${esc(DCO[L])}${dLink?`<a href="${esc(dLink)}" target="_blank" rel="noopener">Guide pratique</a>`:""}</h3>
-      <div class="tiles">${codes.map(k => {
-        const si = S.sel.indexOf(k);
-        return `<button class="tile${si>=0?" sel":""}" data-co="${k}" ${si>=0?`data-slot="${si+1}"`:""}><b>${k}</b><span>${esc(CO[k].t)}</span></button>`;
-      }).join("")}${offs.map(k => `<div class="tile off" aria-disabled="true"><b>${k}</b><span>${esc(OFF[k])}</span><em>Option : non sélectionnable</em></div>`).join("")}</div></div>`;
-  }).join("");
-  $("dcos").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
-}
-function openSheet(k){
-  const c = CO[k], d = $("sheet"), si = S.sel.indexOf(k), link = konv(k);
-  const full = S.sel.every(Boolean);
-  d.setAttribute("style", cvars(k));
-  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
-   <div class="sheet-body">
-    <h4>En bref <span class="tag-no">non officiel</span></h4><p>${esc(c.bref)}</p>
-    <h4>Si vous choisissez ${k}, vous parlez de… <span class="tag-no">non officiel</span></h4><p>${esc(c.angle)}</p>
-    <h4>Idées de situations à l'Espace Entreprise <span class="tag-no">non officiel</span></h4>
-    <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    ${c.easy?'<span class="easy">Facile à illustrer à l\'Espace Entreprise</span> <span class="tag-no">non officiel</span>':""}
-    <details><summary>Texte officiel du plan de formation <span class="tag-off">officiel</span></summary><p style="margin-top:8px">${esc(c.off)}</p></details>
-    <div class="sheet-acts">
-      ${si>=0 ? `<button class="btn solid" id="shDel">Retirer de mon choix</button>`
-        : full ? `<button class="btn" disabled>Vous avez déjà 2 compétences</button>`
-        : `<button class="btn solid" id="shAdd">Choisir ${k}</button>`}
-      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir le Guide pratique (Konvink)</a>`
-             : `<span class="btn" style="border-style:dashed;cursor:default;opacity:.7">Lien Guide pratique bientôt disponible</span>`}
+  const any = nFilled(0) + nFilled(1) > 0;
+  $("s-home").innerHTML = `
+    <div class="intro">
+      <h1>Mon TP5,<br>pas à pas</h1>
+      <p>À l'examen, vous parlez <b>10 minutes</b> de <b>2 compétences</b> que vous avez choisies. On prépare ça ensemble, en <b>3 étapes</b>.</p>
     </div>
-    ${full && si<0 ? '<p style="margin-top:8px;font-size:14.5px;color:var(--ink-soft)">Retirez d\'abord une de vos 2 compétences pour choisir celle-ci.</p>':""}
-   </div>`;
-  const close = () => { d.close(); renderChoose(); };
-  $("shX").onclick = close;
-  if ($("shAdd")) $("shAdd").onclick = () => { const i = S.sel[0] ? 1 : 0; S.sel[i] = k; save(); close(); };
-  if ($("shDel")) $("shDel").onclick = () => {
-    const has = Object.values(S.prep[si]).some(v => typeof v === "string" && v.trim());
-    if (has && !confirmInline(d, si, k)) return;
-    S.sel[si] = null; S.prep[si] = {}; S.step[si] = 0; save(); close();
-  };
-  d.onclick = e => { if (e.target === d) close(); };
-  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
-  d.scrollTop = 0;
-}
-/* Retrait d'une compétence déjà préparée : deuxième appui pour confirmer */
-function confirmInline(d, si, k){
-  if (d.dataset.warned === k){ delete d.dataset.warned; return true; }
-  d.dataset.warned = k;
-  $("shDel").textContent = "Confirmer : retirer et effacer mes réponses";
-  return false;
+    <ol class="path">${items.map(([to,t,s,started],i) => `
+      <li class="${st[i]?"done":""}${i===nextI?" now":""}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
+        <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button></li>`).join("")}
+    </ol>
+    ${any ? `<div class="result"><div><b>Mon speech</b><small>Tout ce que vous avez préparé, prêt à relire ou en PDF.</small></div><button class="btn" data-go="speech">Voir</button></div>` : ""}
+    <div class="links"><h2>À portée de clic</h2><ul>
+      <li><a href="${esc(konv("accueil"))}" target="_blank" rel="noopener">Le Guide pratique <span>Konvink</span></a></li>
+      <li><a href="simulation-tp.html">S'entraîner : simulateur d'examen <span>TP1 à TP5</span></a></li>
+    </ul></div>`;
+  $("barBack").textContent = "← Mon parcours PQual"; $("barBack").href = "../index.html"; $("barBack").onclick = null;
 }
 
 /* =====================================================================
-   PRISME
+   ÉTAPE 1 : COMPRENDRE LA CONSIGNE
    ===================================================================== */
 let mi = 0;
-function renderPrism(){
-  $("missions").innerHTML = MISSIONS.map((x,i) => `<button class="btn${i===mi?" on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
-  $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderPrism(); });
-  $("angles").innerHTML = MISSIONS[mi].a.map(([k,how,first]) =>
-    `<div class="angle" style="${cvars(k)}"><b>${k} · ${esc(CO[k].t)}</b><div>${esc(how)}</div><q>${esc(first)}</q></div>`).join("") +
-    `<p class="note"><b>À retenir</b>Même mission, trois histoires différentes. À vous de choisir l'angle qui vous met le plus en valeur.</p>`;
+function renderLearn(){
+  backHome();
+  $("s-learn").innerHTML = `
+    <div class="head"><div class="k">Étape 1 sur 3</div><h1>Comprendre la consigne</h1></div>
+    <div class="card">
+      <p class="big-rule">Racontez <em>une mission que vous avez vraiment faite</em>, et réussie, sous l'angle d'<em>une compétence</em>.</p>
+      <p class="note-s">Une situation de l'Espace Entreprise, où vous avez relevé un défi. <span class="tag-off">officiel</span></p>
+    </div>
+    <div class="card">
+      <h2>Le même schéma, deux fois</h2>
+      <p>Pour chacune de vos 2 compétences, environ 5 minutes :</p>
+      <div class="min-bar">
+        <span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span>
+      </div>
+      <p class="note-s">Durées « environ » selon la présentation PQUAL. <span class="tag-off">officiel</span> La minute du « Pourquoi » est une estimation. <span class="tag-no">non officiel</span></p>
+    </div>
+    <div class="card">
+      <h2>Une mission, plusieurs angles <span class="tag-no">non officiel</span></h2>
+      <p>La même mission se raconte de plusieurs façons. Ce qui change : ce que vous mettez en avant. Touchez une mission :</p>
+      <div class="missions" id="missions"></div>
+      <div class="angles" id="angles"></div>
+    </div>
+    <div class="card">
+      <h2>Comment vous êtes noté·e <span class="tag-off">officiel</span></h2>
+      <ul class="crit">
+        <li><b>3</b><span>Votre choix est justifié et la situation est claire, concrète.</span></li>
+        <li><b>3</b><span>Vous voyez les défis, vos points forts et ce qui a coincé.</span></li>
+        <li><b>3</b><span>Vous savez comment agir si la situation avait été différente.</span></li>
+      </ul>
+    </div>
+    <div class="nav"><button class="btn solid" id="learnOk">C'est clair : ma compétence 1 &rarr;</button></div>`;
+  renderMissions();
+  $("learnOk").onclick = () => { S.learned = true; save(); go("co1"); };
 }
+function renderMissions(){
+  $("missions").innerHTML = MISSIONS.slice(0,4).map((x,i) => `<button class="${i===mi?"on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
+  $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderMissions(); });
+  $("angles").innerHTML = MISSIONS[mi].a.map(([k,how,first]) =>
+    `<div class="angle" style="${cvars(k)}"><b>${k}</b> · ${esc(how)}<q>${esc(first)}</q></div>`).join("");
+}
+function backHome(){ $("barBack").textContent = "← Mes 3 étapes"; $("barBack").href = "#home"; $("barBack").onclick = e => { e.preventDefault(); go("home"); }; }
 
 /* =====================================================================
-   ASSISTANT DE PRÉPARATION
+   ÉTAPES 2 ET 3 : PRÉPARER UNE COMPÉTENCE
    ===================================================================== */
-function renderWiz(){
-  const k = S.sel[prepIdx], p = S.prep[prepIdx], st = S.step[prepIdx] || 0, w = WIZ[st];
-  document.getElementById("s-prep").setAttribute("style", cvars(k));
-  $("wizCo").textContent = k;
-  $("wizT").textContent = `Compétence ${prepIdx+1} · ${CO[k].t}`;
-  $("dots").innerHTML = WIZ.map((_,i) => `<i class="${i===st?"on":i<st?"done":""}"></i>`).join("");
-  let h = `<h2>${esc(w.h)}</h2><p class="time">${esc(w.t)}${w.crit?` · ${w.crit} de la grille`:""}</p>`;
-  if (w.k === "why") h += `<p class="note"><b>Rappel : ${k}</b>${esc(CO[k].angle)} <span class="tag-no">non officiel</span></p>`;
-  if (w.star) h += `<p class="note"><b>Aide : la méthode STAR <span class="tag-no">non officiel</span></b>Situation, Tâche, Action, Résultat. Les 4 cases ci-dessous suivent cet ordre. Gardez-la courte : 1 minute, c'est 4 ou 5 phrases.</p>`;
-  if (w.ifs){
-    h += `<p>Choisissez une question qu'on pourrait vous poser sur votre situation. <span class="tag-no">non officiel</span></p><div class="ifs">${
-      IFS.map((q,i) => `<label><input type="radio" name="ifq" value="${i}" ${String(p.altQ)===String(i)?"checked":""}><span>${esc(q)}</span></label>`).join("")}</div>`;
-  }
-  if (w.fields) h += w.fields.map(([f,lab,ph,starts]) =>
-    `<div class="field"><label for="f-${f}">${esc(lab)}</label>
-     <textarea id="f-${f}" data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(p[f]||"")}</textarea>
-     <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`).join("");
-  if (w.check){
-    const ch = p.checks || {};
-    const nOk = CHECKS.filter(([id]) => ch[id]).length;
-    h += `<ul class="check">${CHECKS.map(([id,t]) => `<li><label><input type="checkbox" data-chk="${id}" ${ch[id]?"checked":""}><span>${esc(t)}</span></label></li>`).join("")}</ul>
-      <p class="note" id="chkNote"><b>${nOk} sur ${CHECKS.length}</b>${nOk === CHECKS.length ? "Prêt·e pour cette compétence." : "Ce qui n'est pas coché : revenez en arrière pour compléter."}</p>`;
-  }
-  const last = st === WIZ.length - 1;
-  h += `<div class="wiz-nav">${st>0?`<button class="btn" id="wPrev">&larr; Précédent</button>`:"<span></span>"}
-    ${last ? (prepIdx === 0 && S.sel[1] ? `<button class="btn solid" id="wNext2">Compétence 2 &rarr;</button>` : `<button class="btn solid" data-go="fiche">Voir ma fiche &rarr;</button>`)
-           : `<button class="btn solid" id="wNext">${w.k==="alt"?"Suivant (ou passer)":"Suivant"} &rarr;</button>`}</div>`;
-  $("wiz").innerHTML = h;
+function renderCo(){
+  backHome();
+  const seq = seqOf(ci);
+  let st = Math.min(S.step[ci] || 0, seq.length - 1);
+  if (seq[st] !== "start" && !S.entry[ci]) st = 0;
+  const kind = seq[st], k = S.sel[ci], p = S.prep[ci];
+  const visible = seq.filter(x => x !== "start" && x !== "done");
+  const pos = visible.indexOf(kind);
+  document.getElementById("s-co").setAttribute("style", k ? cvars(k) : "");
+  let h = `<div class="head"><div class="k">Étape ${ci+2} sur 3 · Compétence ${ci+1}${k?` · ${k}`:""}</div><h1>${headTitle(kind)}</h1>
+    ${kind!=="start" ? `<div class="prog">${visible.map((_,j) => `<i class="${j<pos||kind==="done"?"done":j===pos?"on":""}"></i>`).join("")}</div>` : ""}</div>`;
 
-  $("wiz").querySelectorAll("textarea").forEach(t => t.addEventListener("input", () => {
-    p[t.dataset.f] = t.value; setSave("Enregistrement…"); clearTimeout(saveT); saveT = setTimeout(save, 400);
-  }));
-  $("wiz").querySelectorAll("[data-start]").forEach(b => b.onclick = () => {
+  if (kind === "start"){
+    if (k) h += `<div class="reminder"><b>Déjà choisie</b>${k} · ${esc(CO[k].t)}</div>`;
+    h += `<p class="tip" style="margin-top:0">Par quoi voulez-vous commencer ?</p>
+      <div class="doors">
+        <button class="door" data-entry="co"><b>J'ai une compétence en tête</b><small>Je la choisis dans la liste, puis je trouve une mission qui va avec.</small></button>
+        <button class="door" data-entry="mission"><b>J'ai une mission en tête</b><small>Je décris ce que j'ai fait, puis je choisis sous quel angle le raconter.</small></button>
+      </div>
+      ${ci===1 && !S.sel[0] ? `<p class="note-s">Conseil : commencez plutôt par la <a href="#co1" data-go="co1">compétence 1</a>.</p>` : ""}`;
+  }
+  else if (kind === "pick"){
+    if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
+    h += `<p class="tip" style="margin-top:0">${has(p.mission) ? "Sous quel angle la racontez-vous ? Touchez une compétence pour lire sa fiche." : "Touchez une compétence pour lire sa fiche et l'angle à prendre."}</p>` + damier();
+  }
+  else if (kind === "mission"){
+    h += `<p class="tip" style="margin-top:0">${k ? `Pensez à une mission réussie que vous pouvez raconter sous l'angle de <b>${k}</b>.` : "Une mission que vous avez vraiment faite, et réussie."}</p>
+      ${k ? `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>` : ""}
+      <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
+      <textarea id="f-mission" data-f="mission" rows="2" placeholder="Ex. J'ai organisé la séance d'équipe du jeudi.">${esc(p.mission||"")}</textarea>
+      <div class="starters"><button type="button" data-start="mission">J'ai…</button><button type="button" data-start="mission">On m'a demandé de…</button></div></div>
+      ${k ? `<details class="card" style="padding:10px 14px"><summary style="cursor:pointer;font-weight:700">Des idées pour ${k}</summary><ul style="margin:8px 0 0;padding-left:20px">${CO[k].ex.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
+  }
+  else if (Q[kind]){
+    const q = Q[kind];
+    h += `<p class="tip" style="margin-top:0">${esc(q.tip)} <span style="white-space:nowrap">· ${esc(q.min)}</span></p>`;
+    if (kind === "why") h += `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>`;
+    if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
+    h += q.fields.map(([f,lab,ph,starts]) => {
+      const val = p[f] != null ? p[f] : (f === "task" && has(p.mission) ? p.mission : "");
+      return `<div class="field"><label for="f-${f}">${esc(lab)}</label>
+      <textarea id="f-${f}" data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(val)}</textarea>
+      <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`;
+    }).join("");
+  }
+  else if (kind === "done"){
+    h += `<div class="done-box"><b>Compétence ${ci+1} prête</b><p class="note-s">Relisez-la à voix haute : environ 5 minutes.</p></div>` + speechCard(ci) +
+      `<div class="actions-col">${ci===0 ? `<button class="btn solid" data-go="co2">Passer à ma compétence 2 &rarr;</button>` : `<button class="btn solid" data-go="speech">Voir mon speech complet</button>`}
+       <button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
+  }
+
+  if (kind !== "start" && kind !== "done"){
+    const canNext = kind === "pick" ? !!k : true;
+    h += `<div class="nav"><button class="btn" id="bPrev" aria-label="Précédent">&larr;</button>
+      ${canNext ? `<button class="btn solid" id="bNext">${kind==="alt"?"Terminer":kind==="pick"?`Continuer avec ${k}`:"Suivant"} &rarr;</button>` : ""}</div>`;
+  }
+  $("s-co").innerHTML = h;
+
+  /* liaisons */
+  $("s-co").querySelectorAll("[data-entry]").forEach(b => b.onclick = () => {
+    S.entry[ci] = b.dataset.entry; S.step[ci] = 1; save(); renderCo(); window.scrollTo(0,0);
+  });
+  $("s-co").querySelectorAll("textarea").forEach(t => {
+    if (t.dataset.f === "task" && p.task == null && has(t.value)) p.task = t.value;
+    t.addEventListener("input", () => { p[t.dataset.f] = t.value; setSave("Enregistrement…"); clearTimeout(saveT); saveT = setTimeout(save, 400); });
+  });
+  $("s-co").querySelectorAll("[data-start]").forEach(b => b.onclick = () => {
     const t = $("f-"+b.dataset.start); const sep = t.value && !/\s$/.test(t.value) ? " " : "";
     t.value += sep + b.textContent + " "; t.dispatchEvent(new Event("input")); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
   });
-  $("wiz").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
-  $("wiz").querySelectorAll("[data-chk]").forEach(c => c.onchange = () => { p.checks = p.checks || {}; p.checks[c.dataset.chk] = c.checked; save(); renderWiz(); });
-  const move = d => { clearTimeout(saveT); S.step[prepIdx] = Math.max(0, Math.min(WIZ.length-1, st + d)); save(); renderWiz(); window.scrollTo(0,0); };
-  if ($("wPrev")) $("wPrev").onclick = () => move(-1);
-  if ($("wNext")) $("wNext").onclick = () => move(1);
-  if ($("wNext2")) $("wNext2").onclick = () => { save(); go("prep2"); };
+  $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
+  $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
+  const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
+  if ($("bPrev")) $("bPrev").onclick = () => move(-1);
+  if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
+}
+function headTitle(kind){
+  return {start:"Par où commencer ?", pick:"Choisir la compétence", mission:"Votre mission", done:"Bravo"}[kind] || Q[kind].h;
+}
+
+/* Damier des compétences */
+function damier(){
+  const other = S.sel[1-ci];
+  return "ABCDE".split("").map(L => {
+    const codes = Object.keys(CO).filter(k => k[0] === L.toLowerCase());
+    const offs = Object.keys(OFF).filter(k => k[0] === L.toLowerCase());
+    const dl = konv(L);
+    return `<div class="dco" style="${cvars(L)}"><h3><i>${L}</i>${esc(DCO[L])}${dl?`<a href="${esc(dl)}" target="_blank" rel="noopener">Guide</a>`:""}</h3>
+      <div class="tiles">${codes.map(k => {
+        const mine = S.sel[ci] === k, taken = other === k;
+        return `<button class="tile${mine?" sel":""}${taken?" taken":""}" data-co="${k}"><b>${k}</b><span>${esc(CO[k].t)}</span>${mine?"<em>Mon choix</em>":taken?`<em>Déjà choisie (compétence ${2-ci})</em>`:""}</button>`;
+      }).join("")}${offs.map(k => `<div class="tile off"><b>${k}</b><span>${esc(OFF[k])}</span><em>Option, non sélectionnable</em></div>`).join("")}</div></div>`;
+  }).join("");
+}
+function openSheet(k){
+  const c = CO[k], d = $("sheet"), link = konv(k);
+  const mine = S.sel[ci] === k, taken = S.sel[1-ci] === k;
+  d.setAttribute("style", cvars(k));
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
+   <div class="sheet-body">
+    <h4>L'angle à prendre <span class="tag-no">non officiel</span></h4><p>${esc(c.angle)}</p>
+    <h4>Des idées à l'Espace Entreprise <span class="tag-no">non officiel</span></h4>
+    <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <details><summary>Le texte officiel <span class="tag-off">officiel</span></summary><p style="margin-top:8px">${esc(c.off)}</p></details>
+    <div class="sheet-acts">
+      ${taken ? `<button class="btn" disabled>Déjà choisie pour la compétence ${2-ci}</button>`
+        : mine ? `<button class="btn solid" id="shKeep">Garder ${k} &rarr;</button>`
+        : `<button class="btn solid" id="shAdd">Je choisis ${k} &rarr;</button>`}
+      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir la théorie (Guide pratique)</a>` : ""}
+    </div>
+   </div>`;
+  const close = () => { d.close(); };
+  $("shX").onclick = close;
+  d.onclick = e => { if (e.target === d) close(); };
+  const pick = () => { S.sel[ci] = k; S.step[ci] = seqOf(ci).indexOf("pick") + 1; save(); close(); renderCo(); window.scrollTo(0,0); };
+  if ($("shAdd")) $("shAdd").onclick = pick;
+  if ($("shKeep")) $("shKeep").onclick = pick;
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
+  d.scrollTop = 0;
 }
 
 /* =====================================================================
-   FICHE FINALE, SAUVEGARDE
+   MON SPEECH (relecture, PDF)
    ===================================================================== */
-function renderFiche(){
-  const part = (lab, time, vals) => `<div class="part"><h3>${lab} <small>· ${time}</small></h3>${
-    vals.map(([l,v]) => v && v.trim() ? `<p>${l?`<b>${l} : </b>`:""}${esc(v.trim())}</p>` : `<p class="empty">${l?l+" : ":""}à compléter</p>`).join("")}</div>`;
-  const out = [0,1].map(i => {
-    const k = S.sel[i];
-    if (!k) return `<div class="fiche"><h2>Compétence ${i+1}</h2><p class="empty">Pas encore choisie.</p></div>`;
-    const p = S.prep[i];
-    return `<div class="fiche" style="${cvars(k)}"><h2><i>${k}</i>${esc(CO[k].t)}</h2>
-      ${part("Pourquoi ce choix","1 min",[["Ce qui me plaît",p.like],["Pourquoi je suis fort·e",p.strong]])}
-      ${part("La situation","1 min",[["Où et quand",p.where],["Ma mission",p.task],["Ce que j'ai fait",p.did],["Le résultat",p.res]])}
-      ${part("L'analyse","2 min",[["Les défis",p.chal],["Ce qui a marché",p.work],["La prochaine fois",p.next]])}
-      ${part("Et si…","1 min",[[p.altQ!=null&&p.altQ!==""?IFS[+p.altQ]:"Question",p.altA]])}
-    </div>`;
-  }).join("");
-  $("ficheOut").innerHTML = `<h1 style="font-family:var(--head);font-size:26px;margin:0 0 10px">Ma fiche TP5</h1>` + out;
+function speechCard(i){
+  const k = S.sel[i], p = S.prep[i];
+  if (!k) return `<div class="speech"><h2>Compétence ${i+1}</h2><p class="empty" style="color:var(--alert);font-style:italic;margin:0">Pas encore choisie.</p></div>`;
+  const line = v => has(v) ? `<p>${esc(v.trim())}</p>` : "";
+  const part = (t, vals) => `<div class="sp"><h3>${t}</h3>${vals.some(has) ? vals.map(line).join("") : `<p class="empty">à compléter</p>`}</div>`;
+  return `<div class="speech" style="${cvars(k)}"><h2><i>${k}</i>${esc(CO[k].t)}</h2>
+    ${part("Pourquoi cette compétence · 1 min", [p.like, p.strong])}
+    ${part("La situation · 1 min", [p.where, p.task, p.chal, p.did, p.res])}
+    ${part("Avec le recul · 2 min", [p.work, p.next])}
+    ${part("Et si… · 1 min", [p.altQ != null && p.altQ !== "" ? IFS[+p.altQ] : "", p.altA])}
+  </div>`;
 }
-$("bPrint").onclick = () => window.print();
-$("bExport").onclick = () => {
-  const blob = new Blob([JSON.stringify(S, null, 1)], {type:"application/json"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-  a.download = "mon-tp5-" + new Date().toISOString().slice(0,10) + ".json";
-  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-};
-$("fImport").onchange = e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = () => { try{ const o = JSON.parse(r.result); if (o && o.v === 1){ S = Object.assign(blank(), o); save(); renderFiche(); setSave("Fichier repris"); } else setSave("Ce fichier n'est pas une fiche TP5"); }catch(err){ setSave("Ce fichier n'est pas une fiche TP5"); } };
-  r.readAsText(f); e.target.value = "";
-};
-let resetArmed = false;
-$("bReset").onclick = () => {
-  if (!resetArmed){ resetArmed = true; $("bReset").textContent = "Confirmer : tout effacer"; setTimeout(() => { resetArmed = false; $("bReset").textContent = "Tout effacer"; }, 4000); return; }
-  S = blank(); save(); resetArmed = false; $("bReset").textContent = "Tout effacer"; renderFiche();
-};
+function renderSpeech(){
+  backHome();
+  $("s-speech").innerHTML = `<div class="head"><div class="k">Mon TP5</div><h1>Mon speech</h1></div>
+    <p class="tip no-print" style="margin-top:0">Relisez-le à voix haute, sans lire mot à mot. Pour le garder : faites une capture d'écran ou enregistrez-le en PDF.</p>
+    <div class="actions-col no-print" style="margin:0 0 14px"><button class="btn solid" id="bPdf">Enregistrer en PDF</button></div>
+    ${speechCard(0)}${speechCard(1)}
+    <p class="note-s">Préparé avec « Mon parcours PQual », Espace Entreprise. Document de travail.</p>
+    <div class="actions-col no-print"><button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
+  $("bPdf").onclick = () => window.print();
+}
 
-/* Démarrage : reprend l'écran indiqué dans l'adresse (#choose, #prep1…) */
-const start = (location.hash || "").slice(1);
-go(["learn","choose","prism","prep1","prep2","fiche"].includes(start) ? start : "home");
+route();
 </script>
 </body>
 </html>

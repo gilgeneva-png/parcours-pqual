@@ -1459,7 +1459,7 @@ function renderTP5(tp, body, fullCorrection) {
       return `<div class="tp5-co"><div class="tp5-co-k">${k}</div><div><div class="tp5-co-t">${escH(CO_TITLES[k] || '')}</div>
         <details><summary>Mes notes</summary><ul>${lines}</ul></details></div></div>`;
     }).join('');
-    mine += `<p class="tp5-hint">Repris de votre fiche « Préparer mon TP5 », sur cet appareil. <a href="tp5.html#fiche">Modifier ma fiche</a></p>`;
+    mine += `<p class="tp5-hint">Repris de votre préparation « Mon TP5, pas à pas », sur cet appareil. <a href="tp5.html">Modifier ma préparation</a></p>`;
   } else {
     const opts = v => '<option value="">Choisir…</option>' + Object.entries(CO_TITLES).map(([k,t]) => `<option value="${k}" ${v===k?'selected':''}>${k} · ${escH(t)}</option>`).join('');
     mine = [0,1].map(i => `<label class="tp5-pick">Compétence ${i+1}<select onchange="tp5Manual[${i}]=this.value">${opts(tp5Manual[i])}</select></label>`).join('')

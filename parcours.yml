@@ -269,11 +269,11 @@ etapes:
         duree: "10 min"
         description: "Un TP complet, de la préparation aux questions. Séries zéro, B et C."
         url: "jeux/simulation-tp.html"
-      - titre: "Ma fiche TP5"
+      - titre: "Mon speech TP5"
         type: oral
         duree: "10 min"
-        description: "Reprenez votre fiche et dites vos 2 compétences à voix haute, en 10 minutes."
-        url: "jeux/tp5.html#fiche"
+        description: "Relisez votre speech et dites vos 2 compétences à voix haute, en 10 minutes."
+        url: "jeux/tp5.html#speech"
     je_me_teste:
       - "J'ai fait au moins un TP complet chronométré pour chaque domaine."
       - "J'ai dit mon TP5 à voix haute en 10 minutes, sans lire."
