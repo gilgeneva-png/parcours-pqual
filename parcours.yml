@@ -35,6 +35,18 @@ site:
 
 
 # ---------------------------------------------------------------------
+#  ENCADRÉ « À LA UNE » DE L'ACCUEIL (sous le compte à rebours)
+#  Pour le retirer : mettre un # devant chaque ligne, ou vider le titre.
+# ---------------------------------------------------------------------
+a_la_une:
+  surtitre: "Entretien de réflexion · TP5"
+  titre: "Préparer mon TP5"
+  description: "Choisissez vos 2 compétences et préparez vos situations à l'avance. Pas à pas, sur votre téléphone, vos réponses restent sur votre appareil."
+  bouton: "Commencer"
+  url: "jeux/tp5.html"
+
+
+# ---------------------------------------------------------------------
 #  2. LA PÉRIODE ET LES EXAMENS  (bornes du planning)
 # ---------------------------------------------------------------------
 parcours:

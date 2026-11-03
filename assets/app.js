@@ -204,7 +204,8 @@ function normalize(d){
     start: toDate(p.debut), end: toDate(p.fin),
     exam: {nom: ex.nom || "Examens", debut: toDate(ex.debut), fin: toDate(ex.fin) || toDate(ex.debut)},
     cal: asList(d.calendrier).map(c => ({...c, debut:toDate(c.debut), fin:toDate(c.fin) || toDate(c.debut)})).filter(c => c.debut),
-    ressources: asList(d.ressources)
+    ressources: asList(d.ressources),
+    une: (d.a_la_une && hasText(d.a_la_une.titre)) ? d.a_la_une : null
   };
 }
 
@@ -349,6 +350,16 @@ function renderHome(data){
   }
 
   const res = data.ressources.filter(r => r && hasText(r.titre));
+  const u = data.une, uOk = !!u && hasText(u.url);
+  const uIn = u ? `<span class="une-body">
+        ${hasText(u.surtitre) ? `<span class="une-k">${esc(u.surtitre)}</span>` : ""}
+        <span class="une-t">${esc(u.titre)}</span>
+        ${hasText(u.description) ? `<span class="une-d">${inline(u.description)}</span>` : ""}
+      </span>
+      <span class="btn une-go${uOk ? "" : " soon"}">${uOk ? esc(u.bouton || "Ouvrir") + " &rarr;" : "Bientôt"}</span>` : "";
+  const une = !u ? "" : uOk
+    ? `<a class="une" href="${esc(u.url)}"${target(u.url)}>${uIn}</a>`
+    : `<section class="une" aria-disabled="true">${uIn}</section>`;
   document.body.innerHTML = `
   ${betaBar(data)}
   <header class="wrap top">
@@ -358,6 +369,7 @@ function renderHome(data){
   </header>
   <main class="wrap">
     ${warningsHtml(data)}
+    ${une}
     ${hero}
     <div class="section-head">
       <h2>Le planning</h2>

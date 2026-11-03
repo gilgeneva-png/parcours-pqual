@@ -43,3 +43,22 @@ a.act:hover .act-go{background:var(--ink); color:var(--sheet)}
   .act-go{grid-column:2; justify-self:start}
 }
 .narrow .acts{grid-template-columns:1fr}
+
+/* Encadré « À la une » de l'accueil */
+.une{color:var(--ink); text-decoration:none; display:grid; grid-template-columns:1fr auto; gap:14px 24px; align-items:center; margin:20px 0 0;
+  background:var(--sheet); border:3px solid var(--ink); border-radius:var(--radius-lg); padding:20px 24px;
+  box-shadow:6px 6px 0 var(--bubble)}
+.une-body{display:block; min-width:0}
+.une-k,.une-t,.une-d{display:block}
+.une-k{margin:0 0 2px; font-size:13.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--bubble)}
+.une-t{margin:0 0 6px; font-family:var(--head); font-weight:800; font-size:clamp(24px,3.4vw,32px); line-height:1.1; letter-spacing:-.01em}
+.une-d{margin:0; font-size:16.5px; color:var(--ink-soft); max-width:60ch}
+.une-go{background:var(--ink); color:var(--sheet); font-size:17px; padding:14px 24px}
+a.une{transition:transform .15s, box-shadow .15s}
+a.une:hover{transform:translate(-2px,-2px); box-shadow:8px 8px 0 var(--bubble)}
+a.une:hover .une-go{background:transparent; color:var(--ink)}
+.une-go.soon{background:transparent; color:var(--ink-soft); border-style:dashed; cursor:default}
+@media (max-width:640px){
+  .une{grid-template-columns:1fr; padding:18px; box-shadow:4px 4px 0 var(--bubble)}
+  .une-go{justify-content:center}
+}
