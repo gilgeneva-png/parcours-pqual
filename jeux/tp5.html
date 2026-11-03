@@ -217,6 +217,11 @@ button.result span{font-weight:700}
 .tips li::before{content:counter(t); grid-row:span 2; width:34px; height:34px; border-radius:50%; background:var(--ink); color:var(--sheet); display:grid; place-items:center; font-family:var(--head); font-weight:800}
 .tips b{font-family:var(--head); font-size:18px}
 .tips span{color:var(--ink-soft); font-size:15.5px}
+.reset{margin:22px 0 0; text-align:center}
+.reset .btn{border-color:var(--line); color:var(--ink-soft); font-size:14px; padding:8px 16px}
+.reset .btn:hover{border-color:var(--ink); background:transparent; color:var(--ink)}
+.reset .btn.armed{border-color:var(--alert); background:var(--alert); color:#fff}
+.reset small{display:block; margin-top:6px; font-size:13.5px; color:var(--alert)}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -538,7 +543,18 @@ function renderHome(){
       <li><a href="#tips" data-go="tips">Les conseils du coach <span>&rarr;</span></a></li>
       <li><a href="${esc(konv("accueil"))}" target="_blank" rel="noopener">Le Guide pratique <span>Konvink</span></a></li>
       <li><a href="simulation-tp.html">Le simulateur d'examen <span>TP1 à TP5</span></a></li>
-    </ul></div>`;
+    </ul></div>
+    ${any || S.learned ? `<div class="reset"><button class="btn" id="bReset">Tout recommencer</button><small id="resetMsg"></small></div>` : ""}`;
+  if ($("bReset")) $("bReset").onclick = () => {
+    const b = $("bReset");
+    if (b.dataset.armed !== "1"){
+      b.dataset.armed = "1"; b.classList.add("armed"); b.textContent = "Oui, tout effacer";
+      $("resetMsg").textContent = "Vos 2 compétences et toutes vos réponses seront effacées de cet appareil.";
+      clearTimeout(b._t); b._t = setTimeout(() => { if (b.isConnected){ b.dataset.armed = ""; b.classList.remove("armed"); b.textContent = "Tout recommencer"; $("resetMsg").textContent = ""; } }, 6000);
+      return;
+    }
+    S = blank(); save(); renderHome(); window.scrollTo(0,0);
+  };
   $("barBack").textContent = "← Mon parcours PQual"; $("barBack").href = "../index.html"; $("barBack").onclick = null;
 }
 
