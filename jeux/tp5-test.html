@@ -252,6 +252,40 @@ button.result span{font-weight:700}
 .next-steps li b{display:block; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft)}
 .angles-help{padding:10px 14px}
 .angles-help summary{cursor:pointer; font-weight:700}
+
+/* ---- v4 ---- */
+.path li::before{left:22px; width:4px; top:54px; bottom:-6px; background:var(--s); opacity:.55; border-radius:2px}
+.path li::after{content:""; position:absolute; left:14px; bottom:-14px; border:10px solid transparent; border-top:12px solid var(--s); border-bottom:0; opacity:.8; z-index:2}
+.path li:last-child::after, .path li.grp::after{display:none}
+.path li.done::before{opacity:.9}
+.path li.first{margin-bottom:22px}
+.path li.first .stage{padding:20px 18px}
+.path li.first .stage b{font-size:26px}
+.path li.first .dot{width:56px; height:56px; font-size:26px; left:-4px; top:14px}
+.path li.first::before{top:72px}
+.intro{position:relative}
+.intro-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin:10px 0 10px}
+.intro-top h1{margin:0}
+.promo{background:var(--sheet); border:2px solid var(--burst); border-radius:var(--radius-sm); padding:10px 14px; margin:0 0 10px !important; font-size:16.5px !important; color:var(--ink) !important}
+.burst{--burst:#D7263D; flex:none; width:112px; height:112px; display:grid; place-items:center;
+  background:var(--burst); color:#fff; text-align:center; transform:rotate(-12deg);
+  clip-path:polygon(50% 0%,59% 12%,73% 5%,76% 20%,91% 18%,87% 33%,100% 40%,90% 51%,100% 62%,86% 68%,90% 83%,75% 81%,71% 96%,58% 88%,50% 100%,42% 88%,29% 96%,25% 81%,10% 83%,14% 68%,0% 62%,10% 51%,0% 40%,13% 33%,9% 18%,24% 20%,27% 5%,41% 12%);
+  animation:pulse 2.4s ease-in-out infinite}
+.intro{--burst:#D7263D}
+.burst span{font-family:var(--head); font-weight:800; font-size:16px; line-height:1.05; text-transform:uppercase; letter-spacing:.02em}
+@keyframes pulse{0%,100%{transform:rotate(-12deg) scale(1)} 50%{transform:rotate(-8deg) scale(1.07)}}
+.ex-btn{display:grid; grid-template-columns:40px 1fr auto; gap:12px; align-items:center; width:100%; text-align:left; font:inherit; color:var(--ink);
+  background:var(--sheet); border:3px solid var(--s); border-radius:var(--radius-sm); padding:12px 14px; margin:0 0 12px; cursor:pointer; box-shadow:4px 4px 0 var(--s);
+  animation:nudge 2.6s ease-in-out infinite}
+.ex-btn b{display:block; font-family:var(--head); font-size:17px; line-height:1.2}
+.ex-btn small{display:block; font-weight:700; color:var(--s); font-size:14.5px}
+.ex-ico{width:40px; height:40px; border-radius:50%; background:var(--s); color:var(--on-s); display:grid; place-items:center; font-family:var(--head); font-weight:800; font-size:22px}
+.ex-go{font-size:22px; font-weight:800; color:var(--s)}
+.ex-btn:hover{transform:translate(-1px,-1px); box-shadow:6px 6px 0 var(--s); animation:none}
+@keyframes nudge{0%,80%,100%{transform:translateX(0)} 86%{transform:translateX(5px)} 92%{transform:translateX(-2px)}}
+@media (prefers-reduced-motion:reduce){ .burst,.ex-btn{animation:none} }
+:root[data-still] .burst, :root[data-still] .ex-btn{animation:none}
+@media (max-width:380px){ .burst{width:96px; height:96px} .burst span{font-size:14px}  }
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -489,7 +523,14 @@ function onColor(hex){
   return L > .36 ? "#12152B" : "#FFFFFF";
 }
 const colorOf = code => pal["ABCDE".indexOf(code[0].toUpperCase())] || pal[0];
-const STEPC = [pal[0], pal[1], pal[3]];
+/* Une couleur par étape : 1 bleu, 2 chaud, 3 vert (selon le thème du site) */
+const STEPS = {
+  classique:["#2F6CC4","#A35C00","#2E8558"], soiree:["#3EE0F0","#FF4FA3","#B6F23A"],
+  ferme:["#2D5F8A","#B3261E","#2F6B3A"],     plage:["#2E59A8","#C7402B","#0B7F74"],
+  banque:["#1B3A6B","#8A1C34","#1F5E4A"],    sport:["#1D4ED8","#D61A2B","#15803D"],
+  arcade:["#56B4E9","#E69F00","#009E73"]
+};
+const STEPC = STEPS[document.documentElement.dataset.skin] || STEPS.classique;
 const svars = i => { const c = STEPC[i]; return `--s:${c};--on-s:${onColor(c)}`; };
 const cvars = code => { const c = colorOf(code); return `--c:${c};--on-c:${onColor(c)}`; };
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
@@ -518,7 +559,7 @@ const Q = {
     ["altA","Ce que vous auriez fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]}
 };
 const FIELDS = ["like","strong","where","task","chal","did","res","work","next","altA"];
-const seqOf = i => ["start", ...(S.entry[i] === "mission" ? ["mission","pick"] : ["pick","mission"]), "why","context","challenge","analysis","alt","done"];
+const seqOf = i => ["mission","pick","why","context","challenge","analysis","alt","done"];
 const nFilled = i => FIELDS.filter(f => has(S.prep[i][f])).length + (S.sel[i] ? 1 : 0);
 const NTOT = FIELDS.length + 1;
 const coDone = i => !!S.sel[i] && ["like","where","task","did","work","next"].every(f => has(S.prep[i][f]));
@@ -562,20 +603,19 @@ function renderHome(){
   const any = nFilled(0) + nFilled(1) > 0;
   $("s-home").innerHTML = `
     <div class="intro">
-      <h1>Mon TP5,<br>pas à pas</h1>
-      <p><b>10 minutes</b> · <b>2 compétences</b> · <b>3 étapes</b></p>
+      <div class="intro-top"><h1>Mon TP5,<br>pas à pas</h1><div class="burst" role="note"><span>Points<br>garantis</span></div></div>
+      <p class="promo">Le TP5, c'est <b>la partie de l'examen que vous contrôlez</b>. Bien préparé à l'avance, ce sont des points garantis.</p>
+      <p><b>10 minutes</b> · <b>2 missions</b> · <b>3 étapes</b></p>
     </div>
     <ol class="path">${items.map(([to,t,s,started],i) => `
       ${i===0?`<li class="grp">La théorie</li>`:i===1?`<li class="grp">La préparation</li>`:""}
-      <li class="${st[i]?"done":""}${i===nextI?" now":""}" style="${svars(i)}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
+      <li class="${st[i]?"done":""}${i===nextI?" now":""}${i===0?" first":""}" style="${svars(i)}"><span class="dot">${st[i]?"&#10003;":i+1}</span>
         <button class="stage" data-go="${to}"><span class="st">${label(i, started)}</span><b>${t}</b><small>${s}</small></button>
         ${i>0 && (nFilled(i-1) > 0 || S.entry[i-1]) ? `<button class="erase" data-erase="${i-1}">Effacer la compétence ${i}</button>` : ""}</li>`).join("")}
     </ol>
     ${any ? `<button class="result" data-go="speech"><b>Mon speech</b><span>Relire · PDF &rarr;</span></button>` : ""}
     <div class="links"><ul>
       <li><a href="#tips" data-go="tips">Les conseils du coach <span>&rarr;</span></a></li>
-      <li><a href="${esc(konv("accueil"))}" target="_blank" rel="noopener">Le Guide pratique <span>Konvink</span></a></li>
-      <li><a href="simulation-tp.html">Le simulateur d'examen <span>TP1 à TP5</span></a></li>
     </ul></div>
     ${any || S.learned ? `<div class="reset"><button class="btn" id="bReset">Tout recommencer</button><small id="resetMsg"></small></div>` : ""}`;
   document.querySelectorAll("[data-erase]").forEach(b => b.onclick = () => {
@@ -609,7 +649,7 @@ const LEARN = [
   {h:"Le TP5 en bref", html:`
     <div class="card"><p class="big-rule">À l'examen, vous parlez <em>10 minutes</em> de votre travail à l'Espace Entreprise.</p></div>
     <div class="two"><div><b>Compétence 1</b><span>5 min</span></div><div><b>Compétence 2</b><span>5 min</span></div></div>
-    <div class="card"><p class="say">C'est <b>vous</b> qui choisissez les 2 compétences, avant l'examen.</p></div>`},
+    <div class="card"><p class="say">C'est <b>vous</b> qui choisissez vos <b>2 missions</b> et vos <b>2 compétences opérationnelles</b>. Vous présentez chaque mission sous l'angle de sa compétence.</p></div>`},
   {h:"Une compétence, 4 parties", html:`
     <div class="card">
       <div class="min-bar"><span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span></div>
@@ -626,8 +666,7 @@ const LEARN = [
     <ul class="yesno">
       <li class="y"><span>Une mission précise : un lieu, un moment, ce que <b>vous</b> avez fait</span></li>
       <li class="y"><span>Un défi relevé : il y avait une difficulté, et vous vous en êtes sorti·e</span></li>
-      <li class="n"><span>Pas un échec</span></li>
-      <li class="n"><span>Pas « d'habitude je fais… » : une seule fois, racontée</span></li>
+      <li class="y"><span>Vous parlez de vous : « j'ai fait… », pas « on a fait… »</span></li>
     </ul>`},
   {h:"Ce que les expert·e·s regardent", html:`
     <div class="card"><ul class="crit">
@@ -659,6 +698,20 @@ function renderLearn(){
     S.learned = true; save(); lp = 0; go("co1");
   };
 }
+function openExample(){
+  const d = $("sheet");
+  d.setAttribute("style", "--c:var(--ink);--on-c:var(--sheet)");
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><h3 style="margin-top:0">Une mission, plusieurs compétences</h3></div>
+    <div class="sheet-body"><p>La même mission se raconte de plusieurs façons. C'est l'angle qui change : ce que vous mettez en avant. Touchez une mission :</p>
+    <div class="missions" id="missions"></div><div class="angles" id="angles"></div>
+    <div class="sheet-acts"><button class="btn solid" id="shOk">J'ai compris</button></div></div>`;
+  renderMissions();
+  const close = () => d.close();
+  $("shX").onclick = close; $("shOk").onclick = close;
+  d.onclick = e => { if (e.target === d) close(); };
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
+  d.scrollTop = 0;
+}
 function renderMissions(){
   $("missions").innerHTML = MISSIONS.slice(0,4).map((x,i) => `<button class="${i===mi?"on":""}" data-m="${i}">${esc(x.m)}</button>`).join("");
   $("missions").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { mi = +b.dataset.m; renderMissions(); });
@@ -689,36 +742,25 @@ function renderCo(){
   backHome();
   const seq = seqOf(ci);
   let st = Math.min(S.step[ci] || 0, seq.length - 1);
-  if (seq[st] !== "start" && !S.entry[ci]) st = 0;
   const kind = seq[st], k = S.sel[ci], p = S.prep[ci];
-  const visible = seq.filter(x => x !== "start" && x !== "done");
+  const visible = seq.filter(x => x !== "done");
   const pos = visible.indexOf(kind);
   document.getElementById("s-co").setAttribute("style", (k ? cvars(k) + ";" : "") + svars(ci + 1));
   let h = `<div class="head"><div class="k">Étape ${ci+2} · Compétence ${ci+1}${k?` · ${k}`:""}${Q[kind]?`<span class="chip-min">${Q[kind].min}</span>`:""}</div><h1>${headTitle(kind)}</h1>
-    ${kind!=="start" ? `<div class="prog">${visible.map((_,j) => `<i class="${j<pos||kind==="done"?"done":j===pos?"on":""}"></i>`).join("")}</div>` : ""}</div>`;
+    <div class="prog">${visible.map((_,j) => `<i class="${j<pos||kind==="done"?"done":j===pos?"on":""}"></i>`).join("")}</div></div>`;
 
-  if (kind === "start"){
-    if (k) h += `<div class="reminder"><b>Déjà choisie</b>${k} · ${esc(CO[k].t)}</div>`;
-    h += `<div class="doors">
-        <button class="door" data-entry="co"><b>J'ai une compétence en tête</b><small>Je la choisis, puis je trouve la mission.</small></button>
-        <button class="door" data-entry="mission"><b>J'ai une mission en tête</b><small>Je la décris, puis je choisis l'angle.</small></button>
-      </div>
-      ${ci===1 && !S.sel[0] ? `<p class="note-s">Conseil : commencez plutôt par la <a href="#co1" data-go="co1">compétence 1</a>.</p>` : ""}`;
-  }
+  if (false){}
   else if (kind === "pick"){
     if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
-    h += `<details class="card angles-help"><summary>Une même mission, plusieurs compétences : voir un exemple</summary>
-      <p style="margin:8px 0 4px">C'est l'angle qui change : ce que vous mettez en avant.</p>
-      <div class="missions" id="missions"></div><div class="angles" id="angles"></div></details>
-      <p class="tip" style="margin-top:0">Touchez une compétence.</p>` + damier();
+    h += `<button class="ex-btn" id="exBtn"><span class="ex-ico">?</span><span><b>Une mission, plusieurs compétences</b><small>Voir un exemple</small></span><span class="ex-go">&rarr;</span></button>
+      <p class="tip">Touchez la compétence sous laquelle vous racontez votre mission.</p>` + damier();
   }
   else if (kind === "mission"){
-    h += `${k ? "" : `<p class="tip" style="margin-top:0">Une mission vraiment faite, et réussie.</p>`}
-      ${k ? `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>` : ""}
+    h += `<p class="tip" style="margin-top:0">Une mission que vous avez vraiment faite, et réussie.</p>
       <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
       <textarea id="f-mission" data-f="mission" rows="2" placeholder="Ex. J'ai organisé la séance d'équipe du jeudi.">${esc(p.mission||"")}</textarea>
       <div class="starters"><button type="button" data-start="mission">J'ai…</button><button type="button" data-start="mission">On m'a demandé de…</button></div></div>
-      ${k ? `<details class="card" style="padding:10px 14px"><summary style="cursor:pointer;font-weight:700">Des idées pour ${k}</summary><ul style="margin:8px 0 0;padding-left:20px">${CO[k].ex.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>` : ""}`;
+`;
   }
   else if (Q[kind]){
     const q = Q[kind];
@@ -737,9 +779,9 @@ function renderCo(){
        <button class="btn" data-go="home">Retour à mes 3 étapes</button></div>`;
   }
 
-  if (kind !== "start" && kind !== "done"){
+  if (kind !== "done"){
     const canNext = kind === "pick" ? !!k : true;
-    h += `<div class="nav"><button class="btn" id="bPrev" aria-label="Précédent">&larr;</button>
+    h += `<div class="nav">${st>0?`<button class="btn" id="bPrev" aria-label="Précédent">&larr;</button>`:""}
       ${canNext ? `<button class="btn solid" id="bNext">${kind==="alt"?"Terminer":kind==="pick"?`Continuer avec ${k}`:"Suivant"} &rarr;</button>` : ""}</div>`;
   }
   $("s-co").innerHTML = h;
@@ -758,13 +800,13 @@ function renderCo(){
   });
   $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
   $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
-  if ($("missions")) renderMissions();
+  if ($("exBtn")) $("exBtn").onclick = openExample;
   const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
   if ($("bPrev")) $("bPrev").onclick = () => move(-1);
   if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
 }
 function headTitle(kind){
-  return {start:"Par où commencer ?", pick:"Choisir la compétence", mission:"Votre mission", done:"Bravo"}[kind] || Q[kind].h;
+  return {pick:"Sous quel angle ?", mission:"Votre mission", done:"Bravo"}[kind] || Q[kind].h;
 }
 
 /* Damier des compétences */
@@ -790,12 +832,11 @@ function openSheet(k){
     <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
     <h4>Des idées à l'Espace Entreprise</h4>
     <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-    <details><summary>Le texte officiel</summary><p style="margin-top:8px">${esc(c.off)}</p></details>
     <div class="sheet-acts">
       ${taken ? `<button class="btn" disabled>Déjà choisie pour la compétence ${2-ci}</button>`
         : mine ? `<button class="btn solid" id="shKeep">Garder ${k} &rarr;</button>`
         : `<button class="btn solid" id="shAdd">Je choisis ${k} &rarr;</button>`}
-      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Ouvrir la théorie (Guide pratique)</a>` : ""}
+      ${link ? `<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Lire la théorie (Guide pratique)</a>` : ""}
     </div>
    </div>`;
   const close = () => { d.close(); };
