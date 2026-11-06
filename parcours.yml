@@ -39,9 +39,9 @@ site:
 #  Pour le retirer : mettre un # devant chaque ligne, ou vider le titre.
 # ---------------------------------------------------------------------
 a_la_une:
-  surtitre: "Entretien de réflexion · TP5"
-  titre: "Préparer mon TP5"
-  description: "Choisissez vos 2 compétences et préparez vos situations à l'avance. Pas à pas, sur votre téléphone, vos réponses restent sur votre appareil."
+  surtitre: "TP5 · Points garantis"
+  titre: "Mon TP5, pas à pas"
+  description: "La partie de l'examen que vous contrôlez : 2 missions, 3 étapes, à préparer à l'avance. Vos réponses restent sur votre appareil."
   bouton: "Commencer"
   url: "jeux/tp5.html"
 
@@ -112,17 +112,14 @@ etapes:
     mot_cle: "Comprendre l'examen"
     titre: "Savoir exactement ce qui vous attend"
     debut: 2026-11-02
-    fin: 2026-11-20
+    fin: 2026-11-13
     en_bref: |
       Avant de vous entraîner, connaissez les règles du jeu : combien de TP,
       combien de temps, et sur quoi vous êtes évalué·e.
-      Commencez aussi votre TP5 : choisir 2 compétences et savoir les décrire
-      de manière professionnelle.
     objectifs:
       - "Connaître les 5 TP et les domaines qu'ils couvrent"
       - "Connaître le déroulement d'un TP : 3, 4 puis 3 minutes"
       - "Savoir lire les critères d'évaluation"
-      - "Choisir 2 compétences pour le TP5 et les décrire de manière professionnelle"
     contenu: |
       **L'examen en bref**
       - 5 TP, chacun noté sur 9 points, soit 45 points au total.
@@ -145,24 +142,48 @@ etapes:
         duree: "5 min"
         description: "Dix questions rapides pour vérifier que vous avez tout compris."
         url: ""
-      - titre: "Préparer mon TP5"
-        type: situation
-        duree: "30 min"
-        description: "Choisissez vos 2 compétences, puis préparez la situation, l'analyse et le « Et si… » pour chacune."
-        url: "jeux/tp5.html"
     je_me_teste:
       - "Je sais combien il y a de TP et quels domaines chacun couvre."
       - "Je connais le déroulement : 3 minutes, 4 minutes, 3 minutes."
       - "Je sais où trouver les critères pendant la préparation."
       - "J'ai lu au moins une tâche de la série zéro en entier."
-      - "J'ai choisi mes 2 compétences pour le TP5 et je sais expliquer pourquoi."
-      - "Ma fiche TP5 est complète pour au moins une compétence."
+
+  # ===================================================================
+  - id: tp5
+    mot_cle: "Mon TP5"
+    titre: "Préparer à l'avance les points garantis"
+    debut: 2026-11-16
+    fin: 2026-12-04
+    en_bref: |
+      Le TP5, c'est la partie de l'examen que vous contrôlez : vous parlez de
+      2 missions que vous avez vraiment faites. Bien préparé à l'avance, ce
+      sont des points garantis.
+    objectifs:
+      - "Choisir 2 missions réussies et leur compétence opérationnelle"
+      - "Raconter chaque mission sous l'angle de sa compétence"
+      - "Parler comme un·e pro : avec vos mots, mais les mots du métier"
+    contenu: |
+      **Le TP5 en bref**
+      - 10 minutes d'entretien, sans préparation sur place.
+      - 2 missions, chacune racontée sous l'angle d'une compétence : 5 minutes par mission.
+      - Pour chaque mission : pourquoi ce choix, la situation, l'analyse, et « Et si… ».
+    activites:
+      - titre: "Mon TP5, pas à pas"
+        type: situation
+        duree: "3 × 30 min"
+        description: "La théorie, puis vos 2 missions, une étape à la fois. À la fin, votre speech en PDF."
+        url: "jeux/tp5.html"
+    je_me_teste:
+      - "J'ai choisi mes 2 missions et leur compétence, et je sais expliquer pourquoi."
+      - "Je raconte chaque mission sous l'angle de sa compétence."
+      - "J'utilise les mots du métier."
+      - "J'ai dit mon speech à voix haute en 10 minutes, sans lire."
 
   # ===================================================================
   - id: methode
     mot_cle: "La méthode"
     titre: "Lire la consigne et préparer en 3 minutes"
-    debut: 2026-11-23
+    debut: 2026-12-07
     fin: 2026-12-23
     en_bref: |
       La demande n'est jamais au même endroit. Apprenez à repérer tout ce
