@@ -287,8 +287,8 @@ button.result span{font-weight:700}
 @media (max-width:380px){ .burst{width:96px; height:96px} .burst span{font-size:14px}  }
 
 /* ---- v5 : le piège ---- */
-.warn{flex:none; width:30px; height:27px; display:grid; place-items:end center; padding-bottom:2px; background:#D7263D; color:#fff; font-family:var(--head); font-weight:800; font-size:16px;
-  clip-path:polygon(50% 0, 100% 100%, 0 100%)}
+.alert-ico{flex:none; width:30px; height:28px; display:block; border:0; padding:0; margin:0; background:none}
+.alert-ico.big{width:40px; height:37px}
 .trap{position:relative; border:3px solid #D7263D; border-radius:var(--radius-sm); padding:12px 14px 14px; background:color-mix(in srgb,#D7263D 6%, var(--sheet))}
 .trap-alert{display:flex; gap:10px; align-items:center; color:color-mix(in srgb,#D7263D 70%,var(--ink)); font-size:17px; line-height:1.25}
 .trap-k{font-size:14.5px; color:var(--ink-soft); margin:8px 0 8px}
@@ -301,7 +301,7 @@ button.result span{font-weight:700}
 .tell.bad p{text-decoration:line-through; text-decoration-thickness:2.5px; text-decoration-color:#D7263D}
 .replay{font:inherit; font-size:13.5px; font-weight:700; color:var(--ink-soft); background:none; border:0; text-decoration:underline; cursor:pointer; padding:2px 0}
 /* animation : la mauvaise version apparaît, tremble, est barrée ; puis la bonne arrive */
-.trap.play .trap-alert .warn{animation:blink 1s ease-in-out 3}
+.trap.play .trap-alert .alert-ico{animation:blink 1s ease-in-out 3}
 .trap.play .tell.bad{animation:pop .4s ease-out both, shake .5s .9s ease-in-out both}
 .trap.play .tell.bad .mark, .trap.play .tell.bad small{animation:fadein .3s 1.4s both}
 .trap.play .tell.bad p{animation:strike .5s 1.4s both, dim .4s 2s forwards}
@@ -315,13 +315,32 @@ button.result span{font-weight:700}
 @keyframes slidein{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
 @keyframes popmark{0%{transform:scale(0)} 70%{transform:scale(1.25)} 100%{transform:scale(1)}}
 @keyframes blink{50%{transform:scale(1.2)}}
-.ex-ico{background:#D7263D !important; color:#fff !important; clip-path:polygon(50% 4%, 100% 96%, 0 96%); border-radius:0 !important; place-items:end center !important; padding-bottom:5px}
 .ex-btn{border-color:#D7263D !important; box-shadow:4px 4px 0 #D7263D !important}
 .ex-btn small, .ex-btn .ex-go{color:color-mix(in srgb,#D7263D 70%,var(--ink)) !important}
 .angle-keep{display:flex; gap:10px; align-items:flex-start; border:2px solid #D7263D; border-radius:10px; padding:9px 12px; margin:0 0 14px; background:color-mix(in srgb,#D7263D 5%, var(--sheet)); font-size:15px}
 .angle-keep b{display:block; color:color-mix(in srgb,#D7263D 70%,var(--ink)); font-size:15.5px}
 @media (prefers-reduced-motion:reduce){ .trap.play *{animation:none !important} }
 :root[data-still] .trap.play *{animation:none !important}
+
+/* ---- v6 : aide pour trouver une mission ---- */
+.coach-btn{display:grid; grid-template-columns:58px 1fr auto; gap:12px; align-items:center; width:100%; text-align:left; font:inherit; color:var(--ink);
+  background:var(--sheet); border:3px solid #D7263D; border-radius:var(--radius-sm); padding:10px 14px; margin:0 0 16px; cursor:pointer; box-shadow:4px 4px 0 #D7263D}
+.coach-btn b{display:block; font-family:var(--head); font-size:17px; line-height:1.2}
+.coach-btn small{display:block; font-weight:700; color:color-mix(in srgb,#D7263D 70%,var(--ink)); font-size:14.5px}
+.coach-btn .ex-go{color:color-mix(in srgb,#D7263D 70%,var(--ink))}
+.coach-btn:hover{transform:translate(-1px,-1px); box-shadow:6px 6px 0 #D7263D}
+.mini-burst{width:58px; height:58px; display:grid; place-items:center; background:#D7263D; color:#fff;
+  clip-path:polygon(50% 0%,59% 12%,73% 5%,76% 20%,91% 18%,87% 33%,100% 40%,90% 51%,100% 62%,86% 68%,90% 83%,75% 81%,71% 96%,58% 88%,50% 100%,42% 88%,29% 96%,25% 81%,10% 83%,14% 68%,0% 62%,10% 51%,0% 40%,13% 33%,9% 18%,24% 20%,27% 5%,41% 12%);
+  animation:pulse 2.4s ease-in-out infinite}
+.mini-burst span{font-family:var(--head); font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.02em}
+.find{list-style:none; padding:0; margin:4px 0 0; display:grid; gap:10px; counter-reset:f}
+.find > li{counter-increment:f; display:grid; grid-template-columns:30px 1fr; column-gap:10px; border-bottom:1.5px dashed var(--line); padding-bottom:10px}
+.find > li::before{content:counter(f); grid-row:span 3; width:30px; height:30px; border-radius:50%; background:#D7263D; color:#fff; display:grid; place-items:center; font-weight:800}
+.find b{font-family:var(--head); font-size:17px}
+.find span{color:var(--ink-soft); font-size:15.5px}
+.find ul{margin:4px 0 0; padding-left:18px; font-size:15.5px}
+@media (prefers-reduced-motion:reduce){ .mini-burst{animation:none} }
+:root[data-still] .mini-burst{animation:none}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -734,13 +753,33 @@ function renderLearn(){
     S.learned = true; save(); lp = 0; go("co1");
   };
 }
+const FIND = [
+  ["Vos mandats pratiques", "Chaque mandat de vos stages portait sur une compétence. Relisez-les : c'est une première piste."],
+  ["Votre TPTP", "Il résume vos lieux de stage et les missions que vous avez faites. Parcourez-le, crayon en main."],
+  ["Faites le point, seul·e", "", ["De quelle mission êtes-vous fier·ère ?", "Quand vous a-t-on dit « merci » ou « bravo » ?", "Quand avez-vous dû vous débrouiller face à un imprévu ?", "Qu'est-ce que vous faites mieux qu'au début de l'apprentissage ?"]],
+  ["Parlez-en", "À votre formatrice ou formateur, à vos collègues. Demandez : « Dans quelle mission tu m'as trouvé·e bon·ne ? »"],
+  ["Fouillez vos traces", "Vos courriels, votre agenda, vos documents de travail : ils rappellent ce que vous avez fait, et quand."],
+  ["Petite mission, ça suffit", "Pas besoin d'un grand projet. Une tâche précise, avec un défi, vaut mieux qu'un souvenir flou."]
+];
+function openFind(){
+  const d = $("sheet");
+  d.setAttribute("style", "--c:#D7263D;--on-c:#fff");
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><h3 style="margin-top:0">Comment trouver une mission&nbsp;?</h3></div>
+    <div class="sheet-body"><ol class="find">${FIND.map(([t,txt,qs]) => `<li><b>${esc(t)}</b>${txt?`<span>${esc(txt)}</span>`:""}${qs?`<ul>${qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ul>`:""}</li>`).join("")}</ol>
+    <div class="sheet-acts"><button class="btn solid" id="shOk">À moi de jouer</button></div></div>`;
+  const close = () => { d.close(); const t = $("f-mission"); if (t) t.focus(); };
+  $("shX").onclick = close; $("shOk").onclick = close;
+  d.onclick = e => { if (e.target === d) close(); };
+  if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open","");
+  d.scrollTop = 0;
+}
 function openExample(){
   const d = $("sheet");
   d.setAttribute("style", "--c:var(--ink);--on-c:var(--sheet)");
   d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><h3 style="margin-top:0">Le piège n° 1</h3></div>
     <div class="sheet-body">
     <div class="trap" id="trap">
-      <div class="trap-alert"><span class="warn" aria-hidden="true">!</span><b>Raconter la mission, mais pas sous l'angle de la compétence</b></div>
+      <div class="trap-alert"><svg class="alert-ico" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 1.5 23 20.5H1z" fill="#D7263D" stroke="#D7263D" stroke-width="1.5" stroke-linejoin="round"/><rect x="10.9" y="7.5" width="2.2" height="7" rx="1.1" fill="#fff"/><circle cx="12" cy="17.4" r="1.3" fill="#fff"/></svg><b>Raconter la mission, mais pas sous l'angle de la compétence</b></div>
       <p class="trap-k">Compétence choisie : <b>c1</b> · organiser le travail, les priorités, le temps</p>
       <div class="tell bad"><span class="mark" aria-hidden="true">&#10005;</span>
         <p>« J'ai organisé la séance. J'ai réservé la salle, fait le budget, envoyé l'invitation, puis rangé la salle. »</p>
@@ -775,7 +814,7 @@ const TIPS = [
   ["Parlez de vous", "« J'ai fait… », pas « on a fait… »."],
   ["L'analyse compte", "Ce qui a marché et ce que vous changeriez : c'est là qu'on fait la différence."],
   ["Préparez le « Et si… »", "Si vous parlez bien, on ne vous coupe pas toujours. Mais soyez prêt·e."],
-  ["Vos mandats pratiques", "Ils peuvent vous donner des idées. Ce n'est pas obligatoire de les reprendre."],
+  ["Trouver sa mission", "Vos mandats pratiques, votre TPTP, et une discussion avec votre formatrice ou formateur."],
   ["À voix haute", "Répétez sans lire, plusieurs fois. Chronométrez-vous : 5 minutes par compétence."]
 ];
 function renderTips(){
@@ -803,11 +842,13 @@ function renderCo(){
   if (false){}
   else if (kind === "pick"){
     if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
-    h += `<button class="ex-btn" id="exBtn"><span class="ex-ico">!</span><span><b>Attention au piège n° 1</b><small>Voir l'exemple, avant de choisir</small></span><span class="ex-go">&rarr;</span></button>
+    h += `<button class="ex-btn" id="exBtn"><svg class="alert-ico big" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 1.5 23 20.5H1z" fill="#D7263D" stroke="#D7263D" stroke-width="1.5" stroke-linejoin="round"/><rect x="10.9" y="7.5" width="2.2" height="7" rx="1.1" fill="#fff"/><circle cx="12" cy="17.4" r="1.3" fill="#fff"/></svg><span><b>Attention au piège n° 1</b><small>Voir l'exemple, avant de choisir</small></span><span class="ex-go">&rarr;</span></button>
       <p class="tip">Touchez la compétence sous laquelle vous racontez votre mission.</p>` + damier();
   }
   else if (kind === "mission"){
     h += `<p class="tip" style="margin-top:0">Une mission que vous avez vraiment faite, et réussie.</p>
+      <button class="coach-btn" id="coachBtn"><span class="mini-burst" aria-hidden="true"><span>Coach</span></span>
+        <span><b>Comment trouver une mission&nbsp;?</b><small>Les conseils du coach</small></span><span class="ex-go">&rarr;</span></button>
       <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
       <textarea id="f-mission" data-f="mission" rows="2">${esc(p.mission||"")}</textarea>
       <div class="starters"><button type="button" data-start="mission">J'ai…</button><button type="button" data-start="mission">On m'a demandé de…</button></div></div>
@@ -816,7 +857,7 @@ function renderCo(){
   else if (Q[kind]){
     const q = Q[kind];
     if (kind === "why") h += `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>`;
-    else h += `<div class="angle-keep"><span class="warn" aria-hidden="true">!</span><span><b>Restez sous l'angle de ${k}</b>${esc(CO[k].angle)}</span></div>`;
+    else h += `<div class="angle-keep"><svg class="alert-ico" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 1.5 23 20.5H1z" fill="#D7263D" stroke="#D7263D" stroke-width="1.5" stroke-linejoin="round"/><rect x="10.9" y="7.5" width="2.2" height="7" rx="1.1" fill="#fff"/><circle cx="12" cy="17.4" r="1.3" fill="#fff"/></svg><span><b>Restez sous l'angle de ${k}</b>${esc(CO[k].angle)}</span></div>`;
     if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
     h += q.fields.map(([f,lab,ph,starts]) => {
       const val = p[f] != null ? p[f] : (f === "task" && has(p.mission) ? p.mission : "");
@@ -853,6 +894,7 @@ function renderCo(){
   $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
   $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
   if ($("exBtn")) $("exBtn").onclick = openExample;
+  if ($("coachBtn")) $("coachBtn").onclick = openFind;
   const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
   if ($("bPrev")) $("bPrev").onclick = () => move(-1);
   if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
