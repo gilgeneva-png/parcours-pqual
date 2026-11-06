@@ -286,6 +286,43 @@ button.result span{font-weight:700}
 @media (prefers-reduced-motion:reduce){ .burst,.ex-btn{animation:none} }
 :root[data-still] .burst, :root[data-still] .ex-btn{animation:none}
 @media (max-width:380px){ .burst{width:96px; height:96px} .burst span{font-size:14px}  }
+
+/* ---- v5 : le piège ---- */
+.warn{flex:none; width:30px; height:27px; display:grid; place-items:end center; padding-bottom:2px; background:#D7263D; color:#fff; font-family:var(--head); font-weight:800; font-size:16px;
+  clip-path:polygon(50% 0, 100% 100%, 0 100%)}
+.trap{position:relative; border:3px solid #D7263D; border-radius:var(--radius-sm); padding:12px 14px 14px; background:color-mix(in srgb,#D7263D 6%, var(--sheet))}
+.trap-alert{display:flex; gap:10px; align-items:center; color:color-mix(in srgb,#D7263D 70%,var(--ink)); font-size:17px; line-height:1.25}
+.trap-k{font-size:14.5px; color:var(--ink-soft); margin:8px 0 8px}
+.tell{position:relative; display:grid; grid-template-columns:28px 1fr; column-gap:10px; border-radius:10px; padding:10px 12px; margin:0 0 8px; background:var(--sheet); border:2px solid var(--line)}
+.tell p{margin:0; font-style:italic; font-size:15.5px; position:relative}
+.tell small{grid-column:2; display:block; margin-top:4px; font-weight:700; font-size:14px}
+.tell .mark{grid-row:span 2; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-weight:800; color:#fff}
+.tell.bad .mark{background:#D7263D} .tell.bad small{color:color-mix(in srgb,#D7263D 70%,var(--ink))}
+.tell.good .mark{background:var(--ok)} .tell.good small{color:var(--ok)}
+.tell.bad p{text-decoration:line-through; text-decoration-thickness:2.5px; text-decoration-color:#D7263D}
+.replay{font:inherit; font-size:13.5px; font-weight:700; color:var(--ink-soft); background:none; border:0; text-decoration:underline; cursor:pointer; padding:2px 0}
+/* animation : la mauvaise version apparaît, tremble, est barrée ; puis la bonne arrive */
+.trap.play .trap-alert .warn{animation:blink 1s ease-in-out 3}
+.trap.play .tell.bad{animation:pop .4s ease-out both, shake .5s .9s ease-in-out both}
+.trap.play .tell.bad .mark, .trap.play .tell.bad small{animation:fadein .3s 1.4s both}
+.trap.play .tell.bad p{animation:strike .5s 1.4s both, dim .4s 2s forwards}
+.trap.play .tell.good{animation:slidein .5s 2.4s ease-out both}
+.trap.play .tell.good .mark{animation:popmark .4s 2.9s both}
+@keyframes pop{from{opacity:0; transform:scale(.96)} to{opacity:1; transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(3px)}}
+@keyframes strike{from{text-decoration-color:transparent} to{text-decoration-color:#D7263D}}
+@keyframes fadein{from{opacity:0} to{opacity:1}}
+@keyframes dim{to{opacity:.5}}
+@keyframes slidein{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+@keyframes popmark{0%{transform:scale(0)} 70%{transform:scale(1.25)} 100%{transform:scale(1)}}
+@keyframes blink{50%{transform:scale(1.2)}}
+.ex-ico{background:#D7263D !important; color:#fff !important; clip-path:polygon(50% 4%, 100% 96%, 0 96%); border-radius:0 !important; place-items:end center !important; padding-bottom:5px}
+.ex-btn{border-color:#D7263D !important; box-shadow:4px 4px 0 #D7263D !important}
+.ex-btn small, .ex-btn .ex-go{color:color-mix(in srgb,#D7263D 70%,var(--ink)) !important}
+.angle-keep{display:flex; gap:10px; align-items:flex-start; border:2px solid #D7263D; border-radius:10px; padding:9px 12px; margin:0 0 14px; background:color-mix(in srgb,#D7263D 5%, var(--sheet)); font-size:15px}
+.angle-keep b{display:block; color:color-mix(in srgb,#D7263D 70%,var(--ink)); font-size:15.5px}
+@media (prefers-reduced-motion:reduce){ .trap.play *{animation:none !important} }
+:root[data-still] .trap.play *{animation:none !important}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -701,11 +738,26 @@ function renderLearn(){
 function openExample(){
   const d = $("sheet");
   d.setAttribute("style", "--c:var(--ink);--on-c:var(--sheet)");
-  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><h3 style="margin-top:0">Une mission, plusieurs compétences</h3></div>
-    <div class="sheet-body"><p>La même mission se raconte de plusieurs façons. C'est l'angle qui change : ce que vous mettez en avant. Touchez une mission :</p>
+  d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><h3 style="margin-top:0">Le piège n° 1</h3></div>
+    <div class="sheet-body">
+    <div class="trap" id="trap">
+      <div class="trap-alert"><span class="warn" aria-hidden="true">!</span><b>Raconter la mission, mais pas sous l'angle de la compétence</b></div>
+      <p class="trap-k">Compétence choisie : <b>c1</b> · organiser le travail, les priorités, le temps</p>
+      <div class="tell bad"><span class="mark" aria-hidden="true">&#10005;</span>
+        <p>« J'ai organisé la séance. J'ai réservé la salle, fait le budget, envoyé l'invitation, puis rangé la salle. »</p>
+        <small>Toute la mission, sans angle : on ne voit pas c1.</small></div>
+      <div class="tell good"><span class="mark" aria-hidden="true">&#10003;</span>
+        <p>« Quand la salle n'était plus libre, j'ai revu mon planning et j'ai priorisé les tâches pour tenir le délai. »</p>
+        <small>Sous l'angle de c1 : on voit comment vous avez organisé le travail.</small></div>
+      <button class="replay" id="trapAgain">Revoir</button>
+    </div>
+    <h4 style="margin:18px 0 4px">Une mission, plusieurs compétences</h4>
+    <p>La même mission se raconte de plusieurs façons. C'est l'angle qui change. Touchez une mission :</p>
     <div class="missions" id="missions"></div><div class="angles" id="angles"></div>
     <div class="sheet-acts"><button class="btn solid" id="shOk">J'ai compris</button></div></div>`;
   renderMissions();
+  $("trapAgain").onclick = () => { const t = $("trap"); t.classList.remove("play"); void t.offsetWidth; t.classList.add("play"); };
+  requestAnimationFrame(() => $("trap").classList.add("play"));
   const close = () => d.close();
   $("shX").onclick = close; $("shOk").onclick = close;
   d.onclick = e => { if (e.target === d) close(); };
@@ -752,24 +804,25 @@ function renderCo(){
   if (false){}
   else if (kind === "pick"){
     if (has(p.mission)) h += `<div class="reminder"><b>Votre mission</b>${esc(p.mission)}</div>`;
-    h += `<button class="ex-btn" id="exBtn"><span class="ex-ico">?</span><span><b>Une mission, plusieurs compétences</b><small>Voir un exemple</small></span><span class="ex-go">&rarr;</span></button>
+    h += `<button class="ex-btn" id="exBtn"><span class="ex-ico">!</span><span><b>Attention au piège n° 1</b><small>Voir l'exemple, avant de choisir</small></span><span class="ex-go">&rarr;</span></button>
       <p class="tip">Touchez la compétence sous laquelle vous racontez votre mission.</p>` + damier();
   }
   else if (kind === "mission"){
     h += `<p class="tip" style="margin-top:0">Une mission que vous avez vraiment faite, et réussie.</p>
       <div class="field"><label for="f-mission">Votre mission, en une phrase</label>
-      <textarea id="f-mission" data-f="mission" rows="2" placeholder="Ex. J'ai organisé la séance d'équipe du jeudi.">${esc(p.mission||"")}</textarea>
+      <textarea id="f-mission" data-f="mission" rows="2">${esc(p.mission||"")}</textarea>
       <div class="starters"><button type="button" data-start="mission">J'ai…</button><button type="button" data-start="mission">On m'a demandé de…</button></div></div>
 `;
   }
   else if (Q[kind]){
     const q = Q[kind];
     if (kind === "why") h += `<div class="reminder"><b>${k} · l'angle à prendre</b>${esc(CO[k].angle)}</div>`;
+    else h += `<div class="angle-keep"><span class="warn" aria-hidden="true">!</span><span><b>Restez sous l'angle de ${k}</b>${esc(CO[k].angle)}</span></div>`;
     if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
     h += q.fields.map(([f,lab,ph,starts]) => {
       const val = p[f] != null ? p[f] : (f === "task" && has(p.mission) ? p.mission : "");
       return `<div class="field"><label for="f-${f}">${esc(lab)}</label>
-      <textarea id="f-${f}" data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(val)}</textarea>
+      <textarea id="f-${f}" data-f="${f}" rows="3">${esc(val)}</textarea>
       <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`;
     }).join("");
   }
