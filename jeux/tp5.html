@@ -341,6 +341,52 @@ button.result span{font-weight:700}
 .find ul{margin:4px 0 0; padding-left:18px; font-size:15.5px}
 @media (prefers-reduced-motion:reduce){ .mini-burst{animation:none} }
 :root[data-still] .mini-burst{animation:none}
+
+/* ---- v7 : jargon pro, speech, chrono ---- */
+.vocab{border:2px solid var(--s); border-radius:var(--radius-sm); padding:10px 12px; margin:0 0 12px; background:var(--sheet)}
+.vocab-h{display:flex; justify-content:space-between; align-items:center; gap:8px; margin:0 0 6px}
+.vocab-h b{font-family:var(--head); font-size:16px}
+.vocab-n{font-size:13px; font-weight:800; background:var(--s); color:var(--on-s); border-radius:999px; padding:1px 10px; white-space:nowrap}
+.vocab-w{display:flex; flex-wrap:wrap; gap:6px}
+.vocab-w button{font:inherit; font-size:14px; font-weight:700; color:var(--ink); background:var(--paper); border:1.5px dashed var(--s); border-radius:8px; padding:4px 10px; cursor:pointer}
+.vocab-w button.on{background:var(--s); color:var(--on-s); border-style:solid}
+.vocab small{display:block; margin-top:6px; color:var(--ink-soft); font-size:13px}
+.pro{border-left:4px solid var(--ink); background:var(--paper); border-radius:0 8px 8px 0; padding:9px 12px; margin:0 0 12px}
+.pro > b{display:block; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:4px}
+.pro-row{display:grid; grid-template-columns:1fr auto 1.3fr; gap:8px; align-items:baseline; font-size:15px; padding:3px 0}
+.pro-row::after{content:""; order:2}
+.pro-row s{color:var(--ink-soft); text-decoration-color:#D7263D; text-decoration-thickness:2px}
+.pro-row span{font-weight:700; grid-column:3}
+.pro-row s{grid-column:1}
+.pro-row::before{content:"→"; grid-column:2; grid-row:1; font-weight:800; color:var(--s)}
+@media (max-width:420px){ .pro-row{grid-template-columns:1fr} .pro-row::before{display:none} .pro-row s,.pro-row span{grid-column:1} }
+.speech .lead{font-style:italic; color:var(--ink-soft); font-size:15.5px}
+.speech .q-if{font-weight:700; font-style:italic}
+.speech .empty{color:var(--alert); font-style:italic}
+.vocab-sum{margin:10px 0 0; padding-top:8px; border-top:1.5px dashed var(--line); font-size:14.5px; color:var(--ink-soft)}
+.chrono{background:var(--sheet); border:3px solid var(--s); border-radius:var(--radius-sm); padding:14px; margin:0 0 12px; position:sticky; top:6px; z-index:3}
+.ch-now{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+.ch-now span{font-family:var(--head); font-weight:800; font-size:22px}
+.ch-now b{font-family:var(--head); font-weight:800; font-size:34px; color:var(--s); font-variant-numeric:tabular-nums}
+.ch-bar{display:flex; gap:3px; margin:8px 0 10px}
+.ch-bar span{min-width:0; text-align:center; font-size:12.5px; font-weight:700; padding:6px 2px; border-radius:5px; background:var(--paper); color:var(--ink-soft); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ch-bar span.on{background:var(--s); color:var(--on-s)}
+.ch-bar span.done{background:color-mix(in srgb,var(--s) 35%, var(--paper)); color:var(--ink)}
+.ch-btns{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:6px}
+.ch-btns .btn{padding:9px 6px; font-size:15px; justify-content:center}
+.ch-btns .btn.solid{background:var(--s); border-color:var(--s); color:var(--on-s)}
+.selfcheck{background:var(--sheet); border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; margin:0 0 12px; display:grid; gap:4px}
+.selfcheck > b{font-family:var(--head); font-size:17px; margin-bottom:4px}
+.selfcheck label{display:flex; gap:10px; align-items:flex-start; padding:6px 0; font-size:16px; cursor:pointer}
+.selfcheck input{width:22px; height:22px; accent-color:var(--s); flex:none; margin:1px 0 0}
+.co-ex-row{display:flex; gap:10px; align-items:center; font-weight:700}
+.co-ex-row .pill{font-family:var(--head); font-weight:800; background:var(--c); color:var(--on-c); border-radius:7px; padding:2px 9px; flex:none}
+.co-ex-eq{margin:2px 0 10px 50px; font-family:var(--head); font-weight:800; font-size:18px; color:var(--s)}
+.co-ex-eq:last-child{margin-bottom:0}
+.mini-damier{display:grid; gap:4px; margin:0 0 12px}
+.md-row{display:flex; gap:4px; align-items:center}
+.md-row i{font-style:normal; width:26px; height:26px; border-radius:6px; background:var(--c); color:var(--on-c); display:grid; place-items:center; font-weight:800; font-size:13px; flex:none}
+.md-row span{flex:1; text-align:center; font-size:13px; font-weight:700; padding:4px 0; border-radius:6px; background:var(--sheet); border:1.5px solid var(--line); border-top:4px solid var(--c)}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -597,27 +643,72 @@ const has = v => typeof v === "string" && v.trim() !== "";
    LES QUESTIONS DE PRÉPARATION (une compétence = 5 écrans)
    ===================================================================== */
 const Q = {
-  why:{h:"Pourquoi cette compétence ?", min:"1 min", fields:[
-    ["like","Qu'est-ce qui vous plaît dans cette compétence ?","Ex. J'aime quand tout est organisé et que l'équipe sait quoi faire.",["J'aime…","Ce qui m'intéresse, c'est…"]],
-    ["strong","Pourquoi êtes-vous fort·e dans ce domaine ?","Ex. On me confie souvent l'organisation des séances.",["Je suis à l'aise parce que…","On me confie souvent…"]]]},
-  context:{h:"Le contexte", min:"Situation · 1 min", fields:[
-    ["where","Où et quand ?","Ex. À l'Espace Entreprise, équipe Culture+Sport, en mars.",["À l'Espace Entreprise, en…","Pendant mon stage chez…"]],
-    ["task","Qu'est-ce qu'on vous a demandé ?","Ex. Organiser la séance d'équipe du jeudi, en trois jours.",["On m'a demandé de…","Ma mission était de…"]]]},
-  challenge:{h:"Le défi relevé", min:"Situation · 1 min", fields:[
-    ["chal","Qu'est-ce qui était difficile ?","Ex. La salle était déjà prise et un collègue était absent.",["La difficulté, c'était…","Je ne m'attendais pas à…"]],
-    ["did","Qu'avez-vous fait, vous ?","Ex. J'ai trouvé une autre salle, réparti les tâches et envoyé l'invitation.",["D'abord…","Ensuite…","Enfin…"]],
-    ["res","Quel a été le résultat ?","Ex. La séance a eu lieu à l'heure, tout le monde avait les documents.",["Résultat :","Ma responsable m'a dit…"]]]},
-  analysis:{h:"Avec le recul", min:"2 min", fields:[
-    ["work","Qu'est-ce qui a fait que ça a marché ?","Ex. J'ai demandé de l'aide tôt et j'ai tenu une liste à jour.",["Ça a marché parce que…","Mon point fort, c'est…"]],
-    ["next","Que feriez-vous autrement la prochaine fois ?","Ex. Réserver la salle dès le premier jour.",["La prochaine fois, je…","Je changerais…"]]]},
-  alt:{h:"Et si… ?", min:"1 min", ifs:true, fields:[
-    ["altA","Ce que vous auriez fait","Ex. J'aurais d'abord appelé la personne pour comprendre, puis proposé une solution.",["Dans ce cas, j'aurais…","D'abord je…, ensuite je…"]]]}
+  why:{h:"Pourquoi cette compétence ?", min:"1 min",
+    pro:[["J'aime bien ça.","Ce qui me motive dans cette compétence, c'est…"],["Je suis bon·ne là-dedans.","Mon point fort dans ce domaine, c'est…"]],
+    fields:[
+    ["like","Qu'est-ce qui vous motive dans cette compétence ?","",["Ce qui me motive, c'est…","Je suis à l'aise avec…"]],
+    ["strong","Quel est votre point fort dans ce domaine ?","",["Mon point fort, c'est…","On me confie régulièrement…"]]]},
+  context:{h:"Le contexte", min:"Situation · 1 min",
+    pro:[["J'étais à l'EE.","Dans le cadre de mon stage à l'Espace Entreprise, au sein de l'équipe…"]],
+    fields:[
+    ["where","Où, quand, avec qui ?","",["Dans le cadre de mon stage à l'Espace Entreprise…","En mars, au sein de l'équipe…"]]]},
+  challenge:{h:"Le défi relevé", min:"Situation · 1 min",
+    pro:[["C'était chaud.","La difficulté principale était…"],["J'ai fait des trucs.","J'ai planifié / coordonné / vérifié…"]],
+    fields:[
+    ["chal","Qu'est-ce qui était difficile ?","",["La difficulté principale était…","Je devais respecter un délai de…"]],
+    ["did","Qu'avez-vous fait, vous ?","",["D'abord, j'ai…","Ensuite, j'ai…","Enfin, j'ai…"]],
+    ["res","Quel a été le résultat ?","",["Résultat :","Ma responsable m'a fait le retour suivant :"]]]},
+  analysis:{h:"Avec le recul", min:"2 min",
+    pro:[["Ça a marché.","Les facteurs de réussite ont été…"],["Je referais pas pareil.","Je l'améliorerais en…"]],
+    fields:[
+    ["work","Qu'est-ce qui a fait que ça a marché ?","",["Les facteurs de réussite ont été…","Mon point fort a été…"]],
+    ["next","Que feriez-vous autrement la prochaine fois ?","",["Je l'améliorerais en…","La prochaine fois, j'anticiperais…"]]]},
+  alt:{h:"Et si… ?", min:"1 min", ifs:true,
+    pro:[["Je sais pas, j'aurais improvisé.","Dans ce cas, j'aurais d'abord…, puis…"]],
+    fields:[
+    ["altA","Ce que vous auriez fait","",["Dans ce cas, j'aurais d'abord…","Ensuite, j'aurais…"]]]}
 };
-const FIELDS = ["like","strong","where","task","chal","did","res","work","next","altA"];
-const seqOf = i => ["mission","pick","why","context","challenge","analysis","alt","done"];
+const FIELDS = ["mission","like","strong","where","chal","did","res","work","next","altA"];
+const seqOf = i => ["mission","pick","why","context","challenge","analysis","alt","say","done"];
 const nFilled = i => FIELDS.filter(f => has(S.prep[i][f])).length + (S.sel[i] ? 1 : 0);
 const NTOT = FIELDS.length + 1;
-const coDone = i => !!S.sel[i] && ["like","where","task","did","work","next"].every(f => has(S.prep[i][f]));
+
+/* ------------------------------------------------------------------
+   Les mots du métier, par compétence (tirés du plan de formation)
+   ------------------------------------------------------------------ */
+const VOCAB = {
+  a1:["bilan","objectif","feed-back","auto-évaluation","mesures","progresser","compétences professionnelles"],
+  a2:["réseau","contacts","interlocuteur","échanger","informations pertinentes","canal"],
+  a3:["mandat","exigences","délai","satisfaction du client","vérifier","mesures d'amélioration"],
+  a4:["responsabilité","durabilité","éthique","conséquences","choix réfléchi","impact"],
+  a5:["valeurs","parties prenantes","éthique","culture","point de vue","argumenter"],
+  b1:["équipe","collaboration","communication","directives","délais","accords","écarts"],
+  b2:["interface","coordonner","transmettre","groupe cible","documenter","suggestion d'amélioration"],
+  b3:["enjeux économiques","sources","fiabilité","impact","durabilité","argumenter"],
+  b4:["projet partiel","calendrier","coordonner","suivi","écarts","informer"],
+  b5:["changement","mise en œuvre","impact","accompagner","amélioration","procédure"],
+  c1:["planifier","prioriser","coordonner","ressources","délai","rétroplanning","optimiser"],
+  c2:["processus administratif","documents","classement","agenda","procès-verbal","rendez-vous"],
+  c3:["processus","procédure","documenter","mode d'emploi","instruire","amélioration"],
+  c4:["groupe cible","message","canal de communication","diffusion","concept de communication","impact"],
+  c5:["budget","facture","décompte","écart","contrôle","coûts"],
+  d1:["besoin","demande","transmettre","service compétent","flux d'informations","suivi"],
+  d2:["entretien de conseil","besoin","solution adaptée","objection","argumenter","climat de confiance"],
+  d3:["offre","argumentation","avantages","négociation","conclure","feed-back"],
+  d4:["fidéliser","satisfaction","relation client","mesure","canal","efficacité"],
+  e1:["application","base de données","mise à jour","sécurité des données","protection des données","résoudre"],
+  e2:["recherche","sources","fiabilité","pertinence","vérifier","synthèse"],
+  e3:["données","analyse","statistiques","plausibilité","interpréter","graphique"],
+  e4:["contenu","groupe cible","canal","modèle","mise en page","qualité"]
+};
+const norm = t => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[’']/g, "'");
+const stem = w => { const n = norm(w); return n.length > 6 ? n.slice(0, n.length - 2) : n; };
+function vocabUsed(i){
+  const k = S.sel[i]; if (!k || !VOCAB[k]) return [];
+  const all = norm(FIELDS.map(f => S.prep[i][f] || "").join(" "));
+  return VOCAB[k].filter(w => all.includes(stem(w)));
+}
+const coDone = i => !!S.sel[i] && ["mission","like","where","did","work","next"].every(f => has(S.prep[i][f]));
 
 /* =====================================================================
    NAVIGATION
@@ -626,6 +717,7 @@ let cur = "home", ci = 0;
 function go(to, push){
   if (to === "co1" || to === "co2"){ ci = to === "co1" ? 0 : 1; to = "co"; }
   if (to === "learn" && cur !== "learn") lp = 0;
+  stopChrono();
   document.querySelectorAll(".screen").forEach(s => s.hidden = s.id !== "s-"+to);
   cur = to;
   ({home:renderHome, learn:renderLearn, co:renderCo, speech:renderSpeech, tips:renderTips}[to])();
@@ -651,7 +743,7 @@ function renderHome(){
     ? `<span class="co-pill" style="${cvars(S.sel[i])}">${S.sel[i]}</span>${esc(CO[S.sel[i]].t)}`
     : (i === 0 ? "Choisir, puis préparer" : "La même chose, une 2e fois");
   const items = [
-    ["learn", "Comprendre la consigne", "Comment se passe le TP5 · 4 écrans", S.learned],
+    ["learn", "Comprendre la consigne", "Comment se passe le TP5 · 5 écrans", S.learned],
     ["co1", "Ma compétence 1", coLine(0), nFilled(0) > 0],
     ["co2", "Ma compétence 2", coLine(1), nFilled(1) > 0]
   ];
@@ -705,6 +797,16 @@ const LEARN = [
     <div class="card"><p class="big-rule">À l'examen, vous parlez <em>10 minutes</em> de votre travail à l'Espace Entreprise.</p></div>
     <div class="two"><div><b>Compétence 1</b><span>5 min</span></div><div><b>Compétence 2</b><span>5 min</span></div></div>
     <div class="card"><p class="say">C'est <b>vous</b> qui choisissez vos <b>2 missions</b> et vos <b>2 compétences opérationnelles</b>. Vous présentez chaque mission sous l'angle de sa compétence.</p></div>`},
+  {h:"C'est quoi, une compétence ?", html:`
+    <div class="card"><p class="big-rule">Une compétence opérationnelle, c'est <em>un savoir-faire du métier</em> d'employé·e de commerce.</p></div>
+    <div class="card co-ex">
+      <div class="co-ex-row"><span class="pill" style="${cvars("c1")}">c1</span><span>Planifier, coordonner et optimiser des tâches</span></div>
+      <div class="co-ex-eq">= organiser son travail</div>
+      <div class="co-ex-row"><span class="pill" style="${cvars("d1")}">d1</span><span>Prendre en compte les besoins des clients</span></div>
+      <div class="co-ex-eq">= comprendre ce que veut le client</div>
+    </div>
+    <div class="mini-damier">${"ABCDE".split("").map(L => `<div class="md-row" style="${cvars(L)}"><i>${L}</i>${Object.keys(CO).filter(k => k[0] === L.toLowerCase()).map(k => `<span>${k}</span>`).join("")}</div>`).join("")}</div>
+    <div class="card"><p class="say">23 compétences possibles, en 5 domaines. Vous en choisirez <b>2</b> à l'étape 2 et 3.</p></div>`},
   {h:"Une compétence, 4 parties", html:`
     <div class="card">
       <div class="min-bar"><span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span></div>
@@ -860,11 +962,26 @@ function renderCo(){
     else h += `<div class="angle-keep"><svg class="alert-ico" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 1.5 23 20.5H1z" fill="#D7263D" stroke="#D7263D" stroke-width="1.5" stroke-linejoin="round"/><rect x="10.9" y="7.5" width="2.2" height="7" rx="1.1" fill="#fff"/><circle cx="12" cy="17.4" r="1.3" fill="#fff"/></svg><span><b>Restez sous l'angle de ${k}</b>${esc(CO[k].angle)}</span></div>`;
     if (q.ifs) h += `<div class="ifs">${IFS.map((x,j) => `<label><input type="radio" name="ifq" value="${j}" ${String(p.altQ)===String(j)?"checked":""}><span>${esc(x)}</span></label>`).join("")}</div>`;
     h += q.fields.map(([f,lab,ph,starts]) => {
-      const val = p[f] != null ? p[f] : (f === "task" && has(p.mission) ? p.mission : "");
+      const val = p[f] || "";
       return `<div class="field"><label for="f-${f}">${esc(lab)}</label>
       <textarea id="f-${f}" data-f="${f}" rows="3">${esc(val)}</textarea>
       <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`;
     }).join("");
+    h += vocabBox(ci);
+    if (q.pro) h += `<div class="pro"><b>Parlez comme un·e pro</b>${q.pro.map(([a,b]) => `<div class="pro-row"><s>${esc(a)}</s><span>${esc(b)}</span></div>`).join("")}</div>`;
+  }
+  else if (kind === "say"){
+    const ck = p.check || {};
+    h += `<p class="tip" style="margin-top:0">Lisez-le une fois, puis dites-le à voix haute, sans lire. Comme à un entretien d'embauche.</p>
+      <div class="chrono" id="chrono">
+        <div class="ch-now"><span id="chPh">Prêt·e ?</span><b id="chT">5:00</b></div>
+        <div class="ch-bar">${PH.map((x,j) => `<span style="flex:${x[1]}" data-j="${j}">${x[0]}</span>`).join("")}</div>
+        <div class="ch-btns"><button class="btn solid" id="chGo">Démarrer</button><button class="btn" id="chNext">Suivante</button><button class="btn" id="chReset">À zéro</button></div>
+      </div>
+      ${speechCard(ci, true)}
+      <div class="selfcheck"><b>Je vérifie</b>
+        ${SELF.map(([id,t]) => `<label><input type="checkbox" data-ck="${id}" ${ck[id]?"checked":""}><span>${t}</span></label>`).join("")}
+      </div>`;
   }
   else if (kind === "done"){
     h += `<div class="done-box"><b>Compétence ${ci+1} prête</b></div>` + speechCard(ci) +
@@ -875,7 +992,7 @@ function renderCo(){
   if (kind !== "done"){
     const canNext = kind === "pick" ? !!k : true;
     h += `<div class="nav">${st>0?`<button class="btn" id="bPrev" aria-label="Précédent">&larr;</button>`:""}
-      ${canNext ? `<button class="btn solid" id="bNext">${kind==="alt"?"Terminer":kind==="pick"?`Continuer avec ${k}`:"Suivant"} &rarr;</button>` : ""}</div>`;
+      ${canNext ? `<button class="btn solid" id="bNext">${kind==="say"?"Terminer":kind==="pick"?`Continuer avec ${k}`:"Suivant"} &rarr;</button>` : ""}</div>`;
   }
   $("s-co").innerHTML = h;
 
@@ -892,15 +1009,65 @@ function renderCo(){
     t.value += sep + b.textContent + " "; t.dispatchEvent(new Event("input")); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
   });
   $("s-co").querySelectorAll("[name=ifq]").forEach(r => r.onchange = () => { p.altQ = r.value; save(); });
+  $("s-co").querySelectorAll("textarea").forEach(t => t.addEventListener("focus", () => { lastTA = t; }));
+  $("s-co").querySelectorAll("[data-word]").forEach(b => b.onclick = () => {
+    const t = lastTA && lastTA.isConnected ? lastTA : $("s-co").querySelector("textarea"); if (!t) return;
+    const w = b.dataset.word, sep = t.value && !/\s$/.test(t.value) ? " " : "";
+    t.value += sep + w + " "; t.dispatchEvent(new Event("input")); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+  });
+  $("s-co").querySelectorAll("textarea").forEach(t => t.addEventListener("input", () => refreshVocab(ci)));
+  $("s-co").querySelectorAll("[data-ck]").forEach(c => c.onchange = () => { p.check = p.check || {}; p.check[c.dataset.ck] = c.checked; save(); });
+  if (kind === "say") initChrono();
   $("s-co").querySelectorAll("[data-co]").forEach(b => b.onclick = () => openSheet(b.dataset.co));
   if ($("exBtn")) $("exBtn").onclick = openExample;
   if ($("coachBtn")) $("coachBtn").onclick = openFind;
-  const move = d => { clearTimeout(saveT); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
+  const move = d => { clearTimeout(saveT); stopChrono(); S.step[ci] = Math.max(0, Math.min(seq.length-1, st + d)); save(); renderCo(); window.scrollTo(0,0); };
   if ($("bPrev")) $("bPrev").onclick = () => move(-1);
   if ($("bNext")) $("bNext").onclick = () => { if (kind === "pick" && !S.sel[ci]) return; move(1); };
 }
+let lastTA = null;
+function vocabBox(i){
+  const k = S.sel[i]; if (!k || !VOCAB[k]) return "";
+  const used = vocabUsed(i);
+  return `<div class="vocab" id="vocab"><div class="vocab-h"><b>Les mots du métier · ${k}</b><span class="vocab-n" id="vocabN">${used.length} utilisé${used.length>1?"s":""}</span></div>
+    <div class="vocab-w">${VOCAB[k].map(w => `<button type="button" data-word="${esc(w)}" class="${used.includes(w)?"on":""}">${esc(w)}</button>`).join("")}</div>
+    <small>Touchez un mot pour l'ajouter dans la case où vous écrivez.</small></div>`;
+}
+function refreshVocab(i){
+  const box = $("vocab"); if (!box) return;
+  const used = vocabUsed(i);
+  $("vocabN").textContent = `${used.length} utilisé${used.length>1?"s":""}`;
+  box.querySelectorAll("[data-word]").forEach(b => b.classList.toggle("on", used.includes(b.dataset.word)));
+}
+const PH = [["Pourquoi",60],["Situation",60],["Analyse",120],["Et si…",60]];
+const SELF = [["noread","Je l'ai dit sans lire"],["je","J'ai dit « j'ai fait », pas « on a fait »"],["vocab","J'ai utilisé les mots du métier"],["time","J'ai tenu à peu près 5 minutes"]];
+let chI = null, chPhase = 0, chLeft = 60, chRun = false;
+function chShow(){
+  const ph = $("chPh"); if (!ph) return;
+  const done = chPhase >= PH.length;
+  ph.textContent = done ? "Terminé. Bravo !" : (chRun || chPhase > 0 || chLeft < PH[0][1] ? PH[chPhase][0] : "Prêt·e ?");
+  let tot = done ? 0 : chLeft; for (let j = chPhase + 1; j < PH.length; j++) tot += PH[j][1];
+  $("chT").textContent = `${Math.floor(tot/60)}:${String(tot%60).padStart(2,"0")}`;
+  document.querySelectorAll(".ch-bar span").forEach((el,j) => el.className = j < chPhase ? "done" : j === chPhase && (chRun || chLeft < PH[0][1] || chPhase > 0) ? "on" : "");
+}
+function stopChrono(){ clearInterval(chI); chRun = false; }
+function initChrono(){
+  stopChrono(); chPhase = 0; chLeft = PH[0][1]; chShow();
+  $("chGo").onclick = () => {
+    if (chPhase >= PH.length){ chPhase = 0; chLeft = PH[0][1]; }
+    chRun = !chRun; $("chGo").textContent = chRun ? "Pause" : "Reprendre"; clearInterval(chI);
+    if (chRun) chI = setInterval(() => {
+      chLeft--; if (chLeft <= 0){ chPhase++; chLeft = chPhase < PH.length ? PH[chPhase][1] : 0; }
+      if (chPhase >= PH.length){ stopChrono(); $("chGo").textContent = "Recommencer"; }
+      chShow();
+    }, 1000);
+    chShow();
+  };
+  $("chNext").onclick = () => { if (chPhase >= PH.length) return; chPhase++; chLeft = chPhase < PH.length ? PH[chPhase][1] : 0; if (chPhase >= PH.length){ stopChrono(); $("chGo").textContent = "Recommencer"; } chShow(); };
+  $("chReset").onclick = () => { stopChrono(); chPhase = 0; chLeft = PH[0][1]; $("chGo").textContent = "Démarrer"; chShow(); };
+}
 function headTitle(kind){
-  return {pick:"Sous quel angle ?", mission:"Votre mission", done:"Bravo"}[kind] || Q[kind].h;
+  return {pick:"Sous quel angle ?", mission:"Votre mission", say:"Je le dis", done:"Bravo"}[kind] || Q[kind].h;
 }
 
 /* Damier des compétences */
@@ -946,16 +1113,30 @@ function openSheet(k){
 /* =====================================================================
    MON SPEECH (relecture, PDF)
    ===================================================================== */
-function speechCard(i){
+function speechCard(i, compact){
   const k = S.sel[i], p = S.prep[i];
   if (!k) return `<div class="speech"><h2>Compétence ${i+1}</h2><p class="empty" style="color:var(--alert);font-style:italic;margin:0">Pas encore choisie.</p></div>`;
-  const line = v => has(v) ? `<p>${esc(v.trim())}</p>` : "";
-  const part = (t, vals) => `<div class="sp"><h3>${t}</h3>${vals.some(has) ? vals.map(line).join("") : `<p class="empty">à compléter</p>`}</div>`;
+  const cap = v => { v = v.trim(); return v.charAt(0).toUpperCase() + v.slice(1); };
+  const own = v => has(v) ? `<p>${esc(cap(v))}</p>` : `<p class="empty">…à compléter</p>`;
+  const link = t => `<p class="lead">${esc(t)}</p>`;
+  const title = CO[k].t.charAt(0).toLowerCase() + CO[k].t.slice(1);
+  const q = p.altQ != null && p.altQ !== "" ? IFS[+p.altQ] : "";
+  const used = vocabUsed(i);
   return `<div class="speech" style="${cvars(k)}"><h2><i>${k}</i>${esc(CO[k].t)}</h2>
-    ${part("Pourquoi cette compétence · 1 min", [p.like, p.strong])}
-    ${part("La situation · 1 min", [p.where, p.task, p.chal, p.did, p.res])}
-    ${part("Avec le recul · 2 min", [p.work, p.next])}
-    ${part("Et si… · 1 min", [p.altQ != null && p.altQ !== "" ? IFS[+p.altQ] : "", p.altA])}
+    <div class="sp"><h3>Pourquoi · 1 min</h3>
+      ${link(i === 0 ? `Bonjour. J'ai choisi de vous présenter la compétence ${k} : ${title}.` : `Ma deuxième compétence est la compétence ${k} : ${title}.`)}
+      ${own(p.like)}${own(p.strong)}</div>
+    <div class="sp"><h3>Situation · 1 min</h3>
+      ${link("Je vais vous présenter une situation concrète que j'ai vécue.")}
+      ${own(p.where)}${own(p.mission || p.task)}${own(p.chal)}${own(p.did)}${own(p.res)}</div>
+    <div class="sp"><h3>Analyse · 2 min</h3>
+      ${link("Avec le recul, voici mon analyse.")}
+      ${own(p.work)}${own(p.next)}</div>
+    <div class="sp"><h3>Et si… · 1 min</h3>
+      ${q ? `<p class="q-if">Question possible : ${esc(q)}</p>` : ""}
+      ${own(p.altA)}
+      ${link(i === 0 ? "Je passe maintenant à ma deuxième compétence." : "Je vous remercie de votre attention.")}</div>
+    ${compact ? "" : `<p class="vocab-sum">Mots du métier utilisés : <b>${used.length}</b>${used.length ? ` · ${used.map(esc).join(", ")}` : ""}</p>`}
   </div>`;
 }
 function renderSpeech(){
