@@ -391,6 +391,15 @@ button.result span{font-weight:700}
 .talk-pro .pro-row{background:var(--paper); border-radius:8px; padding:8px 10px; margin:6px 0 10px}
 .talk-list{list-style:none; padding:0; margin:0 0 8px; display:flex; flex-wrap:wrap; gap:6px}
 .talk-list li{background:var(--s); color:var(--on-s); font-weight:700; font-size:14.5px; border-radius:999px; padding:4px 12px}
+
+.ex-tag{display:inline-block; vertical-align:2px; font-family:var(--body); font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#fff; background:#D7263D; border-radius:4px; padding:2px 7px; margin:0 0 6px}
+h4 .ex-tag, h2 .ex-tag{margin:0 0 0 6px}
+.co-ex .ex-tag, .talk-pro > .ex-tag, .trap > .ex-tag{display:table}
+.pro > .ex-tag{margin-left:6px}
+.two small{display:block; font-size:13.5px; opacity:.9}
+.profil{display:block; text-decoration:none; color:var(--ink-soft); background:#fff; border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:6px; margin:0 0 12px}
+.profil img{display:block; width:100%; height:auto; border-radius:6px}
+.profil span{display:block; text-align:center; font-size:13px; font-weight:700; margin-top:6px}
 @media print{
   body{background:#fff; color:#000; font-size:11.5pt; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact}
   .screen,.bar,.foot-src,dialog{display:none !important}
@@ -799,19 +808,21 @@ let lp = 0;
 const LEARN = [
   {h:"Le TP5 en bref", html:`
     <div class="card"><p class="big-rule">À l'examen, vous parlez <em>10 minutes</em> de votre travail à l'Espace Entreprise.</p></div>
-    <div class="two"><div><b>Compétence 1</b><span>5 min</span></div><div><b>Compétence 2</b><span>5 min</span></div></div>
+    <div class="two"><div><b>Mission 1</b><small>+ compétence 1</small><span>5 min</span></div><div><b>Mission 2</b><small>+ compétence 2</small><span>5 min</span></div></div>
     <div class="card"><p class="say">C'est <b>vous</b> qui choisissez vos <b>2 missions</b> et vos <b>2 compétences opérationnelles</b>. Vous présentez chaque mission sous l'angle de sa compétence.</p></div>`},
   {h:"C'est quoi, une compétence ?", html:`
     <div class="card"><p class="big-rule">Une compétence opérationnelle, c'est <em>un savoir-faire du métier</em> d'employé·e de commerce.</p></div>
-    <div class="card co-ex">
+    <div class="card co-ex"><span class="ex-tag">Exemple</span>
       <div class="co-ex-row"><span class="pill" style="${cvars("c1")}">c1</span><span>Planifier, coordonner et optimiser des tâches</span></div>
       <div class="co-ex-eq">= organiser son travail</div>
       <div class="co-ex-row"><span class="pill" style="${cvars("d1")}">d1</span><span>Prendre en compte les besoins des clients</span></div>
       <div class="co-ex-eq">= comprendre ce que veut le client</div>
     </div>
-    <div class="mini-damier">${"ABCDE".split("").map(L => `<div class="md-row" style="${cvars(L)}"><i>${L}</i>${Object.keys(CO).filter(k => k[0] === L.toLowerCase()).map(k => `<span>${k}</span>`).join("")}</div>`).join("")}</div>
-    <div class="card"><p class="say">23 compétences possibles, en 5 domaines. Vous en choisirez <b>2</b> à l'étape 2 et 3.</p></div>`},
-  {h:"Une compétence, 4 parties", html:`
+    <a class="profil" href="img/profil-qualification-web.jpg" target="_blank" rel="noopener">
+      <img src="img/profil-qualification-web.jpg" alt="Profil de qualification employé·e de commerce CFC : les 5 domaines (a à e) et leurs compétences opérationnelles" loading="lazy" width="1400" height="540">
+      <span>Profil de qualification officiel · toucher pour agrandir</span></a>
+    <div class="card"><p class="say">5 domaines, de a à e. Les cases en bleu foncé sont des options : <b>pas pour le TP5</b>. Vous choisirez <b>2 compétences</b> aux étapes 2 et 3.</p></div>`},
+  {h:"Une mission, 4 parties", html:`
     <div class="card">
       <div class="min-bar"><span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span></div>
       <dl class="parts">
@@ -821,13 +832,14 @@ const LEARN = [
         <div><dt>Et si…</dt><dd>Ce que vous auriez fait si c'était différent.</dd></div>
       </dl>
     </div>
-    <div class="card"><p class="say">Le même schéma, pour chacune des 2 compétences.</p></div>`},
+    <div class="card"><p class="say">Le même schéma pour vos <b>2 missions</b>, chacune racontée sous l'angle de sa <b>compétence opérationnelle</b>.</p></div>`},
   {h:"La règle d'or", html:`
     <div class="card rule-card"><p class="big-rule">Une mission <em>vraiment faite</em>, et <em>réussie</em>.</p></div>
     <ul class="yesno">
       <li class="y"><span>Une mission précise : un lieu, un moment, ce que <b>vous</b> avez fait</span></li>
       <li class="y"><span>Un défi relevé : il y avait une difficulté, et vous vous en êtes sorti·e</span></li>
       <li class="y"><span>Vous parlez de vous : « j'ai fait… », pas « on a fait… »</span></li>
+      <li class="y"><span>Vous parlez comme un·e pro : avec vos mots, mais <b>les mots du métier</b></span></li>
     </ul>`},
   {h:"Ce que les expert·e·s regardent", html:`
     <div class="card"><ul class="crit">
@@ -837,7 +849,7 @@ const LEARN = [
     </ul></div>
     <div class="card talk-pro"><h2>Et votre façon de parler</h2>
       <p>C'est comme un <b>entretien d'embauche</b> : vous racontez avec vos mots, mais dans le langage du métier.</p>
-      <div class="pro-row"><s>J'ai fait des trucs pour la séance.</s><span>J'ai planifié et coordonné la séance.</span></div>
+      <span class="ex-tag">Exemple</span><div class="pro-row"><s>J'ai fait des trucs pour la séance.</s><span>J'ai planifié et coordonné la séance.</span></div>
       <ul class="talk-list"><li>Les mots du métier</li><li>« J'ai fait », pas « on a fait »</li><li>Sans lire</li></ul>
       <p class="note-s">L'outil vous aide : à l'étape 2 et 3, les mots du métier s'affichent pour votre compétence.</p>
     </div>
@@ -892,7 +904,7 @@ function openExample(){
     <div class="sheet-body">
     <div class="trap" id="trap">
       <div class="trap-alert"><svg class="alert-ico" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 1.5 23 20.5H1z" fill="#D7263D" stroke="#D7263D" stroke-width="1.5" stroke-linejoin="round"/><rect x="10.9" y="7.5" width="2.2" height="7" rx="1.1" fill="#fff"/><circle cx="12" cy="17.4" r="1.3" fill="#fff"/></svg><b>Raconter la mission, mais pas sous l'angle de la compétence</b></div>
-      <p class="trap-k">Compétence choisie : <b>c1</b> · organiser le travail, les priorités, le temps</p>
+      <span class="ex-tag">Exemple</span><p class="trap-k">Compétence choisie : <b>c1</b> · organiser le travail, les priorités, le temps</p>
       <div class="tell bad"><span class="mark" aria-hidden="true">&#10005;</span>
         <p>« J'ai organisé la séance. J'ai réservé la salle, fait le budget, envoyé l'invitation, puis rangé la salle. »</p>
         <small>Toute la mission, sans angle : on ne voit pas c1.</small></div>
@@ -901,7 +913,7 @@ function openExample(){
         <small>Sous l'angle de c1 : on voit comment vous avez organisé le travail.</small></div>
       <button class="replay" id="trapAgain">Revoir</button>
     </div>
-    <h4 style="margin:18px 0 4px">Une mission, plusieurs compétences</h4>
+    <h4 style="margin:18px 0 4px">Une mission, plusieurs compétences <span class="ex-tag">Exemple</span></h4>
     <p>La même mission se raconte de plusieurs façons. C'est l'angle qui change. Touchez une mission :</p>
     <div class="missions" id="missions"></div><div class="angles" id="angles"></div>
     <div class="sheet-acts"><button class="btn solid" id="shOk">J'ai compris</button></div></div>`;
@@ -978,7 +990,7 @@ function renderCo(){
       <div class="starters">${starts.map(s => `<button type="button" data-start="${f}">${esc(s)}</button>`).join("")}</div></div>`;
     }).join("");
     h += vocabBox(ci);
-    if (q.pro) h += `<div class="pro"><b>Parlez comme un·e pro</b>${q.pro.map(([a,b]) => `<div class="pro-row"><s>${esc(a)}</s><span>${esc(b)}</span></div>`).join("")}</div>`;
+    if (q.pro) h += `<div class="pro"><b>Parlez comme un·e pro</b><span class="ex-tag">Exemple</span>${q.pro.map(([a,b]) => `<div class="pro-row"><s>${esc(a)}</s><span>${esc(b)}</span></div>`).join("")}</div>`;
   }
   else if (kind === "say"){
     const ck = p.check || {};
@@ -1101,7 +1113,7 @@ function openSheet(k){
   d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
    <div class="sheet-body">
     <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
-    <h4>Des idées à l'Espace Entreprise</h4>
+    <h4>Des idées à l'Espace Entreprise <span class="ex-tag">Exemple</span></h4>
     <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
     <div class="sheet-acts">
       ${taken ? `<button class="btn" disabled>Déjà choisie pour la compétence ${2-ci}</button>`
