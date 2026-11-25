@@ -880,8 +880,8 @@ const LEARN = [
       <img src="img/profil-qualification-web.jpg" alt="Profil de qualification employé·e de commerce CFC : les 5 domaines (a à e) et leurs compétences opérationnelles" loading="lazy" width="1400" height="540">
       <span>Tableau officiel · toucher pour agrandir</span></a>
     <ul class="rules-2">
-      <li class="no"><b>Cases bleu foncé</b> À ne pas présenter : elles concernent l'école.</li>
-      <li class="meh"><b>Domaine a</b> Déconseillé : choisissez plutôt dans b à e.</li>
+      <li class="no"><b>Cases bleu foncé</b> Optionnelles : ne peuvent pas être choisies.</li>
+      <li class="meh"><b>DCO A</b> Déconseillée : choisissez plutôt dans les DCO B à E.</li>
     </ul>`},
   {h:"Une mission, 4 parties", html:`
     <div class="min-bar"><span style="--m:1">Pourquoi<small>1'</small></span><span style="--m:1">Situation<small>1'</small></span><span style="--m:2">Analyse<small>2'</small></span><span style="--m:1">Et si…<small>1'</small></span></div>
@@ -1156,7 +1156,7 @@ function damier(){
         const mine = S.sel[ci] === k, taken = other === k;
         const avoid = k[0] === "a";
         return `<button class="tile${mine?" sel":""}${taken?" taken":""}${avoid?" avoid":""}" data-co="${k}"><b>${k}</b><span>${esc(CO[k].t)}</span>${mine?"<em>Mon choix</em>":taken?`<em>Déjà choisie (mission ${2-ci})</em>`:avoid?"<em>Déconseillé</em>":""}</button>`;
-      }).join("")}${offs.map(k => `<div class="tile off"><b>${k}</b><span>${esc(OFF[k])}</span><em>À ne pas présenter (école)</em></div>`).join("")}</div></div>`;
+      }).join("")}${offs.map(k => `<div class="tile off"><b>${k}</b><span>${esc(OFF[k])}</span><em>Optionnelle : ne peut pas être choisie</em></div>`).join("")}</div></div>`;
   }).join("");
 }
 function openSheet(k){
@@ -1165,7 +1165,7 @@ function openSheet(k){
   d.setAttribute("style", cvars(k));
   d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
    <div class="sheet-body">
-    ${k[0] === "a" ? `<p class="avoid-note"><b>Déconseillé.</b> Choisissez de préférence dans les domaines B à E : c'est plus facile à illustrer avec une mission.</p>` : ""}
+    ${k[0] === "a" ? `<p class="avoid-note"><b>Déconseillé.</b> Choisissez de préférence dans les DCO B à E : c'est plus facile à illustrer avec une mission.</p>` : ""}
     <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
     <h4>Des idées à l'Espace Entreprise <span class="ex-tag">Exemple</span></h4>
     <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
