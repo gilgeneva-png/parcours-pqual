@@ -1166,7 +1166,7 @@ function openSheet(k){
   d.setAttribute("style", cvars(k));
   d.innerHTML = `<div class="sheet-head"><button class="x" id="shX" autofocus>Fermer</button><div class="code">${k}</div><h3>${esc(c.t)}</h3></div>
    <div class="sheet-body">
-    ${k[0] === "a" ? `<p class="avoid-note"><b>Déconseillé.</b> Choisissez de préférence dans les DCO B à E : c'est plus facile à illustrer avec une mission.</p>` : ""}
+    ${k[0] === "a" ? `<p class="avoid-note"><b>DCO A = déconseillée</b><br>Choisir DCO B - C - D - E</p>` : ""}
     <h4>L'angle à prendre</h4><p>${esc(c.angle)}</p>
     <h4>Des idées à l'Espace Entreprise <span class="ex-tag">Exemple</span></h4>
     <ul>${c.ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
